@@ -1,5 +1,6 @@
 
 import { useEffect, useState } from 'react';
+import { API_BASE_URL } from '../../config';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
@@ -91,7 +92,7 @@ export default function ManagerDashboard() {
     }, [scope]);
 
     const fetchCompanyData = () => {
-        fetch(`http://localhost:3003/api/company-content/${scope}`)
+        fetch(`${API_BASE_URL}/api/company-content/${scope}`)
             .then(res => res.json())
             .then(data => {
                 setCompanyInfo(data);
@@ -119,11 +120,11 @@ export default function ManagerDashboard() {
         }
 
         try {
-            let url = `http://localhost:3003/api/company-content/${scope}/brand`;
+            let url = `${API_BASE_URL}/api/company-content/${scope}/brand`;
             let method = 'POST';
 
             if (editingId) {
-                url = `http://localhost:3003/api/company-content/${scope}/brand/${editingId}`;
+                url = `${API_BASE_URL}/api/company-content/${scope}/brand/${editingId}`;
                 method = 'PUT';
             }
 
@@ -172,7 +173,7 @@ export default function ManagerDashboard() {
         e.preventDefault();
         // Sadece info alanlarını gönder, brands/services/awards'ı koru (backend zaten merge ediyor mu? Evet)
         try {
-            const res = await fetch(`http://localhost:3003/api/company-content/${scope}`, {
+            const res = await fetch(`${API_BASE_URL}/api/company-content/${scope}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(companyInfo)
@@ -190,7 +191,7 @@ export default function ManagerDashboard() {
         formData.append('file', file);
 
         try {
-            const res = await fetch('http://localhost:3003/api/upload', {
+            const res = await fetch(`${API_BASE_URL}/api/upload`, {
                 method: 'POST',
                 body: formData
             });
@@ -256,7 +257,7 @@ export default function ManagerDashboard() {
     const updateFullCompanyData = async (newData: CompanyInfo) => {
         setCompanyInfo(newData); // Optimistic UI
         try {
-            await fetch(`http://localhost:3003/api/company-content/${scope}`, {
+            await fetch(`${API_BASE_URL}/api/company-content/${scope}`, {
                 method: 'POST', // Backend bu endpointte içeriği merge'liyorsa sorun yok.
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(newData)
@@ -320,7 +321,7 @@ export default function ManagerDashboard() {
                                         <div className="flex items-center gap-2">
                                             <input type="file" accept="image/*" onChange={handleLogoUpload} className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
                                             {companyInfo.logoPath && (
-                                                <img src={`http://localhost:3003/uploads/${companyInfo.logoPath}`} className="h-10 w-10 object-contain border rounded" alt="Logo" />
+                                                <img src={`${API_BASE_URL}/uploads/${companyInfo.logoPath}`} className="h-10 w-10 object-contain border rounded" alt="Logo" />
                                             )}
                                         </div>
                                     </div>
@@ -405,7 +406,7 @@ export default function ManagerDashboard() {
                                             </div>
                                             <div className="h-20 flex items-center justify-center bg-gray-50 rounded-lg mb-3">
                                                 {brand.logoPath ? (
-                                                    <img src={`http://localhost:3003/uploads/${brand.logoPath}`} className="max-h-16 max-w-full object-contain" alt={brand.name} />
+                                                    <img src={`${API_BASE_URL}/uploads/${brand.logoPath}`} className="max-h-16 max-w-full object-contain" alt={brand.name} />
                                                 ) : (
                                                     <span className="font-bold text-gray-400">{brand.logoText}</span>
                                                 )}

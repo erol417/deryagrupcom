@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../config';
 
 interface Job {
   id: number;
@@ -14,7 +15,7 @@ export default function Career() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('http://localhost:3003/api/jobs?active=true')
+    fetch(`${API_BASE_URL}/api/jobs?active=true`)
       .then(res => res.json())
       .then(data => setJobs(data))
       .catch(err => console.error(err));

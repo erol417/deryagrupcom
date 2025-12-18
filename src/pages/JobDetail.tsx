@@ -1,6 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../config';
 
 interface Job {
     id: number;
@@ -22,7 +23,7 @@ export default function JobDetail() {
 
     useEffect(() => {
         if (!id) return;
-        fetch(`http://localhost:3003/api/jobs/${id}`)
+        fetch(`${API_BASE_URL}/api/jobs/${id}`)
             .then(res => {
                 if (!res.ok) throw new Error("İlan bulunamadı");
                 return res.json();

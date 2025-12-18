@@ -1,5 +1,6 @@
 
 import { useEffect, useState } from 'react';
+import { API_BASE_URL } from '../config';
 
 interface Value {
     title: string;
@@ -34,7 +35,7 @@ export default function CompanyCulture() {
 
     useEffect(() => {
         window.scrollTo(0, 0);
-        fetch('http://localhost:3003/api/culture')
+        fetch(`${API_BASE_URL}/api/culture`)
             .then(res => res.json())
             .then((resData) => {
                 if (resData && Object.keys(resData).length > 0) {
@@ -74,7 +75,7 @@ export default function CompanyCulture() {
             <div className="relative h-[80vh] w-full overflow-hidden flex items-center justify-center text-center px-4">
                 <div className="absolute inset-0 bg-gradient-to-b from-gray-900/70 to-gray-900/30 z-10"></div>
                 <img
-                    src={data.heroImage ? `http://localhost:3003/uploads/${data.heroImage}` : "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2670&auto=format&fit=crop"}
+                    src={data.heroImage ? `${API_BASE_URL}/uploads/${data.heroImage}` : "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2670&auto=format&fit=crop"}
                     alt="Company Culture"
                     className="absolute inset-0 w-full h-full object-cover"
                 />
@@ -143,7 +144,7 @@ export default function CompanyCulture() {
                     ) : (
                         data.gallery.map((img, i) => (
                             <div key={i} className={`rounded-2xl overflow-hidden relative group ${i === 0 ? 'col-span-2 row-span-2' : ''}`}>
-                                <img src={`http://localhost:3003/uploads/${img}`} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Gallery" />
+                                <img src={`${API_BASE_URL}/uploads/${img}`} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Gallery" />
                             </div>
                         ))
                     )}
@@ -190,7 +191,7 @@ export default function CompanyCulture() {
                                 <div className="flex items-center gap-4">
                                     <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xl overflow-hidden">
                                         {quote.photo ? (
-                                            <img src={`http://localhost:3003/uploads/${quote.photo}`} className="w-full h-full object-cover" />
+                                            <img src={`${API_BASE_URL}/uploads/${quote.photo}`} className="w-full h-full object-cover" />
                                         ) : (
                                             quote.name.charAt(0)
                                         )}

@@ -1,5 +1,6 @@
 
 import { useParams, Link, useNavigate } from "react-router-dom"
+import { API_BASE_URL } from '../config';
 import { companies } from "../data/companies"
 import { useEffect, useState } from "react"
 import { clsx } from 'clsx';
@@ -40,7 +41,7 @@ export default function CompanyDetail() {
     }
 
     if (id) {
-      fetch(`http://localhost:3003/api/company-content/${id}`)
+      fetch(`${API_BASE_URL}/api/company-content/${id}`)
         .then(res => res.json())
         .then(data => {
           setCurrentCompany((prev: any) => ({ ...prev, ...data }));
@@ -112,7 +113,7 @@ export default function CompanyDetail() {
             {/* Logo */}
             <div className="w-32 h-32 bg-white border border-gray-100 rounded-2xl flex items-center justify-center overflow-hidden p-4 shadow-lg shrink-0">
               {currentCompany.logoPath ? (
-                <img src={`http://localhost:3003/uploads/${currentCompany.logoPath}`} className="w-full h-full object-contain" alt="Logo" />
+                <img src={`${API_BASE_URL}/uploads/${currentCompany.logoPath}`} className="w-full h-full object-contain" alt="Logo" />
               ) : (
                 <span className="material-symbols-outlined text-4xl text-blue-600">business</span>
               )}
@@ -285,7 +286,7 @@ export default function CompanyDetail() {
                 {currentCompany.brands.slice(0, 12).map((brand: any) => (
                   <div key={brand.id} className="aspect-[3/2] bg-white rounded-xl border border-gray-100 p-4 flex items-center justify-center hover:border-blue-100 hover:shadow-lg transition-all group cursor-pointer" title={brand.name}>
                     {brand.logoPath ? (
-                      <img src={`http://localhost:3003/uploads/${brand.logoPath}`} className="w-full h-full object-contain filter grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:scale-105" alt={brand.name} />
+                      <img src={`${API_BASE_URL}/uploads/${brand.logoPath}`} className="w-full h-full object-contain filter grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:scale-105" alt={brand.name} />
                     ) : (
                       <span className="text-sm font-black text-gray-300 group-hover:text-blue-600 transition-colors uppercase tracking-wider">{brand.logoText?.substring(0, 6) || brand.name.substring(0, 3)}</span>
                     )}

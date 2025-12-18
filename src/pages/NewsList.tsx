@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { API_BASE_URL } from '../config';
 
 interface News {
     id: number;
@@ -17,7 +18,7 @@ export default function NewsList() {
     const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
-        fetch('http://localhost:3003/api/news')
+        fetch(`${API_BASE_URL}/api/news`)
             .then(res => res.json())
             .then(data => {
                 setNews(data);
@@ -134,7 +135,7 @@ export default function NewsList() {
                                     </div>
                                     {item.imagePath ? (
                                         <img
-                                            src={`http://localhost:3003/uploads/news/${item.imagePath}`}
+                                            src={`${API_BASE_URL}/uploads/news/${item.imagePath}`}
                                             alt={item.title}
                                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                                         />

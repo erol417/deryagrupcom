@@ -1,5 +1,6 @@
 
 import { useEffect, useState } from 'react';
+import { API_BASE_URL } from '../../config';
 import { useNavigate } from 'react-router-dom';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
@@ -51,7 +52,7 @@ export default function AdminDashboard() {
 
     const fetchJobs = async () => {
         try {
-            const res = await fetch('http://localhost:3003/api/jobs');
+            const res = await fetch(`${API_BASE_URL}/api/jobs`);
             const data = await res.json();
             setJobs(data);
         } catch (err) { console.error(err); }
@@ -59,7 +60,7 @@ export default function AdminDashboard() {
 
     const fetchApplications = async () => {
         try {
-            const res = await fetch('http://localhost:3003/api/applications');
+            const res = await fetch(`${API_BASE_URL}/api/applications`);
             const data = await res.json();
             setApplications(data);
         } catch (err) { console.error(err); }
@@ -99,7 +100,7 @@ export default function AdminDashboard() {
     // İlan Ekleme
     const handleAddJob = async (e: React.FormEvent) => {
         e.preventDefault();
-        await fetch('http://localhost:3003/api/jobs', {
+        await fetch(`${API_BASE_URL}/api/jobs`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(newJob)
@@ -121,7 +122,7 @@ export default function AdminDashboard() {
     // İlan Silme
     const handleDeleteJob = async (id: number) => {
         if (!confirm("İlanı silmek istediğinize emin misiniz?")) return;
-        await fetch(`http://localhost:3003/api/jobs/${id}`, { method: 'DELETE' });
+        await fetch(`${API_BASE_URL}/api/jobs/${id}`, { method: 'DELETE' });
         fetchJobs();
     };
 
@@ -134,7 +135,7 @@ export default function AdminDashboard() {
         // Optimistic
         setJobs(jobs.map(j => j.id === id ? { ...j, isActive: targetStatus } : j));
 
-        await fetch(`http://localhost:3003/api/jobs/${id}`, {
+        await fetch(`${API_BASE_URL}/api/jobs/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ isActive: targetStatus })
@@ -335,7 +336,7 @@ function NewsTab() {
 
     const fetchNews = async () => {
         try {
-            const res = await fetch('http://localhost:3003/api/news');
+            const res = await fetch(`${API_BASE_URL}/api/news`);
             const data = await res.json();
             setNewsList(data);
         } catch (error) {
@@ -380,13 +381,13 @@ function NewsTab() {
             let res;
             if (editingItem) {
                 // Update
-                res = await fetch(`http://localhost:3003/api/news/${editingItem.id}`, {
+                res = await fetch(`${API_BASE_URL}/api/news/${editingItem.id}`, {
                     method: 'PUT',
                     body: formData
                 });
             } else {
                 // Create
-                res = await fetch('http://localhost:3003/api/news', {
+                res = await fetch(`${API_BASE_URL}/api/news`, {
                     method: 'POST',
                     body: formData
                 });
@@ -408,7 +409,7 @@ function NewsTab() {
     const handleDelete = async (id: number) => {
         if (!confirm('Haberi silmek istiyor musunuz?')) return;
         try {
-            await fetch(`http://localhost:3003/api/news/${id}`, { method: 'DELETE' });
+            await fetch(`${API_BASE_URL}/api/news/${id}`, { method: 'DELETE' });
             fetchNews();
         } catch (error) {
             console.error(error);
@@ -432,7 +433,7 @@ function NewsTab() {
                     <div key={item.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col group hover:shadow-md transition-shadow">
                         <div className="h-48 overflow-hidden bg-gray-100 relative">
                             {item.imagePath ? (
-                                <img src={`http://localhost:3003/uploads/news/${item.imagePath}`} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                <img src={`${API_BASE_URL}/uploads/news/${item.imagePath}`} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                             ) : (
                                 <div className="w-full h-full flex items-center justify-center text-gray-400">
                                     <span className="material-symbols-outlined text-4xl">image_not_supported</span>
@@ -622,7 +623,7 @@ function ApplicationsTab({ applications: initialApps }: { applications: Applicat
         if (!selectedApp) return;
 
         try {
-            const res = await fetch(`http://localhost:3003/api/applications/${selectedApp.id}`, {
+            const res = await fetch(`${API_BASE_URL}/api/applications/${selectedApp.id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -725,7 +726,7 @@ function ApplicationsTab({ applications: initialApps }: { applications: Applicat
                                 </td>
                                 <td className="px-6 py-4 text-right space-x-2">
                                     <a
-                                        href={`http://localhost:3003/uploads/${app.cvPath}`}
+                                        href={`${API_BASE_URL}/uploads/${app.cvPath}`}
                                         target="_blank"
                                         className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors"
                                         title="CV Görüntüle"
@@ -874,14 +875,14 @@ function SocialTab() {
     }, []);
 
     const fetchSocial = () => {
-        fetch('http://localhost:3003/api/social')
+        fetch(`${API_BASE_URL}/api/social`)
             .then(res => res.json())
             .then(d => setData(d));
     };
 
     const updateSettings = async (payload: any) => {
         setData(prev => ({ ...prev, ...payload }));
-        await fetch('http://localhost:3003/api/social/settings', {
+        await fetch(`${API_BASE_URL}/api/social/settings`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -890,7 +891,7 @@ function SocialTab() {
 
     const handleDelete = async (id: number) => {
         if (!confirm('Silmek istediğinize emin misiniz?')) return;
-        await fetch(`http://localhost:3003/api/social/${id}`, { method: 'DELETE' });
+        await fetch(`${API_BASE_URL}/api/social/${id}`, { method: 'DELETE' });
         fetchSocial();
     };
 
@@ -905,7 +906,7 @@ function SocialTab() {
         fd.append('link', newItem.link);
         if (imageFile) fd.append('image', imageFile);
 
-        await fetch('http://localhost:3003/api/social', {
+        await fetch(`${API_BASE_URL}/api/social`, {
             method: 'POST',
             body: fd
         });
@@ -966,7 +967,7 @@ function SocialTab() {
                     {data.posts.map((post: any) => (
                         <div key={post.id} className="relative group bg-white border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all">
                             <div className="aspect-[4/5] relative bg-gray-100">
-                                {post.imagePath && <img src={`http://localhost:3003/uploads/social/${post.imagePath}`} className="w-full h-full object-cover" />}
+                                {post.imagePath && <img src={`${API_BASE_URL}/uploads/social/${post.imagePath}`} className="w-full h-full object-cover" />}
                                 <div className="absolute top-2 right-2 bg-white/90 rounded-full p-1 shadow-sm">
                                     <span className="material-symbols-outlined text-sm">{post.platform === 'linkedin' ? 'work' : 'photo_camera'}</span>
                                 </div>
@@ -1028,7 +1029,7 @@ function CultureTab() {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        fetch('http://localhost:3003/api/culture')
+        fetch(`${API_BASE_URL}/api/culture`)
             .then(res => res.json())
             .then(resData => {
                 let finalData = resData;
@@ -1068,7 +1069,7 @@ function CultureTab() {
     const handleSave = async () => {
         setLoading(true);
         try {
-            const res = await fetch('http://localhost:3003/api/culture', {
+            const res = await fetch(`${API_BASE_URL}/api/culture`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
@@ -1089,7 +1090,7 @@ function CultureTab() {
         fd.append('file', file);
 
         try {
-            const res = await fetch('http://localhost:3003/api/upload', { method: 'POST', body: fd });
+            const res = await fetch(`${API_BASE_URL}/api/upload`, { method: 'POST', body: fd });
             const json = await res.json();
             if (json.success) {
                 if (field === 'heroImage') {
@@ -1138,7 +1139,7 @@ function CultureTab() {
                     <div>
                         <label className="block text-sm font-bold text-gray-700 mb-1">Arkaplan Görseli</label>
                         <input type="file" onChange={e => handleFileUpload(e, 'heroImage')} className="mb-2" />
-                        {data.heroImage && <img src={`http://localhost:3003/uploads/${data.heroImage}`} className="h-24 rounded object-cover" />}
+                        {data.heroImage && <img src={`${API_BASE_URL}/uploads/${data.heroImage}`} className="h-24 rounded object-cover" />}
                     </div>
                 </div>
             </div>
@@ -1171,7 +1172,7 @@ function CultureTab() {
                 <div className="grid grid-cols-4 md:grid-cols-6 gap-4">
                     {data.gallery?.map((img: string, i: number) => (
                         <div key={i} className="relative group aspect-square bg-gray-100 rounded overflow-hidden">
-                            <img src={`http://localhost:3003/uploads/${img}`} className="w-full h-full object-cover" />
+                            <img src={`${API_BASE_URL}/uploads/${img}`} className="w-full h-full object-cover" />
                             <button onClick={() => { const n = [...data.gallery]; n.splice(i, 1); setData({ ...data, gallery: n }) }} className="absolute top-1 right-1 bg-white/80 p-1 rounded-full text-red-500 hover:bg-white"><span className="material-symbols-outlined text-sm">close</span></button>
                         </div>
                     ))}
@@ -1210,7 +1211,7 @@ function CultureTab() {
                     {data.quotes?.map((q: any, i: number) => (
                         <div key={i} className="border p-4 rounded-lg relative bg-gray-50 flex gap-4">
                             <div className="w-20 shrink-0">
-                                {q.photo ? <img src={`http://localhost:3003/uploads/${q.photo}`} className="w-20 h-20 rounded-full object-cover mb-2" /> : <div className="w-20 h-20 bg-gray-200 rounded-full mb-2"></div>}
+                                {q.photo ? <img src={`${API_BASE_URL}/uploads/${q.photo}`} className="w-20 h-20 rounded-full object-cover mb-2" /> : <div className="w-20 h-20 bg-gray-200 rounded-full mb-2"></div>}
                                 <input type="file" className="text-[10px] w-full" onChange={e => handleFileUpload(e, 'quotes', i, 'photo')} />
                             </div>
                             <div className="flex-1 space-y-2">

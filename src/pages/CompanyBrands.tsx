@@ -1,4 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom"
+import { API_BASE_URL } from '../config';
 import { companies } from "../data/companies"
 import { useEffect, useState } from "react"
 
@@ -31,7 +32,7 @@ export default function CompanyBrands() {
         }
 
         if (id) {
-            fetch(`http://localhost:3003/api/company-content/${id}`)
+            fetch(`${API_BASE_URL}/api/company-content/${id}`)
                 .then(res => res.json())
                 .then(data => {
                     // API'den gelen veriyi (brands, title, description vb.) merge et
@@ -76,7 +77,7 @@ export default function CompanyBrands() {
                                 {/* Logo Area */}
                                 <div className="mb-8 w-full flex items-center justify-center py-6 border-b border-gray-100 min-h-[120px]">
                                     {brand.logoPath ? (
-                                        <img src={`http://localhost:3003/uploads/${brand.logoPath}`} alt={brand.name} className="max-h-[100px] object-contain" />
+                                        <img src={`${API_BASE_URL}/uploads/${brand.logoPath}`} alt={brand.name} className="max-h-[100px] object-contain" />
                                     ) : (
                                         <h3 className="text-4xl font-black text-gray-900 uppercase tracking-tighter">{brand.logoText}</h3>
                                     )}

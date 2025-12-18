@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { API_BASE_URL } from '../config';
 import { Helmet } from 'react-helmet-async';
 
 interface NewsDetail {
@@ -21,7 +22,7 @@ export default function NewsDetail() {
 
     useEffect(() => {
         // Fetch all news to handle next/prev and related logic
-        fetch('http://localhost:3003/api/news')
+        fetch(`${API_BASE_URL}/api/news`)
             .then(res => res.json())
             .then((data: any[]) => {
                 setAllNews(data);
@@ -77,7 +78,7 @@ export default function NewsDetail() {
                 <title>{news.title} - Derya Grup</title>
                 <meta property="og:title" content={news.title} />
                 <meta property="og:description" content={news.summary} />
-                {news.imagePath && <meta property="og:image" content={`http://localhost:3003/uploads/${news.imagePath}`} />}
+                {news.imagePath && <meta property="og:image" content={`${API_BASE_URL}/uploads/news/${news.imagePath}`} />}
                 <meta property="og:url" content={window.location.href} />
                 <meta name="twitter:card" content="summary_large_image" />
             </Helmet>
@@ -141,7 +142,7 @@ export default function NewsDetail() {
                     <div className="mb-12 rounded-2xl overflow-hidden shadow-sm bg-gray-100">
                         {news.imagePath ? (
                             <img
-                                src={`http://localhost:3003/uploads/news/${news.imagePath}`}
+                                src={`${API_BASE_URL}/uploads/news/${news.imagePath}`}
                                 alt={news.title}
                                 className="w-full h-auto object-cover max-h-[600px]"
                             />
@@ -268,7 +269,7 @@ export default function NewsDetail() {
                                             </span>
                                         </div>
                                         {item.imagePath ? (
-                                            <img src={`http://localhost:3003/uploads/news/${item.imagePath}`} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                            <img src={`${API_BASE_URL}/uploads/news/${item.imagePath}`} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                                         ) : (
                                             <div className="bg-gray-200 w-full h-full flex items-center justify-center">
                                                 <span className="material-symbols-outlined text-gray-400">image</span>

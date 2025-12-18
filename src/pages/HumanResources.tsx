@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../config';
 import { useNavigate } from 'react-router-dom';
 
 interface Job {
@@ -28,7 +29,7 @@ export default function HumanResources() {
     ];
 
     useEffect(() => {
-        fetch('http://localhost:3003/api/jobs?active=true')
+        fetch(`${API_BASE_URL}/api/jobs?active=true`)
             .then(res => res.json())
             .then(data => setPositions(data))
             .catch(err => console.error("İlanlar çekilemedi:", err));

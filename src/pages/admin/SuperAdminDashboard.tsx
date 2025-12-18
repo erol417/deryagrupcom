@@ -1,5 +1,6 @@
 
 import { useEffect, useState } from 'react';
+import { API_BASE_URL } from '../../config';
 import { useNavigate } from 'react-router-dom';
 
 interface User {
@@ -37,7 +38,7 @@ export default function SuperAdminDashboard() {
 
     const fetchUsers = async () => {
         try {
-            const res = await fetch('http://localhost:3003/api/users');
+            const res = await fetch(`${API_BASE_URL}/api/users`);
             const data = await res.json();
             setUsers(data);
         } catch (error) {
@@ -55,8 +56,8 @@ export default function SuperAdminDashboard() {
 
         const method = editingUser ? 'PUT' : 'POST';
         const url = editingUser
-            ? `http://localhost:3003/api/users/${editingUser.id}`
-            : 'http://localhost:3003/api/users';
+            ? `${API_BASE_URL}/api/users/${editingUser.id}`
+            : `${API_BASE_URL}/api/users`;
 
         // Şifre boşsa gönderme (Update modunda)
         const body: any = { ...formData };
@@ -74,7 +75,7 @@ export default function SuperAdminDashboard() {
 
     const handleDelete = async (id: number) => {
         if (!confirm('Kullanıcıyı silmek istediğinize emin misiniz?')) return;
-        await fetch(`http://localhost:3003/api/users/${id}`, { method: 'DELETE' });
+        await fetch(`${API_BASE_URL}/api/users/${id}`, { method: 'DELETE' });
         fetchUsers();
     };
 

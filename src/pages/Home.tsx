@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from "react-router-dom"
+import { API_BASE_URL } from '../config';
 
 interface News {
   id: number;
@@ -16,7 +17,7 @@ export default function Home() {
 
   useEffect(() => {
     // Haberleri Getir
-    fetch('http://localhost:3003/api/news')
+    fetch(`${API_BASE_URL}/api/news`)
       .then(res => res.json())
       .then(data => {
         if (data && data.length > 0) {
@@ -27,13 +28,13 @@ export default function Home() {
       .catch(err => console.error(err));
 
     // Markaları Getir (Tüm Şirketlerden)
-    fetch('http://localhost:3003/api/all-brands')
+    fetch(`${API_BASE_URL}/api/all-brands`)
       .then(res => res.json())
       .then(data => setBrands(data))
       .catch(err => console.error("Markalar yüklenirken hata:", err));
 
     // Sosyal Medya Verisini Getir
-    fetch('http://localhost:3003/api/social')
+    fetch(`${API_BASE_URL}/api/social`)
       .then(res => res.json())
       .then(data => setSocialData(data))
       .catch(err => console.error("Sosyal medya hatası:", err));
@@ -75,7 +76,7 @@ export default function Home() {
             {brands.map((brand, i) => (
               <div key={`s1-${i}`} className="mx-8 md:mx-16 flex-shrink-0 w-32 h-16 flex items-center justify-center opacity-60 hover:opacity-100 transition-all duration-300 grayscale hover:grayscale-0 cursor-pointer">
                 {brand.logoPath ? (
-                  <img src={`http://localhost:3003/uploads/${brand.logoPath}`} alt={brand.name} className="max-h-full max-w-full object-contain" />
+                  <img src={`${API_BASE_URL}/uploads/${brand.logoPath}`} alt={brand.name} className="max-h-full max-w-full object-contain" />
                 ) : (
                   <span className="text-xl font-bold text-gray-400">{brand.logoText || brand.name}</span>
                 )}
@@ -86,7 +87,7 @@ export default function Home() {
             {brands.map((brand, i) => (
               <div key={`s2-${i}`} className="mx-8 md:mx-16 flex-shrink-0 w-32 h-16 flex items-center justify-center opacity-60 hover:opacity-100 transition-all duration-300 grayscale hover:grayscale-0 cursor-pointer">
                 {brand.logoPath ? (
-                  <img src={`http://localhost:3003/uploads/${brand.logoPath}`} alt={brand.name} className="max-h-full max-w-full object-contain" />
+                  <img src={`${API_BASE_URL}/uploads/${brand.logoPath}`} alt={brand.name} className="max-h-full max-w-full object-contain" />
                 ) : (
                   <span className="text-xl font-bold text-gray-400">{brand.logoText || brand.name}</span>
                 )}
@@ -97,7 +98,7 @@ export default function Home() {
             {brands.map((brand, i) => (
               <div key={`s3-${i}`} className="mx-8 md:mx-16 flex-shrink-0 w-32 h-16 flex items-center justify-center opacity-60 hover:opacity-100 transition-all duration-300 grayscale hover:grayscale-0 cursor-pointer">
                 {brand.logoPath ? (
-                  <img src={`http://localhost:3003/uploads/${brand.logoPath}`} alt={brand.name} className="max-h-full max-w-full object-contain" />
+                  <img src={`${API_BASE_URL}/uploads/${brand.logoPath}`} alt={brand.name} className="max-h-full max-w-full object-contain" />
                 ) : (
                   <span className="text-xl font-bold text-gray-400">{brand.logoText || brand.name}</span>
                 )}
@@ -280,7 +281,7 @@ export default function Home() {
               <div key={post.id} onClick={() => window.open(post.link, '_blank')} className="group flex flex-col bg-white dark:bg-white/5 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer border border-gray-100 dark:border-white/10">
                 {/* Image Section */}
                 <div className="relative aspect-square overflow-hidden bg-gray-100">
-                  <img src={`http://localhost:3003/uploads/social/${post.imagePath}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt={post.platform} />
+                  <img src={`${API_BASE_URL}/uploads/social/${post.imagePath}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt={post.platform} />
 
                   {/* Platform Icon Badge */}
                   <div className="absolute top-3 right-3 z-10">
