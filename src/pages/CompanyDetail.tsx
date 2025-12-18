@@ -151,7 +151,7 @@ export default function CompanyDetail() {
             {/* CTA Button */}
             <div className="md:self-center shrink-0">
               <a href="#contact" className="bg-[#0f172a] text-white px-8 py-4 rounded-xl text-sm font-bold hover:bg-black transition-colors flex items-center gap-3 shadow-lg hover:shadow-xl hover:-translate-y-1 transform duration-300">
-                <span>Hemen<br />İletişime Geç</span>
+                <span className="whitespace-pre-line text-left">{currentCompany.contact?.buttonText || 'Hemen\nİletişime Geç'}</span>
                 <span className="material-symbols-outlined text-2xl">calendar_month</span>
               </a>
             </div>

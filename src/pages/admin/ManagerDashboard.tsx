@@ -47,6 +47,11 @@ interface CompanyInfo {
         website: string;
         buttonText?: string;
     };
+    stats?: {
+        value: string;
+        label: string;
+        icon: string;
+    }[];
 }
 
 export default function ManagerDashboard() {
@@ -72,7 +77,7 @@ export default function ManagerDashboard() {
     const [newService, setNewService] = useState<Service>({ id: 0, title: '', desc: '', icon: 'star', image: '' });
     const [newAward, setNewAward] = useState<Award>({ id: 0, year: '2023', title: '', desc: '', icon: 'emoji_events', color: 'yellow' });
 
-    const [activeTab, setActiveTab] = useState<'info' | 'brands' | 'services' | 'awards'>('info');
+    const [activeTab, setActiveTab] = useState<'info' | 'brands' | 'services' | 'awards' | 'stats'>('info');
 
     // Admin User Info
     const adminUser = JSON.parse(localStorage.getItem('adminUser') || '{}');
@@ -160,12 +165,6 @@ export default function ManagerDashboard() {
 
     const deleteBrand = async (id: number) => {
         if (!confirm("Markayı silmek istediğinize emin misiniz?")) return;
-        // Backend delete endpoint olmadığı için (şimdilik) simüle ediyoruz veya ekleyebiliriz.
-        // Ama kullanıcı istememiş, sadece düzenleme istemiş. Biz yine de API'yi tam yapmalıyız.
-        // Hızlı çözüm: Mevcut API delete desteklemiyor olabilir, bu adımı atlıyorum veya JSON'dan siliyorum.
-        // Şimdilik sadece frontend'den filtreleyip update atalım (tehlikeli ama hızlı)
-        // Veya backend'e DELETE endpoint ekletmek gerek.
-        // Basitlik adina: Şimdilik silme butonu koymuyorum veya sadece UI'dan kaldırıyorum.
     };
 
     // --- INFO OPERATIONS ---
@@ -304,6 +303,9 @@ export default function ManagerDashboard() {
                         </button>
                         <button onClick={() => setActiveTab('awards')} className={`flex-1 py-4 text-center font-medium transition-colors ${activeTab === 'awards' ? 'bg-blue-50 text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:bg-gray-50'}`}>
                             Başarılar ve Ödüller
+                        </button>
+                        <button onClick={() => setActiveTab('stats')} className={`flex-1 py-4 text-center font-medium transition-colors ${activeTab === 'stats' ? 'bg-blue-50 text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:bg-gray-50'}`}>
+                            İstatistikler (Kartlar)
                         </button>
                     </div>
 
@@ -492,6 +494,68 @@ export default function ManagerDashboard() {
                                             <p className="text-xs text-gray-500">{award.desc}</p>
                                         </div>
                                     ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* TAB 5: STATS */}
+                        {activeTab === 'stats' && (
+                            <div>
+                                <h3 className="text-lg font-bold mb-4">Şirket İstatistikleri (Detay Sayfası)</h3>
+                                <div className="bg-yellow-50 p-4 rounded mb-6 text-sm text-yellow-800">
+                                    Burada girilen istatistikler, şirket detay sayfasında Hero görselinin hemen altında yan yana kutular halinde görünür. Genellikle 4 adet olması önerilir.
+                                </div>
+                                <div className="space-y-4">
+                                    {companyInfo.stats?.map((stat, index) => (
+                                        <div key={index} className="flex gap-4 items-end bg-white p-4 rounded-xl border border-gray-200">
+                                            <div className="flex-1">
+                                                <label className="block text-xs font-bold text-gray-500 mb-1">Değer (Örn: 45+)</label>
+                                                <input className="w-full border p-2 rounded" value={stat.value} placeholder="45+"
+                                                    onChange={e => {
+                                                        const newStats = [...(companyInfo.stats || [])];
+                                                        newStats[index] = { ...stat, value: e.target.value };
+                                                        setCompanyInfo({ ...companyInfo, stats: newStats });
+                                                    }} />
+                                            </div>
+                                            <div className="flex-1">
+                                                <label className="block text-xs font-bold text-gray-500 mb-1">Etiket (Örn: Proje)</label>
+                                                <input className="w-full border p-2 rounded" value={stat.label} placeholder="Tamamlanan Proje"
+                                                    onChange={e => {
+                                                        const newStats = [...(companyInfo.stats || [])];
+                                                        newStats[index] = { ...stat, label: e.target.value };
+                                                        setCompanyInfo({ ...companyInfo, stats: newStats });
+                                                    }} />
+                                            </div>
+                                            <div className="flex-1">
+                                                <label className="block text-xs font-bold text-gray-500 mb-1">İkon (Material Symbol)</label>
+                                                <input className="w-full border p-2 rounded" value={stat.icon} placeholder="apartment"
+                                                    onChange={e => {
+                                                        const newStats = [...(companyInfo.stats || [])];
+                                                        newStats[index] = { ...stat, icon: e.target.value };
+                                                        setCompanyInfo({ ...companyInfo, stats: newStats });
+                                                    }} />
+                                            </div>
+                                            <button onClick={() => {
+                                                const newStats = companyInfo.stats?.filter((_, i) => i !== index);
+                                                setCompanyInfo({ ...companyInfo, stats: newStats });
+                                            }} className="bg-red-100 text-red-600 p-2 rounded-lg hover:bg-red-200">
+                                                <span className="material-symbols-outlined">delete</span>
+                                            </button>
+                                        </div>
+                                    ))}
+
+                                    <button onClick={() => {
+                                        const newStats = [...(companyInfo.stats || []), { value: '', label: '', icon: 'star' }];
+                                        setCompanyInfo({ ...companyInfo, stats: newStats });
+                                    }} className="w-full py-3 border-2 border-dashed border-gray-300 rounded-xl text-gray-500 hover:border-blue-500 hover:text-blue-500 transition-colors flex items-center justify-center gap-2">
+                                        <span className="material-symbols-outlined">add</span> Yeni İstatistik Ekle
+                                    </button>
+
+                                    <div className="flex justify-end mt-6">
+                                        <button onClick={handleInfoUpdate} className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 font-bold shadow-lg shadow-blue-200">
+                                            İstatistikleri Kaydet
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         )}

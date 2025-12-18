@@ -1,16 +1,16 @@
 {
   "otomotiv": {
-    "title": "",
+    "title": "Derya Otomotiv A.Ş.",
     "description": "<p>Derya Otomotiv, Türkiye'nin önde gelen otomotiv perakendecilerinden biri olarak, sektördeki yolculuğuna <strong>28 yıl </strong>önce başlamıştır. Kuruluşumuzdan bu yana değişmeyen tek ilkemiz, koşulsuz müşteri memnuniyeti ve kaliteli hizmet anlayışıdır.</p><p><br></p><p>Bugün <strong>BYD, Hyundai, MG ve Suzuki </strong>yetkili satış ve Servis bayilikleri yanında <strong>Eurorepar Car servis</strong> temsilciliği ile tüm markalara servis hizmeti sunarak hizmet vermeye devam etmektedir.</p><p><br></p><p>Geniş araç portföyümüz, son teknoloji ile donatılmış servis istasyonlarımız ve alanında uzman teknik kadromuz ile müşterilerimize A'dan Z'ye komple bir otomotiv deneyimi sunuyoruz surdürülebilirlik ve inovasyon vizyonumuzla, elektrikli araç dönüşümüne de öncülük ediyor, çevre dostu çözümleri portföyümüze entegre ediyoruz.</p>",
-    "heroTitle": "",
-    "heroSubtitle": "",
-    "heroImage": "",
+    "heroTitle": "Yarına Giden Yolculuk",
+    "heroSubtitle": "Dünyanın dev markalarını sizler ile buluşturmak için lokasyonlarımızda sizleri ağırlamak için bekliyoruz.",
+    "heroImage": "https://images.unsplash.com/photo-1666772161663-42b0cdd882f0?q=80&w=2920&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     "contact": {
-      "phone": "+90 324 359 75 00",
+      "phone": "03243597500",
       "address": "Fatih Mah. GMK bulvarı Hyundai Plaza Tesisleri Mezitli Mersin",
       "email": "info@deryaotomotiv.com.tr",
-      "website": "www.deryaotomotiv.com.tr",
-      "buttonText": "Hemen İletişime Geç",
+      "website": "www.deryagrup.com",
+      "buttonText": "İletişime Geç",
       "buttonIcon": "call"
     },
     "stats": [
@@ -25,7 +25,7 @@
         "icon": "groups"
       },
       {
-        "value": "12",
+        "value": "3",
         "label": "Şube Sayısı",
         "icon": "storefront"
       },
@@ -35,7 +35,36 @@
         "icon": "sentiment_satisfied"
       }
     ],
-    "services": [],
+    "services": [
+      {
+        "id": 1,
+        "title": "Sıfır Araç Satışı",
+        "desc": "Dünyaca ünlü markaların en yeni modellerini, avantajlı ödeme seçenekleri ve kurumsal güvenceyle sunuyoruz.",
+        "icon": "directions_car",
+        "image": "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&q=80&w=800"
+      },
+      {
+        "id": 2,
+        "title": "Yetkili Servis & Bakım",
+        "desc": "Uzman teknisyenlerimiz ve orijinal yedek parça garantisiyle aracınızın performansını ilk günkü gibi koruyoruz.",
+        "icon": "build",
+        "image": "https://images.unsplash.com/photo-1530046339160-ce3e530c7d2f?auto=format&fit=crop&q=80&w=800"
+      },
+      {
+        "id": 3,
+        "title": "Sigorta ve Finansman",
+        "desc": "Kasko, trafik sigortası ve taşıt kredisi süreçlerinde size özel çözümlerle işlemlerinizi kolaylaştırıyoruz.",
+        "icon": "verified_user",
+        "image": "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&q=80&w=800"
+      },
+      {
+        "id": 4,
+        "title": "Filo ve E-Mobilite",
+        "desc": "Kurumsal filo kiralama ve elektrikli şarj istasyonu kurulum hizmetlerimizle geleceğe yatırım yapıyoruz.",
+        "icon": "electric_bolt",
+        "image": "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&q=80&w=800"
+      }
+    ],
     "awards": [],
     "brands": [
       {
@@ -113,11 +142,11 @@
     "logoPath": "1766016421980-2582185-derya_otomotiv.png"
   },
   "insaat": {
-    "title": "Derya İnş. ve İnş. Taah. San. Tic LTD ŞTI",
-    "description": "Derya İnşaat, sektördeki 20 yılı aşkın deneyimiyle konut, ticari ve altyapı projelerinde güvenilirliğin simgesi haline gelmiştir. \"İnsan odaklı tasarım\" felsefemizle, sadece binalar değil, komşuluk ilişkilerinin geliştiği, doğayla uyumlu yaşam alanları tasarlıyoruz.\n\nModern mimari teknikleri, birinci sınıf malzemeler ve yenilikçi mühendislik çözümlerini bir araya getirerek, her projemizde kalite standartlarını yeniden tanımlıyoruz. Deprem güvenliği ve sürdürülebilirlik, tüm projelerimizin temelini oluşturan değişmez önceliklerimizdir.",
-    "heroTitle": "Yaşamı Şekillendiren Projeler",
-    "heroSubtitle": "Estetik, güvenli ve çevreye duyarlı modern yaşam alanları inşa ederek geleceğin şehirlerini kuruyoruz.",
-    "heroImage": "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=2670&auto=format&fit=crop",
+    "title": "Derya İnşaat",
+    "description": "<p><strong>Derya İnşaat, </strong>sektördeki yarım asıra yakın deneyimiyle</p><p><br></p><ul><li>- konut,</li><li>- ticari </li><li>- altyapı</li></ul><p><br></p><p>projelerinde güvenilirliğin simgesi haline gelmiştir. \"İnsan odaklı tasarım\" felsefemizle, sadece binalar değil, komşuluk ilişkilerinin geliştiği, doğayla uyumlu yaşam alanları tasarlıyoruz. Modern mimari teknikleri, birinci sınıf malzemeler ve yenilikçi mühendislik çözümlerini bir araya getirerek, her projemizde kalite standartlarını yeniden tanımlıyoruz. Deprem güvenliği ve sürdürülebilirlik, tüm projelerimizin temelini oluşturan değişmez önceliklerimizdir.</p>",
+    "heroTitle": "Yaşamı Şekilendiren Projeler",
+    "heroSubtitle": "Estetik, güvenli ve çevreye duyarlı modern yaşam alanları inşaa ederek geleğin şehirlerini kuruyoruz. ",
+    "heroImage": "https://plus.unsplash.com/premium_photo-1681823684347-dfe489378b08?q=80&w=2340&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     "brands": [
       {
         "id": 1765945290353,
@@ -134,13 +163,15 @@
       }
     ],
     "projects": [],
-    "logoPath": "1766016842035-490543904-derya_insaat.png",
+    "logoPath": "1766048580401-852617190-derya_insaat.png",
     "contact": {
       "phone": "0324 2323323",
-      "website": "www.deryagrup.com.tr",
-      "address": "Silifke cad. Yenişehir Mersin",
+      "website": "www.deryainşaat.com",
+      "address": "Silifke cad. Derya 1 Apt . Yenişehir Mersin ",
       "buttonText": "İletişime Geç"
-    }
+    },
+    "services": [],
+    "awards": []
   },
   "sigorta": {
     "title": "Derya Sigortacılık Ltd. Şti.",
