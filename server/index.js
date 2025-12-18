@@ -8,7 +8,7 @@ const fs = require('fs');
 require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3003;
 
 // Veri Dosyalarının Yolları
 const JOBS_FILE = path.join(__dirname, 'data', 'jobs.json');
@@ -612,6 +612,105 @@ app.get('/api/culture', (req, res) => {
 app.post('/api/culture', (req, res) => {
     writeData(CULTURE_FILE, req.body);
     res.json({ success: true });
+});
+
+// HOMEPAGE HERO API
+app.get('/api/hero', (req, res) => {
+    try {
+        const HERO_FILE = path.join(__dirname, 'data', 'hero.json');
+        let data = readData(HERO_FILE);
+        // Default data if empty
+        if (!data || Object.keys(data).length === 0 || Array.isArray(data) || !data.activeDesign) {
+            data = {
+                activeDesign: "type3",
+                type1: {
+                    slides: [
+                        {
+                            image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2670&auto=format&fit=crop",
+                            title: "Geleceği İnşa Ediyoruz",
+                            subtitle: "Modern mimari ve sürdürülebilir yaşam alanları."
+                        },
+                        {
+                            image: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=2672&auto=format&fit=crop",
+                            title: "Yolculuğunuzda Yanınızdayız",
+                            subtitle: "Otomotiv sektöründeki deneyimimizle güvenli sürüş."
+                        }
+                    ]
+                },
+                type2: {
+                    slides: [
+                        {
+                            image: "https://lh3.googleusercontent.com/aida-public/AB6AXuA3CJDlMRpSHDez1hCYt5KdQcrgp3B-XPBqznh18s_XaMYlDkvclvUusSz0lrtiiFxdCv5WHwanlEGw87oYmoNbrCkAGIznFgh1zMMFCmWDDs1I5bxzUPOPDtEHgMCjWSRf8YdjxfIr38r47ZsvVpsdlCVAsWil63D8PWPAyVIuGjFF8BBQzCRKD3ijowWQplX8R_w9qTdHRzlK0mLBUikTPTpc9UWAJqLWn2n5cULMpFWHAdyzEd7Bav3IZsqzd_CKjdGoDWrI8lo",
+                            title: "Sürekli Kalite",
+                            description: "Güven, İnşaat ve Otomotiv Sektörlerinde Öncü."
+                        },
+                        {
+                            image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2670&auto=format&fit=crop",
+                            title: "Modern Mimari",
+                            description: "Şehrin silüetine değer katan projeler."
+                        },
+                        {
+                            image: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=2672&auto=format&fit=crop",
+                            title: "Güvenli Sürüş",
+                            description: "En yeni teknolojilerle donatılmış araçlar."
+                        }
+                    ]
+                },
+                type3: {
+                    words: ["İnşa Ediyoruz.", "Güçlendiriyoruz.", "Büyütüyoruz.", "Tasarlıyoruz."],
+                    description: "İnşaat, Otomotiv, Sigorta ve daha fazlası. 9 farklı ana sektör, 9 şirket ve 40 yıllık tecrübe ile hayatınıza değer katıyoruz.",
+                    rightImage: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2670&auto=format&fit=crop",
+                    floatingBox: {
+                        title: "Sürdürülebilir",
+                        text: "Doğaya, insanlara ve topluma değer katıyoruz.",
+                        icon: "eco"
+                    }
+                }
+            };
+        }
+        res.json(data);
+    } catch (error) {
+        console.error("Hero API Error:", error);
+        res.status(500).json({ error: "Veri okunamadı" });
+    }
+});
+
+app.post('/api/hero', (req, res) => {
+    try {
+        const HERO_FILE = path.join(__dirname, 'data', 'hero.json');
+        writeData(HERO_FILE, req.body);
+        res.json({ success: true });
+    } catch (error) {
+        console.error("Hero Save Error:", error);
+        res.status(500).json({ error: "Veri kaydedilemedi" });
+    }
+});
+
+// --- ABOUT (HISTORY) API ---
+const ABOUT_FILE = path.join(__dirname, 'data', 'about.json');
+
+app.get('/api/about', (req, res) => {
+    try {
+        let data = readData(ABOUT_FILE);
+        // Varsayılan yapı kontrolü
+        if (!data || Object.keys(data).length === 0) {
+            data = { history: [] };
+        }
+        res.json(data);
+    } catch (error) {
+        console.error("About API Error:", error);
+        res.status(500).json({ error: "Veri okunamadı" });
+    }
+});
+
+app.post('/api/about', (req, res) => {
+    try {
+        writeData(ABOUT_FILE, req.body);
+        res.json({ success: true });
+    } catch (error) {
+        console.error("About Save Error:", error);
+        res.status(500).json({ error: "Veri kaydedilemedi" });
+    }
 });
 
 app.listen(PORT, () => {

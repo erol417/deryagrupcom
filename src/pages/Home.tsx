@@ -1,6 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from "react-router-dom"
 import { API_BASE_URL } from '../config';
+import HeroType1 from '../components/hero/HeroType1';
+import HeroType2 from '../components/hero/HeroType2';
+import HeroType3 from '../components/hero/HeroType3';
 
 interface News {
   id: number;
@@ -15,7 +18,50 @@ export default function Home() {
   const [brands, setBrands] = useState<any[]>([]);
   const [socialData, setSocialData] = useState<any>(null);
 
+  // Hero Data
+  const [heroData, setHeroData] = useState<any>(null);
+
+  // Scroll Animation State
+  const companiesRef = useRef<HTMLDivElement>(null);
+  const [isCompaniesVisible, setIsCompaniesVisible] = useState(false);
+
   useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // Her giriş çıkışta tetiklensin (Repeat animation on every scroll)
+        setIsCompaniesVisible(entry.isIntersecting);
+      },
+      { threshold: 0.2 } // %20'si görünür olduğunda başlat
+    );
+
+    if (companiesRef.current) observer.observe(companiesRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    // Hero Bilgilerini Getir
+    fetch(`${API_BASE_URL}/api/hero`)
+      .then(res => res.json())
+      .then(data => {
+        if (!data.activeDesign) data.activeDesign = 'type3'; // Fallback
+        setHeroData(data);
+      })
+      .catch(err => console.error("Hero API Error", err));
+  }, []);
+
+
+  const companies = [
+    { id: "otomotiv", title: "Derya Otomotiv", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuD8Di3Gl2leSYoYJXlA-chRLIJaSI_WcdrQHVwZ373IKCq7JwPaJ4d3ZeFhowjswi7uCKXoSJhB1ZH2MtD4ADtVp9qjPJq6wgdJpW-BJ4Mca2GATCg1i76cnbyAmpqU9UmO8CUtfyCy5BCpVCxBuBh_L5kjAulMwAKOREeGlnbJ_0dppZI3c5WX3dpvuftAeoCSP0ek5OuPXaBCcy3cz4SjvZTBlOhzPZm9P7XbcuMn8pXNHjZMdHaXHV5ahFMInbMzwgek4Q1s91g", tag: "Otomotiv" },
+    { id: "insaat", title: "Derya İnşaat", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCXUwsnFWqwnLfRDpUYGLB9zO8ZoyfBEld9xNhdtJGvSQ2BKwrp-EY2SfiMeTHZYdQakE6Bq97IGFsJQWj-suheK_4IoZnqx_VvKQQU0O5KQEY-8wdQbx0ws_lpDUu3avfsoBJU5GRGZ7q0sZsl1OGHk76kf_-24fr4U3Y5HApI2FxX2oV0nRLtAYkc0Wdm6lhVtjkgOmuif3TKysPeIzAA7_kq6R2O6OUGhcwf5Dz-md_v9QNznDvib5HIZfKB0gTeeMYFJayqjco", tag: "İnşaat" },
+    { id: "sigorta", title: "Derya Sigorta", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAuqifC2g5FLWPL1_LMTAAn1rcF-nw2PFnXUNjHJ2h6g6a1W5A-GDoiTGdtgUixiUdIDuM7oOX83DlLjkRVeKgLTQQPhHAPPDWWUfXXuOloqCywJ5fFgwwxLQzdZ2RjeodiLWvzRGf74ba-UkbXuj7Be682Zbs_1lBtBY6kFzQuKOf6DP2hGa1C5kP_Kr9fl7xHCtHRLGaz9vFoiJ1LFdxPqEbXBCsScbbxV906o8HReKglrl5-Z1-a-L7gaDeEiUCJjZbdX6DhQno", tag: "Sigorta" },
+    { id: "elektronik", title: "Derya Klima", img: "https://images.unsplash.com/photo-1545259741-2ea3ebf61fa3?q=80&w=2340&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", tag: "Elektronik" },
+    { id: "chefmezze", title: "ChefMezze", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCHeGwkMJpGIFuBOwGMB795KVpnGoaF0Uhdq0m-NE2g_fpJAzK1Q5b7_sEKNzHytezxsgEqTuVLK9CIjynMnnn8y5PMWp19EeXwcZuvWOY1Bniz7c2qTB1Pf3piRmmgjppZHIu9nHzZraacqNbxX5mOsKUyN7r2M4DTF5tINftrKeLZ1W6pBeeMwSO--xkOtUTJGlkB-vAgzGMG0PWrB0_sVCzFEVrQncFWu8rRRKDVDwRNAKJyvtPnqSUbD5GrlnHK-wvo86NBvR4", tag: "Gıda & Hizmet" },
+    { id: "marble", title: "Derya MARBLE", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDQTc_XhPBkW8yIfkzLDYgcUJu-bclX7V2bxdfp0oTRpa09_d9HdoArV-YSyq-evONl3dy3HbadxlLGUiUV1ChPQLK0b-SMu5uKP0unJ9SzU1SIiKCEDJseJFb-n380wwn0q13n870lj8Muoov_XS6n7PL_ZHTt-uEomiMUx0MUv3BrpfF9KQhKcYviFKTr2AkS0VMvWU0uSQw81HGAq15fWT1fxfqRLK2F2ioBq9JoiTlsaza45QG5LWb2FzdewbNCtk4WkR_wfNU", tag: "Madencilik" }
+  ];
+
+  useEffect(() => {
+
+
     // Haberleri Getir
     fetch(`${API_BASE_URL}/api/news`)
       .then(res => res.json())
@@ -43,31 +89,18 @@ export default function Home() {
 
   return (
     <>
-      <section className="relative h-[85vh] w-full flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url(\"https://lh3.googleusercontent.com/aida-public/AB6AXuA3CJDlMRpSHDez1hCYt5KdQcrgp3B-XPBqznh18s_XaMYlDkvclvUusSz0lrtiiFxdCv5WHwanlEGw87oYmoNbrCkAGIznFgh1zMMFCmWDDs1I5bxzUPOPDtEHgMCjWSRf8YdjxfIr38r47ZsvVpsdlCVAsWil63D8PWPAyVIuGjFF8BBQzCRKD3ijowWQplX8R_w9qTdHRzlK0mLBUikTPTpc9UWAJqLWn2n5cULMpFWHAdyzEd7Bav3IZsqzd_CKjdGoDWrI8lo\")" }}></div>
-        <div className="absolute inset-0 bg-gradient-to-r from-secondary/90 to-secondary/40"></div>
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-          <div className="max-w-3xl">
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-tight mb-6">
-              Sürekli kalite hedefimiz, <br />
-              <span className="text-primary">müşteri geleceğimiz.</span>
-            </h1>
-            <p className="text-lg md:text-xl text-gray-200 mb-10 max-w-2xl font-light">
-              Güven, İnşaat ve Otomotiv Sektörlerinde Öncü. Geleceği inşa ederken değerlerimizden ödün vermiyoruz.
-            </p>
-            <Link to="/hakkimizda" className="bg-primary hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-full transition-all transform hover:scale-105 inline-flex items-center gap-2 shadow-lg hover:shadow-primary/50">
-              <span>Bizi Tanıyın</span>
-              <span className="material-symbols-outlined text-xl">arrow_forward</span>
-            </Link>
-          </div>
-        </div>
-        <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce text-white/50">
-          <span className="material-symbols-outlined text-4xl">keyboard_arrow_down</span>
-        </div>
-      </section>
+      {/* DYNAMIC HERO SECTION */}
+      {heroData && (
+        <>
+          {heroData.activeDesign === 'type1' && <HeroType1 data={heroData.type1} />}
+          {heroData.activeDesign === 'type2' && <HeroType2 data={heroData.type2} />}
+          {heroData.activeDesign === 'type3' && <HeroType3 data={heroData.type3} />}
+        </>
+      )}
+      {!heroData && <div className="h-[85vh] flex items-center justify-center font-bold text-gray-400">Yükleniyor...</div>}
 
       {/* BRAND MARQUEE */}
-      <section className="bg-gray-50 py-10 overflow-hidden border-b border-gray-100">
+      <section className="bg-gray-50 py-10 overflow-hidden border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8 text-center">
           <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest">Markalarımız & Çözüm Ortaklarımız</h3>
         </div>
@@ -112,55 +145,55 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-24 bg-white dark:bg-background-dark">
+      <section className="py-24 bg-[#0F172A]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row gap-16">
             <div className="flex-1">
               <span className="text-sm font-bold tracking-widest text-gray-500 uppercase mb-2 block">Kurumsal</span>
-              <h2 className="text-3xl font-bold text-secondary dark:text-white mb-8">Vizyonumuz</h2>
+              <h2 className="text-3xl font-bold text-white mb-8">Vizyonumuz</h2>
               <div className="space-y-8">
                 <div className="flex gap-4 group">
-                  <div className="size-12 rounded-full bg-background-light dark:bg-white/10 flex items-center justify-center shrink-0 group-hover:bg-primary transition-colors">
-                    <span className="material-symbols-outlined text-secondary dark:text-white">lightbulb</span>
+                  <div className="size-12 rounded-full bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-primary transition-colors">
+                    <span className="material-symbols-outlined text-white">lightbulb</span>
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-secondary dark:text-white mb-1">Yenilikçilik</h3>
-                    <p className="text-gray-600 dark:text-gray-400">Sektördeki en yeni teknolojileri takip ederek sürekli gelişim sağlıyoruz.</p>
+                    <h3 className="text-lg font-bold text-white mb-1">Yenilikçilik</h3>
+                    <p className="text-gray-400">Sektördeki en yeni teknolojileri takip ederek sürekli gelişim sağlıyoruz.</p>
                   </div>
                 </div>
                 <div className="flex gap-4 group">
-                  <div className="size-12 rounded-full bg-background-light dark:bg-white/10 flex items-center justify-center shrink-0 group-hover:bg-primary transition-colors">
-                    <span className="material-symbols-outlined text-secondary dark:text-white">eco</span>
+                  <div className="size-12 rounded-full bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-primary transition-colors">
+                    <span className="material-symbols-outlined text-white">eco</span>
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-secondary dark:text-white mb-1">Sürdürülebilirlik</h3>
-                    <p className="text-gray-600 dark:text-gray-400">Gelecek nesillere yaşanabilir bir dünya bırakmak için çevre dostu çözümler.</p>
+                    <h3 className="text-lg font-bold text-white mb-1">Sürdürülebilirlik</h3>
+                    <p className="text-gray-400">Gelecek nesillere yaşanabilir bir dünya bırakmak için çevre dostu çözümler.</p>
                   </div>
                 </div>
                 <div className="flex gap-4 group">
-                  <div className="size-12 rounded-full bg-background-light dark:bg-white/10 flex items-center justify-center shrink-0 group-hover:bg-primary transition-colors">
-                    <span className="material-symbols-outlined text-secondary dark:text-white">diversity_3</span>
+                  <div className="size-12 rounded-full bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-primary transition-colors">
+                    <span className="material-symbols-outlined text-white">diversity_3</span>
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-secondary dark:text-white mb-1">Müşteri Odaklılık</h3>
-                    <p className="text-gray-600 dark:text-gray-400">Müşteri memnuniyetini işimizin merkezine koyarak güven inşa ediyoruz.</p>
+                    <h3 className="text-lg font-bold text-white mb-1">Müşteri Odaklılık</h3>
+                    <p className="text-gray-400">Müşteri memnuniyetini işimizin merkezine koyarak güven inşa ediyoruz.</p>
                   </div>
                 </div>
               </div>
             </div>
             <div className="flex-1">
               <span className="text-sm font-bold tracking-widest text-gray-500 uppercase mb-2 block">Hedefimiz</span>
-              <h2 className="text-3xl font-bold text-secondary dark:text-white mb-8">Misyonumuz</h2>
-              <div className="bg-background-light dark:bg-white/5 p-10 rounded-2xl h-full flex flex-col justify-center relative overflow-hidden group">
+              <h2 className="text-3xl font-bold text-white mb-8">Misyonumuz</h2>
+              <div className="bg-white/5 p-10 rounded-2xl h-full flex flex-col justify-center relative overflow-hidden group border border-white/5">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-150 duration-700"></div>
                 <div className="relative z-10">
                   <span className="material-symbols-outlined text-6xl text-primary mb-6">format_quote</span>
-                  <p className="text-xl md:text-2xl font-medium text-secondary dark:text-gray-200 leading-relaxed">
+                  <p className="text-xl md:text-2xl font-medium text-gray-200 leading-relaxed">
                     "Topluma ve çevreye duyarlı, güvenilir ve kaliteli hizmet anlayışıyla sektörde fark yaratarak, ülkemizin ekonomik kalkınmasına değer katmak."
                   </p>
                   <div className="mt-8 flex items-center gap-3">
                     <div className="h-1 w-12 bg-primary"></div>
-                    <span className="text-sm font-bold text-gray-500">Derya Grup Yönetim Kurulu</span>
+                    <span className="text-sm font-bold text-gray-400">Derya Grup Yönetim Kurulu</span>
                   </div>
                 </div>
               </div>
@@ -169,43 +202,65 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="companies" className="py-24 bg-background-light dark:bg-black/20">
+      <section id="companies" className="py-24 bg-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <span className="text-primary font-bold tracking-wider uppercase text-sm mb-2 block">Faaliyet Alanlarımız</span>
-            <h2 className="text-3xl md:text-4xl font-bold text-secondary dark:text-white">Grup Şirketlerimiz</h2>
-            <p className="mt-4 text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">Dokuz farklı sektörde öncü iştiraklerimizle hizmet veriyoruz.</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Grup Şirketlerimiz</h2>
+            <p className="mt-4 text-gray-600 max-w-2xl mx-auto">Dokuz farklı sektörde öncü iştiraklerimizle hizmet veriyoruz.</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              { id: "otomotiv", title: "Derya Otomotiv", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuD8Di3Gl2leSYoYJXlA-chRLIJaSI_WcdrQHVwZ373IKCq7JwPaJ4d3ZeFhowjswi7uCKXoSJhB1ZH2MtD4ADtVp9qjPJq6wgdJpW-BJ4Mca2GATCg1i76cnbyAmpqU9UmO8CUtfyCy5BCpVCxBuBh_L5kjAulMwAKOREeGlnbJ_0dppZI3c5WX3dpvuftAeoCSP0ek5OuPXaBCcy3cz4SjvZTBlOhzPZm9P7XbcuMn8pXNHjZMdHaXHV5ahFMInbMzwgek4Q1s91g", tag: "Otomotiv" },
-              { id: "insaat", title: "Derya İnşaat", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCXUwsnFWqwnLfRDpUYGLB9zO8ZoyfBEld9xNhdtJGvSQ2BKwrp-EY2SfiMeTHZYdQakE6Bq97IGFsJQWj-suheK_4IoZnqx_VvKQQU0O5KQEY-8wdQbx0ws_lpDUu3avfsoBJU5GRGZ7q0sZsl1OGHk76kf_-24fr4U3Y5HApI2FxX2oV0nRLtAYkc0Wdm6lhVtjkgOmuif3TKysPeIzAA7_kq6R2O6OUGhcwf5Dz-md_v9QNznDvib5HIZfKB0gTeeMYFJayqjco", tag: "İnşaat" },
-              { id: "sigorta", title: "Derya Sigorta", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAuqifC2g5FLWPL1_LMTAAn1rcF-nw2PFnXUNjHJ2h6g6a1W5A-GDoiTGdtgUixiUdIDuM7oOX83DlLjkRVeKgLTQQPhHAPPDWWUfXXuOloqCywJ5fFgwwxLQzdZ2RjeodiLWvzRGf74ba-UkbXuj7Be682Zbs_1lBtBY6kFzQuKOf6DP2hGa1C5kP_Kr9fl7xHCtHRLGaz9vFoiJ1LFdxPqEbXBCsScbbxV906o8HReKglrl5-Z1-a-L7gaDeEiUCJjZbdX6DhQno", tag: "Sigorta" },
-              { id: "elektronik", title: "Derya Klima", img: "https://images.unsplash.com/photo-1545259741-2ea3ebf61fa3?q=80&w=2340&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", tag: "Elektronik" },
-              { id: "chefmezze", title: "ChefMezze", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCHeGwkMJpGIFuBOwGMB795KVpnGoaF0Uhdq0m-NE2g_fpJAzK1Q5b7_sEKNzHytezxsgEqTuVLK9CIjynMnnn8y5PMWp19EeXwcZuvWOY1Bniz7c2qTB1Pf3piRmmgjppZHIu9nHzZraacqNbxX5mOsKUyN7r2M4DTF5tINftrKeLZ1W6pBeeMwSO--xkOtUTJGlkB-vAgzGMG0PWrB0_sVCzFEVrQncFWu8rRRKDVDwRNAKJyvtPnqSUbD5GrlnHK-wvo86NBvR4", tag: "Gıda & Hizmet" },
-              { id: "marble", title: "Derya MARBLE", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDQTc_XhPBkW8yIfkzLDYgcUJu-bclX7V2bxdfp0oTRpa09_d9HdoArV-YSyq-evONl3dy3HbadxlLGUiUV1ChPQLK0b-SMu5uKP0unJ9SzU1SIiKCEDJseJFb-n380wwn0q13n870lj8Muoov_XS6n7PL_ZHTt-uEomiMUx0MUv3BrpfF9KQhKcYviFKTr2AkS0VMvWU0uSQw81HGAq15fWT1fxfqRLK2F2ioBq9JoiTlsaza45QG5LWb2FzdewbNCtk4WkR_wfNU", tag: "Madencilik" }
-            ].map((company) => (
-              <div key={company.id} className="group relative overflow-hidden rounded-2xl bg-white dark:bg-white/5 shadow-sm hover:shadow-xl transition-all duration-300">
-                <div className="h-64 overflow-hidden relative">
-                  <div className="absolute inset-0 bg-secondary/20 group-hover:bg-secondary/0 transition-colors z-10"></div>
-                  <img alt={company.title} className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" src={company.img} />
+
+          {/* STACKED CARD / ACCORDION ANIMATION */}
+          <div ref={companiesRef} className="flex flex-col md:flex-row justify-center gap-4 md:gap-2 h-[600px] w-full perspective-1000">
+            {companies.map((company, index) => (
+              <Link
+                key={company.id}
+                to={`/sirket/${company.id}`}
+                style={{ transitionDelay: `${index * 100}ms` }}
+                className={`relative flex-1 group hover:flex-[3] transition-all duration-700 ease-out overflow-hidden rounded-2xl border border-white/10 transform ${isCompaniesVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-32 scale-75'} md:min-w-[80px]`}
+              >
+                {/* Background Image */}
+                <div className="absolute inset-0">
+                  <div className="absolute inset-0 bg-black/60 group-hover:bg-black/30 transition-colors duration-500 z-10" />
+                  <img
+                    src={company.img}
+                    alt={company.title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 filter grayscale group-hover:grayscale-0"
+                  />
                 </div>
-                <div className="p-6 relative z-20">
-                  <div className="flex justify-between items-end">
-                    <div>
-                      <span className="text-xs font-bold text-primary uppercase tracking-wider mb-1 block">{company.tag}</span>
-                      <h3 className="text-xl font-bold text-secondary dark:text-white">{company.title}</h3>
+
+                {/* Content Container */}
+                <div className="absolute inset-0 z-20 flex flex-col justify-end p-6">
+
+                  {/* Collapsed State Title (Bottom & Vertical) */}
+                  <div className="absolute inset-0 flex items-center justify-center md:items-end md:pb-12 transition-all duration-300 group-hover:opacity-0 pointer-events-none">
+                    <h3
+                      className="hidden md:block text-lg md:text-xl font-bold text-white/90 tracking-widest uppercase whitespace-nowrap drop-shadow-md"
+                      style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
+                    >
+                      {company.tag}
+                    </h3>
+                    <h3 className="md:hidden text-lg font-bold text-white/90 tracking-widest uppercase whitespace-nowrap drop-shadow-md">
+                      {company.tag}
+                    </h3>
+                  </div>
+
+                  {/* Expanded State Content */}
+                  <div className="relative opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-4 group-hover:translate-y-0 z-30">
+                    <span className="text-primary font-bold tracking-widest uppercase text-xs mb-2 block md:hidden lg:block">{company.tag}</span>
+                    <h3 className="text-2xl md:text-3xl font-bold text-white mb-4 whitespace-nowrap">{company.title}</h3>
+                    <div className="inline-flex items-center gap-2 text-white font-bold bg-primary/90 px-5 py-2.5 rounded-full backdrop-blur-md shadow-lg hover:bg-primary transition-colors">
+                      <span>İncele</span>
+                      <span className="material-symbols-outlined text-sm">arrow_forward</span>
                     </div>
-                    <Link to={`/sirket/${company.id}`} className="size-10 rounded-full bg-background-light dark:bg-white/10 group-hover:bg-primary flex items-center justify-center transition-colors">
-                      <span className="material-symbols-outlined text-secondary text-xl">arrow_outward</span>
-                    </Link>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
+
           <div className="mt-12 text-center">
-            <Link to="/sirket/otomotiv" className="text-secondary dark:text-white font-bold hover:text-primary transition-colors flex items-center gap-2 mx-auto inline-flex">
+            <Link to="/sirket/otomotiv" className="text-gray-900 font-bold hover:text-primary transition-colors flex items-center gap-2 mx-auto inline-flex">
               <span>Tüm Şirketleri İncele</span>
               <span className="material-symbols-outlined">arrow_forward</span>
             </Link>
@@ -213,7 +268,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-24 bg-secondary text-white relative overflow-hidden">
+      <section className="py-24 bg-[#0F172A] text-white relative overflow-hidden">
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(#ffffff 1px, transparent 1px)", backgroundSize: "32px 32px" }}></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-4">
@@ -255,13 +310,13 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="social-wall" className={`py-24 bg-background-light dark:bg-neutral-900 border-t border-gray-100 dark:border-white/5 ${socialData && !socialData.isVisible ? 'hidden' : ''}`}>
+      <section id="social-wall" className={`py-24 bg-white border-t border-gray-100 ${socialData && !socialData.isVisible ? 'hidden' : ''}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
             <div>
               <span className="text-primary font-bold tracking-wider uppercase text-sm mb-2 block">Sosyal Medyada Biz</span>
-              <h2 className="text-3xl md:text-4xl font-bold text-secondary dark:text-white">Sosyal Medyadan Paylaşımlar</h2>
-              <p className="mt-4 text-gray-600 dark:text-gray-400 max-w-2xl">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Sosyal Medyadan Paylaşımlar</h2>
+              <p className="mt-4 text-gray-600 max-w-2xl">
                 Derya Grup dünyasındaki son gelişmeler, projeler ve etkinliklerden haberdar olun.
               </p>
             </div>
@@ -323,7 +378,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-16 bg-white dark:bg-background-dark border-t border-gray-100 dark:border-white/5">
+      <section className="py-16 bg-white border-t border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {latestNews && (
             <div className="bg-secondary rounded-2xl p-8 md:p-12 relative overflow-hidden shadow-xl group">

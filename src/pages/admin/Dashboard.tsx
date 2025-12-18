@@ -1,9 +1,28 @@
-
 import { useEffect, useState } from 'react';
 import { API_BASE_URL } from '../../config';
 import { useNavigate } from 'react-router-dom';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+
+// HELPER: Convert Google Drive / OneDrive links to direct image links
+const convertToDirectLink = (url: string) => {
+    if (!url) return '';
+    try {
+        if (url.includes('drive.google.com') && (url.includes('/d/') || url.includes('id='))) {
+            let id = '';
+            if (url.includes('/d/')) id = url.split('/d/')[1].split('/')[0];
+            else if (url.includes('id=')) id = url.split('id=')[1].split('&')[0];
+
+            // Format: lh3.googleusercontent.com/d/ID (More reliable/faster for direct viewing)
+            if (id) return `https://lh3.googleusercontent.com/d/${id}`;
+        }
+        // Dropbox (dl=0 -> dl=1)
+        if (url.includes('dropbox.com') && url.includes('dl=0')) {
+            return url.replace('dl=0', 'dl=1');
+        }
+    } catch (e) { console.error('Link conversion error', e); }
+    return url;
+};
 
 interface Job {
     id: number;
@@ -32,7 +51,7 @@ export default function AdminDashboard() {
 
 
     const navigate = useNavigate();
-    const [activeTab, setActiveTab] = useState<'applications' | 'jobs' | 'news' | 'social' | 'culture'>('applications');
+    const [activeTab, setActiveTab] = useState<'applications' | 'jobs' | 'news' | 'social' | 'culture' | 'hero' | 'about'>('applications');
     const [currentUser, setCurrentUser] = useState<any>(null);
 
     const [jobs, setJobs] = useState<Job[]>([]);
@@ -202,6 +221,18 @@ export default function AdminDashboard() {
                     >
                         Kültür & Yaşam
                     </button>
+                    <button
+                        onClick={() => setActiveTab('hero')}
+                        className={`pb-3 px-4 text-sm font-bold border-b-2 transition-colors ${activeTab === 'hero' ? 'border-purple-600 text-purple-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+                    >
+                        Hero Yönetimi
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('about')}
+                        className={`pb-3 px-4 text-sm font-bold border-b-2 transition-colors ${activeTab === 'about' ? 'border-cyan-600 text-cyan-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+                    >
+                        Hakkımızda
+                    </button>
                 </div>
 
                 {/* TAB: APPLICATIONS */}
@@ -305,7 +336,289 @@ export default function AdminDashboard() {
                 {activeTab === 'culture' && (
                     <CultureTab />
                 )}
+                {/* TAB: HERO */}
+                {activeTab === 'hero' && (
+                    <HeroTab />
+                )}
+                {/* TAB: ABOUT */}
+                {activeTab === 'about' && (
+                    <AboutTab />
+                )}
 
+            </div>
+        </div>
+    );
+}
+
+function HeroTab() {
+    const [data, setData] = useState<any>(null);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        fetch(`${API_BASE_URL}/api/hero`)
+            .then(res => res.json())
+            .then(d => {
+                if (!d.type1) d.type1 = { slides: [] };
+                if (!d.type2) d.type2 = { slides: [] };
+                if (!d.type3) d.type3 = { title: "Geleceği", titleSize: "large", words: [], description: "", rightImage: "", floatingBox: { title: "", text: "", icon: "" }, stats: [{ value: "40+", label: "Yıllık Tecrübe" }, { value: "9", label: "Grup Şirketi" }, { value: "1000+", label: "Mutlu Çalışan" }] };
+                else {
+                    if (!d.type3.stats) d.type3.stats = [{ value: "40+", label: "Yıllık Tecrübe" }, { value: "9", label: "Grup Şirketi" }, { value: "1000+", label: "Mutlu Çalışan" }];
+                    if (!d.type3.title) d.type3.title = "Geleceği";
+                    if (!d.type3.titleSize) d.type3.titleSize = "large";
+                }
+                if (!d.activeDesign) d.activeDesign = "type3";
+                setData(d);
+            })
+            .catch(e => console.error(e));
+    }, []);
+
+    const handleSave = () => {
+        setLoading(true);
+        fetch(`${API_BASE_URL}/api/hero`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+            .then(res => {
+                if (res.ok) alert("Tasarım ve içerik güncellendi!");
+                else alert("Hata oluştu.");
+            })
+            .finally(() => setLoading(false));
+    };
+
+    if (!data) return <div>Yükleniyor...</div>;
+
+    return (
+        <div className="bg-white p-8 rounded-xl border border-gray-200 shadow-sm max-w-4xl mx-auto">
+            <h3 className="text-xl font-bold bg-gray-50 border-b p-4 -mx-8 -mt-8 mb-6 flex items-center gap-2">
+                <span className="material-symbols-outlined text-purple-600">style</span>
+                Hero Tasarım ve İçerik Yönetimi
+            </h3>
+
+            {/* DESIGN SELECTION */}
+            <div className="mb-8">
+                <label className="block text-sm font-bold text-gray-700 mb-4">Aktif Tasarım Seçimi</label>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {['type1', 'type2', 'type3'].map((type) => (
+                        <div
+                            key={type}
+                            onClick={() => setData({ ...data, activeDesign: type })}
+                            className={`cursor-pointer rounded-xl border-2 p-4 flex flex-col items-center gap-2 transition-all ${data.activeDesign === type ? 'border-purple-600 bg-purple-50' : 'border-gray-200 hover:border-purple-300'}`}
+                        >
+                            <div className="w-full h-24 bg-gray-200 rounded-lg mb-2 flex items-center justify-center text-gray-400 font-bold">
+                                {type === 'type1' ? 'Klasik Slider' : type === 'type2' ? '3D Carousel' : 'Modern Daktilo'}
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className={`material-symbols-outlined ${data.activeDesign === type ? 'text-purple-600' : 'text-gray-400'}`}>
+                                    {data.activeDesign === type ? 'radio_button_checked' : 'radio_button_unchecked'}
+                                </span>
+                                <span className={`font-bold ${data.activeDesign === type ? 'text-purple-900' : 'text-gray-500'}`}>
+                                    {type === 'type1' ? 'Tip 1: Klasik' : type === 'type2' ? 'Tip 2: 3D Animasyon' : 'Tip 3: Minimal'}
+                                </span>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            <div className="border-t border-gray-200 pt-6">
+                <h4 className="font-bold text-lg mb-4 flex items-center gap-2">
+                    <span className="material-symbols-outlined text-gray-500">edit</span>
+                    {data.activeDesign === 'type1' ? 'Klasik Slider İçeriği' : data.activeDesign === 'type2' ? '3D Carousel İçeriği' : 'Modern Tasarım İçeriği'}
+                </h4>
+
+                {/* TYPE 1 FORM */}
+                {data.activeDesign === 'type1' && (
+                    <div className="space-y-4">
+                        {data.type1.slides.map((slide: any, i: number) => (
+                            <div key={i} className="bg-gray-50 p-4 rounded-lg relative border border-gray-200">
+                                <button onClick={() => {
+                                    const newSlides = [...data.type1.slides];
+                                    newSlides.splice(i, 1);
+                                    setData({ ...data, type1: { ...data.type1, slides: newSlides } });
+                                }} className="absolute top-2 right-2 text-red-500"><span className="material-symbols-outlined">delete</span></button>
+
+                                <label className="block text-xs font-bold text-gray-500 mb-1">Slide Görseli (1920x1080px)</label>
+                                <input className="w-full mb-2 p-2 border rounded text-sm" placeholder="Resim URL" value={slide.image} onChange={e => {
+                                    const newSlides = [...data.type1.slides];
+                                    newSlides[i].image = e.target.value;
+                                    setData({ ...data, type1: { ...data.type1, slides: newSlides } });
+                                }} onBlur={e => {
+                                    const fixed = convertToDirectLink(e.target.value);
+                                    if (fixed !== e.target.value) {
+                                        const newSlides = [...data.type1.slides];
+                                        newSlides[i].image = fixed;
+                                        setData({ ...data, type1: { ...data.type1, slides: newSlides } });
+                                    }
+                                }} />
+                                <label className="block text-xs font-bold text-gray-500 mb-1">Başlık</label>
+                                <input className="w-full mb-2 p-2 border rounded text-sm font-bold" placeholder="Başlık" value={slide.title} onChange={e => {
+                                    const newSlides = [...data.type1.slides];
+                                    newSlides[i].title = e.target.value;
+                                    setData({ ...data, type1: { ...data.type1, slides: newSlides } });
+                                }} />
+                                <label className="block text-xs font-bold text-gray-500 mb-1">Alt Başlık</label>
+                                <input className="w-full p-2 border rounded text-sm" placeholder="Alt Başlık" value={slide.subtitle} onChange={e => {
+                                    const newSlides = [...data.type1.slides];
+                                    newSlides[i].subtitle = e.target.value;
+                                    setData({ ...data, type1: { ...data.type1, slides: newSlides } });
+                                }} />
+                            </div>
+                        ))}
+                        <button onClick={() => setData({ ...data, type1: { ...data.type1, slides: [...data.type1.slides, { image: '', title: '', subtitle: '' }] } })} className="text-sm font-bold text-blue-600 hover:underline">+ Yeni Slayt Ekle</button>
+                    </div>
+                )}
+
+                {/* TYPE 2 FORM */}
+                {data.activeDesign === 'type2' && (
+                    <div className="space-y-4">
+                        {data.type2.slides.map((slide: any, i: number) => (
+                            <div key={i} className="bg-gray-50 p-4 rounded-lg relative border border-gray-200">
+                                <button onClick={() => {
+                                    const newSlides = [...data.type2.slides];
+                                    newSlides.splice(i, 1);
+                                    setData({ ...data, type2: { ...data.type2, slides: newSlides } });
+                                }} className="absolute top-2 right-2 text-red-500"><span className="material-symbols-outlined">delete</span></button>
+
+                                <label className="block text-xs font-bold text-gray-500 mb-1">Slide Görseli (1920x1080px)</label>
+                                <input className="w-full mb-2 p-2 border rounded text-sm" placeholder="Resim URL" value={slide.image} onChange={e => {
+                                    const newSlides = [...data.type2.slides];
+                                    newSlides[i].image = e.target.value;
+                                    setData({ ...data, type2: { ...data.type2, slides: newSlides } });
+                                }} onBlur={e => {
+                                    const fixed = convertToDirectLink(e.target.value);
+                                    if (fixed !== e.target.value) {
+                                        const newSlides = [...data.type2.slides];
+                                        newSlides[i].image = fixed;
+                                        setData({ ...data, type2: { ...data.type2, slides: newSlides } });
+                                    }
+                                }} />
+                                <label className="block text-xs font-bold text-gray-500 mb-1">Başlık</label>
+                                <input className="w-full mb-2 p-2 border rounded text-sm font-bold" placeholder="Başlık" value={slide.title} onChange={e => {
+                                    const newSlides = [...data.type2.slides];
+                                    newSlides[i].title = e.target.value;
+                                    setData({ ...data, type2: { ...data.type2, slides: newSlides } });
+                                }} />
+                                <label className="block text-xs font-bold text-gray-500 mb-1">Açıklama</label>
+                                <input className="w-full p-2 border rounded text-sm" placeholder="Açıklama" value={slide.description} onChange={e => {
+                                    const newSlides = [...data.type2.slides];
+                                    newSlides[i].description = e.target.value;
+                                    setData({ ...data, type2: { ...data.type2, slides: newSlides } });
+                                }} />
+                            </div>
+                        ))}
+                        <button onClick={() => setData({ ...data, type2: { ...data.type2, slides: [...data.type2.slides, { image: '', title: '', description: '' }] } })} className="text-sm font-bold text-blue-600 hover:underline">+ Yeni Slayt Ekle</button>
+                    </div>
+                )}
+
+                {/* TYPE 3 FORM (Extensive) */}
+                {data.activeDesign === 'type3' && (
+                    <div className="space-y-6">
+                        <div className="flex gap-4">
+                            <div className="flex-1">
+                                <label className="block text-sm font-bold text-gray-700 mb-2">Sabit Başlık (İlk Satır)</label>
+                                <input className="w-full border rounded p-2" value={data.type3.title || ''} placeholder="Varsayılan: Geleceği" onChange={e => setData({ ...data, type3: { ...data.type3, title: e.target.value } })} />
+                            </div>
+                            <div className="w-1/3">
+                                <label className="block text-sm font-bold text-gray-700 mb-2">Yazı Boyutu</label>
+                                <select
+                                    className="w-full border rounded p-2 bg-white"
+                                    value={data.type3.titleSize || "large"}
+                                    onChange={e => setData({ ...data, type3: { ...data.type3, titleSize: e.target.value } })}
+                                >
+                                    <option value="large">Büyük (Varsayılan)</option>
+                                    <option value="medium">Orta</option>
+                                    <option value="small">Küçük (Uzun Yazılar)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label className="block text-sm font-bold text-gray-700 mb-2">Animasyonlu Kelimeler (Virgülle)</label>
+                            <input className="w-full border rounded p-2" value={data.type3.words?.join(', ')} onChange={e => setData({ ...data, type3: { ...data.type3, words: e.target.value.split(',').map((s: string) => s.trim()) } })} />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-bold text-gray-700 mb-2">Genel Açıklama</label>
+                            <textarea className="w-full border rounded p-2 h-20" value={data.type3.description} onChange={e => setData({ ...data, type3: { ...data.type3, description: e.target.value } })} />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-bold text-gray-700 mb-2">Sağ Görsel URL <span className="text-xs font-normal text-gray-500">(Önerilen: 800x1200px / Dikey)</span></label>
+                            <input className="w-full border rounded p-2 text-sm" value={data.type3.rightImage} onChange={e => setData({ ...data, type3: { ...data.type3, rightImage: e.target.value } })} onBlur={e => {
+                                const fixed = convertToDirectLink(e.target.value);
+                                if (fixed !== e.target.value) setData({ ...data, type3: { ...data.type3, rightImage: fixed } });
+                            }} />
+                        </div>
+
+                        <div className="bg-gray-50 p-4 rounded border border-gray-200">
+                            <h5 className="font-bold text-sm mb-2 text-gray-600">Yüzen Kutu İçeriği (Resim Önündeki)</h5>
+                            <div className="grid grid-cols-2 gap-2 mb-2">
+                                <div>
+                                    <label className="block text-xs font-bold text-gray-500 mb-1">Kutu Başlığı</label>
+                                    <input className="w-full border rounded p-2 text-sm" placeholder="örn: Sürdürülebilir" value={data.type3.floatingBox?.title} onChange={e => setData({ ...data, type3: { ...data.type3, floatingBox: { ...data.type3.floatingBox, title: e.target.value } } })} />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-gray-500 mb-1">İkon <a href="https://fonts.google.com/icons" target="_blank" className="text-blue-500 font-normal hover:underline ml-1">(Google Fonts)</a></label>
+                                    <input className="w-full border rounded p-2 text-sm" placeholder="örn: eco" value={data.type3.floatingBox?.icon} onChange={e => setData({ ...data, type3: { ...data.type3, floatingBox: { ...data.type3.floatingBox, icon: e.target.value } } })} />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-xs font-bold text-gray-500 mb-1">Kutu Metni</label>
+                                <input className="w-full border rounded p-2 text-sm" placeholder="Kısa açıklama..." value={data.type3.floatingBox?.text} onChange={e => setData({ ...data, type3: { ...data.type3, floatingBox: { ...data.type3.floatingBox, text: e.target.value } } })} />
+                            </div>
+                        </div>
+
+                        <div className="bg-gray-50 p-4 rounded border border-gray-200">
+                            <div className="flex justify-between items-center mb-2">
+                                <h5 className="font-bold text-sm text-gray-600">İstatistikler (Alt Yan Yana 3 Kutu)</h5>
+                                <button onClick={() => {
+                                    const currentStats = data.type3.stats || [];
+                                    if (currentStats.length >= 3) return alert("En fazla 3 adet eklenebilir (Tasarım kısıtı).");
+                                    setData({ ...data, type3: { ...data.type3, stats: [...currentStats, { value: "", label: "" }] } });
+                                }} className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded font-bold hover:bg-blue-200 transition">+ Ekle</button>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                {(data.type3.stats || []).map((stat: any, i: number) => (
+                                    <div key={i} className="p-3 border rounded bg-white relative">
+                                        <button onClick={() => {
+                                            const newStats = [...(data.type3.stats || [])];
+                                            newStats.splice(i, 1);
+                                            setData({ ...data, type3: { ...data.type3, stats: newStats } });
+                                        }} className="absolute top-1 right-1 text-red-400 hover:text-red-600"><span className="material-symbols-outlined text-sm">close</span></button>
+
+                                        <label className="block text-xs font-bold text-gray-500 mb-1">Değer {i + 1}</label>
+                                        <input
+                                            className="w-full border rounded p-1 mb-2 text-sm font-bold"
+                                            placeholder="örn: 40+"
+                                            value={stat.value}
+                                            onChange={e => {
+                                                const newStats = [...(data.type3.stats || [])];
+                                                newStats[i] = { ...newStats[i], value: e.target.value };
+                                                setData({ ...data, type3: { ...data.type3, stats: newStats } });
+                                            }}
+                                        />
+                                        <label className="block text-xs font-bold text-gray-500 mb-1">Etiket</label>
+                                        <input
+                                            className="w-full border rounded p-1 text-xs"
+                                            placeholder="örn: Yıllık Tecrübe"
+                                            value={stat.label}
+                                            onChange={e => {
+                                                const newStats = [...(data.type3.stats || [])];
+                                                newStats[i] = { ...newStats[i], label: e.target.value };
+                                                setData({ ...data, type3: { ...data.type3, stats: newStats } });
+                                            }}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            <div className="mt-8 pt-6 border-t border-gray-200">
+                <button onClick={handleSave} disabled={loading} className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-lg transition-all flex items-center justify-center gap-2">
+                    {loading ? 'Kaydediliyor...' : 'Değişiklikleri Kaydet ve Yayınla'}
+                    {!loading && <span className="material-symbols-outlined">save</span>}
+                </button>
             </div>
         </div>
     );
@@ -1137,7 +1450,7 @@ function CultureTab() {
                         <input className="w-full border rounded p-2" value={data.heroSubtitle || ''} onChange={e => setData({ ...data, heroSubtitle: e.target.value })} />
                     </div>
                     <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-1">Arkaplan Görseli</label>
+                        <label className="block text-sm font-bold text-gray-700 mb-1">Arkaplan Görseli <span className="text-xs font-normal text-gray-500">(Önerilen: 1920x600px)</span></label>
                         <input type="file" onChange={e => handleFileUpload(e, 'heroImage')} className="mb-2" />
                         {data.heroImage && <img src={`${API_BASE_URL}/uploads/${data.heroImage}`} className="h-24 rounded object-cover" />}
                     </div>
@@ -1157,6 +1470,7 @@ function CultureTab() {
                             <input className="w-full border rounded p-2 mb-2 text-sm font-bold" placeholder="Başlık" value={val.title} onChange={e => { const n = [...data.values]; n[i].title = e.target.value; setData({ ...data, values: n }) }} />
                             <textarea className="w-full border rounded p-2 mb-2 text-xs" placeholder="Açıklama" value={val.desc} onChange={e => { const n = [...data.values]; n[i].desc = e.target.value; setData({ ...data, values: n }) }} />
                             <input className="w-full border rounded p-2 text-xs" placeholder="Icon (Google Font)" value={val.icon} onChange={e => { const n = [...data.values]; n[i].icon = e.target.value; setData({ ...data, values: n }) }} />
+                            <a href="https://fonts.google.com/icons" target="_blank" className="text-[10px] text-blue-500 block hover:underline">İkon Listesi</a>
                         </div>
                     ))}
                 </div>
@@ -1167,7 +1481,7 @@ function CultureTab() {
                 <h4 className="font-bold border-l-4 border-green-500 pl-3">Galeri</h4>
                 <div className="flex gap-4 items-center">
                     <input type="file" onChange={e => handleFileUpload(e, 'gallery')} />
-                    <span className="text-xs text-gray-500">Yeni fotoğraf ekleyin</span>
+                    <span className="text-xs text-gray-500">Yeni fotoğraf ekleyin (Önerilen: 800x800px)</span>
                 </div>
                 <div className="grid grid-cols-4 md:grid-cols-6 gap-4">
                     {data.gallery?.map((img: string, i: number) => (
@@ -1195,6 +1509,7 @@ function CultureTab() {
                             <div className="flex-1 space-y-2">
                                 <input className="w-full border rounded p-2 text-sm font-bold" placeholder="Başlık" value={p.title} onChange={e => { const n = [...data.perks]; n[i].title = e.target.value; setData({ ...data, perks: n }) }} />
                                 <input className="w-full border rounded p-2 text-xs" placeholder="Icon (Google Font)" value={p.icon} onChange={e => { const n = [...data.perks]; n[i].icon = e.target.value; setData({ ...data, perks: n }) }} />
+                                <a href="https://fonts.google.com/icons" target="_blank" className="text-[10px] text-blue-500 block hover:underline">İkon Listesi</a>
                             </div>
                         </div>
                     ))}
@@ -1227,4 +1542,230 @@ function CultureTab() {
         </div>
     );
 }
+
+// --- ABOUT MANAGEMENT ---
+function AboutTab() {
+    const [data, setData] = useState<any>({ history: [] });
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        fetch(`${API_BASE_URL}/api/about`)
+            .then(res => res.json())
+            .then(d => {
+                if (!d.history) d.history = [];
+                setData(d);
+            })
+            .catch(err => console.error(err));
+    }, []);
+
+    const handleSave = async () => {
+        setLoading(true);
+        try {
+            await fetch(`${API_BASE_URL}/api/about`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            alert('Değişiklikler kaydedildi.');
+        } catch (error) {
+            console.error(error);
+            alert('Hata oluştu.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleImageUpload = async (e: any, index: number) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/upload`, {
+                method: 'POST',
+                body: formData
+            });
+            const result = await res.json();
+            if (result.success) {
+                const newHistory = [...data.history];
+                newHistory[index].image = result.filePath;
+                setData({ ...data, history: newHistory });
+            }
+        } catch (error) {
+            console.error(error);
+            alert('Resim yüklenemedi.');
+        }
+    };
+
+    const handleMove = (index: number, direction: 'up' | 'down') => {
+        const newHistory = [...data.history];
+        if (direction === 'up' && index > 0) {
+            [newHistory[index], newHistory[index - 1]] = [newHistory[index - 1], newHistory[index]];
+        } else if (direction === 'down' && index < newHistory.length - 1) {
+            [newHistory[index], newHistory[index + 1]] = [newHistory[index + 1], newHistory[index]];
+        }
+        setData({ ...data, history: newHistory });
+    };
+
+    const handleSort = (direction: 'asc' | 'desc') => {
+        if (!confirm('Tüm listeyi yıla göre yeniden sıralamak istediğinize emin misiniz?')) return;
+        const newHistory = [...data.history].sort((a: any, b: any) => {
+            return direction === 'asc'
+                ? parseInt(a.year) - parseInt(b.year)
+                : parseInt(b.year) - parseInt(a.year);
+        });
+        setData({ ...data, history: newHistory });
+    };
+
+    return (
+        <div className="space-y-8">
+            {/* Video Settings */}
+            <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
+                <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <span className="material-symbols-outlined text-primary">play_circle</span>
+                    Tanıtım Videosu
+                </h3>
+                <div>
+                    <label className="block text-sm font-bold text-gray-700 mb-2">YouTube Video Linki</label>
+                    <input
+                        type="text"
+                        className="w-full border rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary/20 outline-none"
+                        placeholder="https://www.youtube.com/watch?v=..."
+                        value={data.videoUrl || ''}
+                        onChange={(e) => setData({ ...data, videoUrl: e.target.value })}
+                    />
+                    <p className="text-xs text-gray-500 mt-2 flex items-center gap-1">
+                        <span className="material-symbols-outlined text-xs">info</span>
+                        Örnek: https://www.youtube.com/watch?v=ZVaR0TnPf1Q (veya tarayıcıdaki linki direkt yapıştırın)
+                    </p>
+                </div>
+            </div>
+
+            <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
+                <div className="flex justify-between items-center mb-6">
+                    <h3 className="text-lg font-bold text-gray-800">Tarihçe Yönetimi</h3>
+                    <div className="flex items-center gap-2">
+                        <div className="flex bg-gray-100 rounded-lg p-1 mr-2">
+                            <button onClick={() => handleSort('asc')} className="text-xs text-gray-600 px-2 py-1 rounded hover:bg-white hover:shadow-sm transition flex items-center gap-1" title="Eskiden Yeniye Sırala"><span className="material-symbols-outlined text-sm">arrow_upward</span> 1-9</button>
+                            <button onClick={() => handleSort('desc')} className="text-xs text-gray-600 px-2 py-1 rounded hover:bg-white hover:shadow-sm transition flex items-center gap-1" title="Yeniden Eskiye Sırala"><span className="material-symbols-outlined text-sm">arrow_downward</span> 9-1</button>
+                        </div>
+                        <button onClick={() => setData({ ...data, history: [...data.history, { id: Date.now(), year: "", title: "", description: "", image: null }] })} className="text-sm bg-blue-100 text-blue-600 px-3 py-1.5 rounded-lg font-bold hover:bg-blue-200 transition flex items-center gap-1">
+                            <span className="material-symbols-outlined text-sm">add</span> Yeni Dönem
+                        </button>
+                    </div>
+                </div>
+
+                <div className="space-y-6">
+                    {data.history.map((item: any, i: number) => (
+                        <div key={i} className="bg-gray-50 p-4 rounded-lg relative border border-gray-200 grid grid-cols-1 md:grid-cols-12 gap-4 group hover:border-blue-200 hover:shadow-md transition-all">
+
+                            {/* Action Buttons */}
+                            <div className="absolute top-2 right-2 flex items-center gap-1 bg-white/80 backdrop-blur-sm p-1 rounded-lg border border-gray-100 shadow-sm opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                                <button onClick={() => handleMove(i, 'up')} type="button" disabled={i === 0} className="text-gray-400 hover:text-primary hover:bg-gray-100 rounded p-1 disabled:opacity-30 transition-colors" title="Yukarı Taşı"><span className="material-symbols-outlined text-base">arrow_upward</span></button>
+                                <button onClick={() => handleMove(i, 'down')} type="button" disabled={i === data.history.length - 1} className="text-gray-400 hover:text-primary hover:bg-gray-100 rounded p-1 disabled:opacity-30 transition-colors" title="Aşağı Taşı"><span className="material-symbols-outlined text-base">arrow_downward</span></button>
+                                <div className="w-px h-4 bg-gray-200 mx-1"></div>
+                                <button onClick={() => {
+                                    if (!confirm('Silmek istediğinize emin misiniz?')) return;
+                                    const newHistory = [...data.history];
+                                    newHistory.splice(i, 1);
+                                    setData({ ...data, history: newHistory });
+                                }} type="button" className="text-red-500 hover:bg-red-50 rounded p-1 transition-colors" title="Sil"><span className="material-symbols-outlined text-base">delete</span></button>
+                            </div>
+
+                            {/* Yıl ve Başlık */}
+                            <div className="md:col-span-3 space-y-2">
+                                <div>
+                                    <label className="block text-xs font-bold text-gray-500 mb-1">Yıl</label>
+                                    <input className="w-full border rounded p-2 text-sm font-bold" value={item.year} onChange={e => {
+                                        const newHistory = [...data.history];
+                                        newHistory[i].year = e.target.value;
+                                        setData({ ...data, history: newHistory });
+                                    }} placeholder="1979" />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-gray-500 mb-1">Başlık</label>
+                                    <input className="w-full border rounded p-2 text-sm" value={item.title} onChange={e => {
+                                        const newHistory = [...data.history];
+                                        newHistory[i].title = e.target.value;
+                                        setData({ ...data, history: newHistory });
+                                    }} placeholder="Kuruluş" />
+                                </div>
+                            </div>
+
+                            {/* Açıklama */}
+                            <div className="md:col-span-6">
+                                <label className="block text-xs font-bold text-gray-500 mb-1">Açıklama</label>
+                                <textarea className="w-full border rounded p-2 text-sm h-full min-h-[100px]" value={item.description} onChange={e => {
+                                    const newHistory = [...data.history];
+                                    newHistory[i].description = e.target.value;
+                                    setData({ ...data, history: newHistory });
+                                }} placeholder="Detaylı açıklama..." />
+                            </div>
+
+                            {/* Resim Alanı (URL veya Upload) */}
+                            <div className="md:col-span-3 space-y-2">
+                                <label className="block text-xs font-bold text-gray-500">Görsel <span className="font-normal text-gray-400">(Önerilen: 600x400px)</span></label>
+
+                                {item.image && (
+                                    <div className="relative group mb-1">
+                                        <img
+                                            src={item.image.startsWith('http') ? item.image : `${API_BASE_URL}/uploads/${item.image}`}
+                                            className="w-full h-24 object-cover rounded border bg-white"
+                                            alt="Preview"
+                                        />
+                                        <button onClick={() => {
+                                            const newHistory = [...data.history];
+                                            newHistory[i].image = null;
+                                            setData({ ...data, history: newHistory });
+                                        }} className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity transform hover:scale-110"><span className="material-symbols-outlined text-xs">close</span></button>
+                                    </div>
+                                )}
+
+                                <div className="space-y-2">
+                                    <input
+                                        className="w-full border rounded p-2 text-xs bg-white"
+                                        placeholder="URL Yapıştır (https://...)"
+                                        value={item.image && item.image.startsWith('http') ? item.image : ''}
+                                        onChange={e => {
+                                            const newHistory = [...data.history];
+                                            newHistory[i].image = e.target.value;
+                                            setData({ ...data, history: newHistory });
+                                        }}
+                                        onBlur={e => {
+                                            const fixed = convertToDirectLink(e.target.value);
+                                            if (fixed !== e.target.value) {
+                                                const newHistory = [...data.history];
+                                                newHistory[i].image = fixed;
+                                                setData({ ...data, history: newHistory });
+                                            }
+                                        }}
+                                    />
+                                    <div className="text-[10px] text-gray-400 text-center font-bold">- VEYA -</div>
+                                    <input type="file" className="text-xs w-full text-gray-500" onChange={(e) => handleImageUpload(e, i)} />
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+
+                    {data.history.length === 0 && (
+                        <div className="text-center py-10 text-gray-400 italic">
+                            Henüz kayıt yok. "Yeni Dönem Ekle" diyerek başlayabilirsiniz.
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            <div className="flex justify-end sticky bottom-6">
+                <button onClick={handleSave} disabled={loading} className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition-all flex items-center gap-2">
+                    {loading ? 'Kaydediliyor...' : 'Tüm Değişiklikleri Kaydet'}
+                    {!loading && <span className="material-symbols-outlined">save</span>}
+                </button>
+            </div>
+        </div>
+    );
+}
+
+
 

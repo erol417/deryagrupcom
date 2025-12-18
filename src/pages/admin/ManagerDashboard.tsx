@@ -319,7 +319,7 @@ export default function ManagerDashboard() {
                                         <input type="text" className="w-full border rounded-lg p-2" value={companyInfo.title} onChange={e => setCompanyInfo({ ...companyInfo, title: e.target.value })} />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Şirket Logosu</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Şirket Logosu <span className="text-xs font-normal text-gray-500 ml-1">(Önerilen: 500x500px / PNG)</span></label>
                                         <div className="flex items-center gap-2">
                                             <input type="file" accept="image/*" onChange={handleLogoUpload} className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
                                             {companyInfo.logoPath && (
@@ -328,7 +328,7 @@ export default function ManagerDashboard() {
                                         </div>
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Hero Resim URL</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Hero Resim URL <span className="text-xs font-normal text-gray-500 ml-1">(Önerilen: 1920x800px)</span></label>
                                         <input type="text" className="w-full border rounded-lg p-2" value={companyInfo.heroImage} onChange={e => setCompanyInfo({ ...companyInfo, heroImage: e.target.value })} />
                                     </div>
                                     <div className="md:col-span-2">
@@ -428,7 +428,10 @@ export default function ManagerDashboard() {
                                 <form onSubmit={handleServiceAdd} className="bg-gray-50 p-6 rounded-xl border border-gray-200 mb-8 space-y-4">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <input placeholder="Hizmet Başlığı" className="border p-2 rounded" value={newService.title} onChange={e => setNewService({ ...newService, title: e.target.value })} required />
-                                        <input placeholder="İkon Kodu (örn. directions_car)" className="border p-2 rounded" value={newService.icon} onChange={e => setNewService({ ...newService, icon: e.target.value })} />
+                                        <div className="flex flex-col">
+                                            <input placeholder="İkon Kodu (örn. directions_car)" className="border p-2 rounded" value={newService.icon} onChange={e => setNewService({ ...newService, icon: e.target.value })} />
+                                            <a href="https://fonts.google.com/icons" target="_blank" className="text-xs text-blue-500 mt-1 hover:underline">Google İkon Listesi</a>
+                                        </div>
                                         <input placeholder="Resim URL (Opsiyonel)" className="col-span-2 border p-2 rounded" value={newService.image} onChange={e => setNewService({ ...newService, image: e.target.value })} />
                                         <textarea placeholder="Kısa Açıklama" className="col-span-2 border p-2 rounded" rows={2} value={newService.desc} onChange={e => setNewService({ ...newService, desc: e.target.value })} required />
                                     </div>
@@ -470,7 +473,10 @@ export default function ManagerDashboard() {
                                             <option value="green">Yeşil</option>
                                             <option value="purple">Mor</option>
                                         </select>
-                                        <input placeholder="İkon (emoji_events, verified vb.)" className="border p-2 rounded" value={newAward.icon} onChange={e => setNewAward({ ...newAward, icon: e.target.value })} />
+                                        <div className="flex flex-col">
+                                            <input placeholder="İkon (emoji_events, verified vb.)" className="border p-2 rounded" value={newAward.icon} onChange={e => setNewAward({ ...newAward, icon: e.target.value })} />
+                                            <a href="https://fonts.google.com/icons" target="_blank" className="text-xs text-blue-500 mt-1 hover:underline">Google İkon Listesi</a>
+                                        </div>
                                         <textarea placeholder="Açıklama" className="col-span-3 border p-2 rounded" rows={2} value={newAward.desc} onChange={e => setNewAward({ ...newAward, desc: e.target.value })} />
                                     </div>
                                     <div className="flex gap-2">
@@ -527,7 +533,7 @@ export default function ManagerDashboard() {
                                                     }} />
                                             </div>
                                             <div className="flex-1">
-                                                <label className="block text-xs font-bold text-gray-500 mb-1">İkon (Material Symbol)</label>
+                                                <label className="block text-xs font-bold text-gray-500 mb-1">İkon (Material Symbol) <a href="https://fonts.google.com/icons" target="_blank" className="text-blue-600 font-normal hover:underline ml-1">(Liste)</a></label>
                                                 <input className="w-full border p-2 rounded" value={stat.icon} placeholder="apartment"
                                                     onChange={e => {
                                                         const newStats = [...(companyInfo.stats || [])];

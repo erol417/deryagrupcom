@@ -33,3 +33,5 @@ server/data/*.json
 !server/data/social.json
 !server/data/users.json
 !server/data/company_content.json
+!server/data/about.json
+!server/data/hero.json

@@ -1,0 +1,67 @@
+{
+  "activeDesign": "type3",
+  "type1": {
+    "slides": [
+      {
+        "image": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2670&auto=format&fit=crop",
+        "title": "Geleceği İnşa Ediyoruz",
+        "subtitle": "Modern mimari ve sürdürülebilir yaşam alanları."
+      },
+      {
+        "image": "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=2672&auto=format&fit=crop",
+        "title": "Yolculuğunuzda Yanınızdayız",
+        "subtitle": "Otomotiv sektöründeki deneyimimizle güvenli sürüş."
+      }
+    ]
+  },
+  "type2": {
+    "slides": [
+      {
+        "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuA3CJDlMRpSHDez1hCYt5KdQcrgp3B-XPBqznh18s_XaMYlDkvclvUusSz0lrtiiFxdCv5WHwanlEGw87oYmoNbrCkAGIznFgh1zMMFCmWDDs1I5bxzUPOPDtEHgMCjWSRf8YdjxfIr38r47ZsvVpsdlCVAsWil63D8PWPAyVIuGjFF8BBQzCRKD3ijowWQplX8R_w9qTdHRzlK0mLBUikTPTpc9UWAJqLWn2n5cULMpFWHAdyzEd7Bav3IZsqzd_CKjdGoDWrI8lo",
+        "title": "Sürekli Kalite",
+        "description": "Güven, İnşaat ve Otomotiv Sektörlerinde Öncü."
+      },
+      {
+        "image": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2670&auto=format&fit=crop",
+        "title": "Modern Mimari",
+        "description": "Şehrin silüetine değer katan projeler."
+      },
+      {
+        "image": "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=2672&auto=format&fit=crop",
+        "title": "Güvenli Sürüş",
+        "description": "En yeni teknolojilerle donatılmış araçlar."
+      }
+    ]
+  },
+  "type3": {
+    "words": [
+      "İnşa Ediyoruz.",
+      "Sunuyoruz.",
+      "Büyütüyoruz.",
+      "Tasarlıyoruz."
+    ],
+    "description": "İnşaat, Otomotiv, Sigorta ve daha fazlası. 9 farklı ana sektör, 9 şirket ve 47 yıllık tecrübe ile hayatınıza değer katıyoruz.",
+    "rightImage": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2670&auto=format&fit=crop",
+    "floatingBox": {
+      "title": "Sürdürülebilir",
+      "text": "Doğaya, insanlara ve topluma değer katıyoruz.",
+      "icon": "eco"
+    },
+    "stats": [
+      {
+        "value": "47+",
+        "label": "Yıllık Tecrübe"
+      },
+      {
+        "value": "9",
+        "label": "Grup Şirketi"
+      },
+      {
+        "value": "500+",
+        "label": "Mutlu Çalışan"
+      }
+    ],
+    "title": "Geleceği",
+    "titleSize": "medium"
+  }
+}

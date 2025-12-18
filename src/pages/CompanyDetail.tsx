@@ -73,10 +73,10 @@ export default function CompanyDetail() {
                   key={item.id}
                   to={`/sirket/${item.id}`}
                   className={cn(
-                    "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 text-sm font-medium",
+                    "flex items-center gap-4 px-5 py-4 rounded-xl transition-all duration-200 text-base font-bold",
                     id === item.id
-                      ? "bg-blue-50 text-blue-600"
-                      : "text-gray-500 hover:text-gray-900 hover:bg-gray-50"
+                      ? "bg-blue-600 text-white shadow-lg transform scale-105"
+                      : "text-gray-500 hover:text-gray-900 hover:bg-white hover:shadow-md bg-transparent"
                   )}
                 >
                   <span className="material-symbols-outlined text-lg">{item.icon}</span>
