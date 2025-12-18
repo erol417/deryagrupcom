@@ -1,0 +1,39 @@
+{
+  "isVisible": true,
+  "posts": [
+    {
+      "id": 1766015594918,
+      "platform": "instagram",
+      "date": "2025-10-04",
+      "description": "Geleneksel Derya Grup pikniğinden keyifli anlar🍀",
+      "link": "https://www.instagram.com/reel/DPX7ZrVCrBP/?utm_source=ig_web_button_share_sheet&igsh=MzRlODBiNWFlZA==",
+      "imagePath": "social-1766015594896-piknik_postu_.png"
+    },
+    {
+      "id": 1766013752768,
+      "platform": "instagram",
+      "date": "2025-10-27",
+      "description": "Lütfen Kaputa Vur!\r\nSoğuk havalarda araçların motoruna ısınmak için sığınan tüylü dostlarımız olabilir!",
+      "link": "https://www.instagram.com/p/DQTzdz8DJ3F/?utm_source=ig_web_button_share_sheet&igsh=MzRlODBiNWFlZA==",
+      "imagePath": "social-1766013752763-pet_postu_.png"
+    },
+    {
+      "id": 1766013640116,
+      "platform": "instagram",
+      "date": "2025-12-18",
+      "description": "OYDER Başkanı Sayın Ömer Koyuncu, değerli yönetim kurulu üyeleri ve Akbank Genel Müdürlük Otomotiv Kredileri Bölümü yöneticilerini Mersin ziyaretleri kapsamında plazamızda ağırlamaktan büyük onur duyduk.",
+      "link": "https://www.instagram.com/p/DR4cYwZDOIw/?utm_source=ig_web_button_share_sheet&igsh=MzRlODBiNWFlZA==",
+      "imagePath": "social-1766013640109-instagram_postu_.png"
+    },
+    {
+      "id": 1766013525885,
+      "platform": "linkedin",
+      "date": "2025-12-18",
+      "description": "Derya Grup Ailemiz Büyüyor!!Başvurularınızı 😊🙏\r\npersonel@deryagrup.com.tr adresine iletebilirsiniz 👍\r\n",
+      "link": "https://www.linkedin.com/posts/derya-grup_derya-grup-ailemiz-b%C3%BCy%C3%BCyorba%C5%9Fvurular%C4%B1n%C4%B1z%C4%B1-activity-7370902606258446336-iUkS?utm_source=share&utm_medium=member_desktop&rcm=ACoAAD6DxHcBpVkM20tbjjlvfwR1uh5GmdSEfT4",
+      "imagePath": "social-1766013525877-linekdin_post.png"
+    }
+  ],
+  "instagramUrl": "https://www.instagram.com/deryagrupcomtr?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==",
+  "linkedinUrl": "https://www.linkedin.com/company/derya-grup/"
+}

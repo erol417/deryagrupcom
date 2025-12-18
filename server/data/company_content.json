@@ -1,0 +1,228 @@
+{
+  "otomotiv": {
+    "title": "",
+    "description": "<p>Derya Otomotiv, Türkiye'nin önde gelen otomotiv perakendecilerinden biri olarak, sektördeki yolculuğuna <strong>28 yıl </strong>önce başlamıştır. Kuruluşumuzdan bu yana değişmeyen tek ilkemiz, koşulsuz müşteri memnuniyeti ve kaliteli hizmet anlayışıdır.</p><p><br></p><p>Bugün <strong>BYD, Hyundai, MG ve Suzuki </strong>yetkili satış ve Servis bayilikleri yanında <strong>Eurorepar Car servis</strong> temsilciliği ile tüm markalara servis hizmeti sunarak hizmet vermeye devam etmektedir.</p><p><br></p><p>Geniş araç portföyümüz, son teknoloji ile donatılmış servis istasyonlarımız ve alanında uzman teknik kadromuz ile müşterilerimize A'dan Z'ye komple bir otomotiv deneyimi sunuyoruz surdürülebilirlik ve inovasyon vizyonumuzla, elektrikli araç dönüşümüne de öncülük ediyor, çevre dostu çözümleri portföyümüze entegre ediyoruz.</p>",
+    "heroTitle": "",
+    "heroSubtitle": "",
+    "heroImage": "",
+    "contact": {
+      "phone": "+90 324 359 75 00",
+      "address": "Fatih Mah. GMK bulvarı Hyundai Plaza Tesisleri Mezitli Mersin",
+      "email": "info@deryaotomotiv.com.tr",
+      "website": "www.deryaotomotiv.com.tr",
+      "buttonText": "Hemen İletişime Geç",
+      "buttonIcon": "call"
+    },
+    "stats": [
+      {
+        "value": "28",
+        "label": "Yıllık Tecrübe",
+        "icon": "calendar_month"
+      },
+      {
+        "value": "250+",
+        "label": "Çalışan Sayısı",
+        "icon": "groups"
+      },
+      {
+        "value": "12",
+        "label": "Şube Sayısı",
+        "icon": "storefront"
+      },
+      {
+        "value": "50k+",
+        "label": "Mutlu Müşteri",
+        "icon": "sentiment_satisfied"
+      }
+    ],
+    "services": [],
+    "awards": [],
+    "brands": [
+      {
+        "id": 1,
+        "name": "BYD Türkiye",
+        "logoText": "BYD",
+        "tags": [
+          "ELEKTRİKLİ",
+          "İNOVASYON"
+        ],
+        "description": "Elektrikli araç teknolojisinin global lideri. Geleceğin sürdürülebilir ulaşım çözümlerini, yüksek batarya teknolojisi ve üstün konforla bugün deneyimleyin.",
+        "url": "https://byd.com.tr",
+        "logoPath": "brands/1765944379424-byd_logosu_.png"
+      },
+      {
+        "id": 2,
+        "name": "Hyundai Derya",
+        "logoText": "HYUNDAI",
+        "tags": [
+          "BİNEK & SUV"
+        ],
+        "description": "İnovasyon ve teknolojinin buluşma noktası. Geniş model yelpazesi, hibrit seçenekleri ve ödüllü tasarımlarıyla her ihtiyaca uygun çözümler sunar.",
+        "url": "#",
+        "logoPath": "brands/1765944433005-hyundai_logosu.png"
+      },
+      {
+        "id": 3,
+        "name": "MG Türkiye",
+        "logoText": "MG",
+        "tags": [
+          "PREMIUM",
+          "ELEKTRİKLİ"
+        ],
+        "description": "Köklü İngiliz mirası, modern elektrikli teknolojilerle yeniden doğuyor. Tarz sahibi, performanslı ve çevreci sürüş deneyimi.",
+        "url": "#",
+        "logoPath": "brands/1765944303542-Mg.png"
+      },
+      {
+        "id": 4,
+        "name": "Suzuki Derya",
+        "logoText": "SUZUKI",
+        "tags": [
+          "HİBRİT",
+          "4X4"
+        ],
+        "description": "Akıllı hibrit teknolojisinin öncüsü. Kompakt, dayanıklı ve ekonomik araçlarıyla hem şehir yaşamı hem de macera tutkunları için ideal.",
+        "url": "#",
+        "logoPath": "brands/1765944315301-suzuki.png"
+      },
+      {
+        "id": 5,
+        "name": "Eurorepar Car Service",
+        "logoText": "EUROREPAR",
+        "tags": [
+          "SERVİS",
+          "YEDEK PARÇA"
+        ],
+        "description": "Her marka araca profesyonel bakım ve onarım hizmeti. Uzman teknik kadro, kaliteli yedek parça garantisi ve uygun fiyat avantajları.",
+        "url": "#",
+        "logoPath": "brands/1766011379873-eurrepar_logosu_.png"
+      },
+      {
+        "id": 1765898166197,
+        "name": "mercedes",
+        "logoText": "logo metni",
+        "description": "açıklama ",
+        "url": "www.google.com",
+        "tags": [
+          "etiketler"
+        ],
+        "logoPath": "brands/1765898166184-AZsnt_5MiXWPXyVfBRx0Ow_AZsnt_5MahcfUDeyyyj_HA.jpg"
+      }
+    ],
+    "projects": [],
+    "logoPath": "1766016421980-2582185-derya_otomotiv.png"
+  },
+  "insaat": {
+    "title": "Derya İnş. ve İnş. Taah. San. Tic LTD ŞTI",
+    "description": "Derya İnşaat, sektördeki 20 yılı aşkın deneyimiyle konut, ticari ve altyapı projelerinde güvenilirliğin simgesi haline gelmiştir. \"İnsan odaklı tasarım\" felsefemizle, sadece binalar değil, komşuluk ilişkilerinin geliştiği, doğayla uyumlu yaşam alanları tasarlıyoruz.\n\nModern mimari teknikleri, birinci sınıf malzemeler ve yenilikçi mühendislik çözümlerini bir araya getirerek, her projemizde kalite standartlarını yeniden tanımlıyoruz. Deprem güvenliği ve sürdürülebilirlik, tüm projelerimizin temelini oluşturan değişmez önceliklerimizdir.",
+    "heroTitle": "Yaşamı Şekillendiren Projeler",
+    "heroSubtitle": "Estetik, güvenli ve çevreye duyarlı modern yaşam alanları inşa ederek geleceğin şehirlerini kuruyoruz.",
+    "heroImage": "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=2670&auto=format&fit=crop",
+    "brands": [
+      {
+        "id": 1765945290353,
+        "name": "DYO",
+        "logoText": "Ustalar DYO diyo",
+        "description": "boya da dev bir türk markası ",
+        "url": "www.dyo.com.tr",
+        "tags": [
+          "boya",
+          "dyo",
+          "inşaat"
+        ],
+        "logoPath": "brands/1765945290318-dyo_logosu.png"
+      }
+    ],
+    "projects": [],
+    "logoPath": "1766016842035-490543904-derya_insaat.png",
+    "contact": {
+      "phone": "0324 2323323",
+      "website": "www.deryagrup.com.tr",
+      "address": "Silifke cad. Yenişehir Mersin",
+      "buttonText": "İletişime Geç"
+    }
+  },
+  "sigorta": {
+    "title": "Derya Sigortacılık Ltd. Şti.",
+    "description": "Derya Sigorta, Derya Grup bünyesinde 2005 yılında faaliyetlerine başlamış köklü bir sigorta acentesidir. \"Önce Güven\" ilkesiyle yola çıkan şirketimiz, Türkiye'nin önde gelen sigorta şirketlerinin yetkili acentesi olarak hizmet vermektedir.\n\nUzman kadromuz ile bireysel ve kurumsal müşterilerimizin ihtiyaçlarını doğru analiz ederek, en uygun teminatları en avantajlı fiyatlarla sunmayı hedefliyoruz. Kasko, Trafik, Konut, DASK, Sağlık, Seyahat ve İşyeri sigortaları başta olmak üzere tüm branşlarda profesyonel çözümler üretiyoruz. Hasar anında müşterimizin yanında olarak sürecin hızlı ve sorunsuz tamamlanmasını sağlıyoruz.",
+    "heroTitle": "Bugününüz ve Geleceğiniz Güvence Altında",
+    "heroSubtitle": "Derya Sigorta olarak, hayatın her anında karşılaşabileceğiniz risklere karşı size ve sevdiklerinize özel çözümler sunuyoruz.",
+    "heroImage": "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=80&w=2670&auto=format&fit=crop",
+    "brands": [
+      {
+        "id": 1765945570851,
+        "name": "AXA",
+        "logoText": "hayatınız değerli",
+        "description": "axa sigorta acentiliği ile her zaman yanındayız",
+        "url": "www.axa.com.tr",
+        "tags": [
+          "axa",
+          "kasko",
+          "sigorta",
+          "bes"
+        ],
+        "logoPath": "brands/1765945570813-axa_logosu.png"
+      }
+    ],
+    "projects": [],
+    "logoPath": "1766016875561-427249439-derya_sigorta.png"
+  },
+  "elektronik": {
+    "title": "Derya Klima",
+    "description": "Derya Elektronik, 2008 yılından bu yana tüketici elektroniği ve endüstriyel otomasyon alanlarında katma değerli çözümler sunmaktadır. Teknoloji dünyasındaki hızlı değişime ayak uyduran dinamik yapımız ve güçlü Ar-Ge merkezimiz ile sektörde fark yaratıyoruz.\n\nGeliştirdiğimiz akıllı ev sistemleri, IoT tabanlı endüstriyel sensörler ve enerji verimliliği sağlayan otomasyon yazılımları ile hem bireysel kullanıcıların hem de sanayi kuruluşlarının ihtiyaçlarına yanıt veriyoruz. \"Yerli Üretim, Küresel Vizyon\" mottomuzla teknolojiyi sadece tüketen değil, üreten bir toplum olma yolunda emin adımlarla ilerliyoruz.",
+    "heroTitle": "Geleceği Şekillendiren Akıllı Teknolojiler",
+    "heroSubtitle": "Derya Klima, yenilikçi ürünler ve endüstriyel çözümlerle dijital dönüşümün öncüsü olarak hayatı kolaylaştıran teknolojiler üretiyor.",
+    "heroImage": "https://plus.unsplash.com/premium_photo-1663054563006-a4d84cda7204?q=80&w=2340&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "brands": [],
+    "projects": [],
+    "logoPath": "1766016963119-462347490-derya_elektronik.png"
+  },
+  "bilisim": {
+    "title": "Derya Bilişim",
+    "description": "Derya Bilişim, dijital dönüşüm yolculuğunuzda size rehberlik eden, yenilikçi ve güvenilir bir teknoloji ortağıdır. İşletmelerin verimliliğini artıran özel yazılım çözümleri, siber güvenlik stratejileri ve güvenli altyapı hizmetleri sunuyoruz.\n\nTeknolojinin hızla geliştiği dünyada, müşterilerimize en güncel ve etkili çözümleri sunarak rekabet avantajı sağlıyoruz. Uzman ekibimizle, iş süreçlerinizi optimize ediyor ve geleceğe güvenle bakmanızı sağlıyoruz.",
+    "heroTitle": "Derya Bilişim",
+    "heroSubtitle": "Geleceği şekillendiren teknolojik inovasyonlar ve müşteri odaklı yazılım çözümleri ile işletmenizi dijital çağa taşıyın.",
+    "heroImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2672&auto=format&fit=crop",
+    "brands": [],
+    "projects": [],
+    "logoPath": "1766016924798-755057909-deryabilisimlogo.png"
+  },
+  "chefmezze": {
+    "title": "ChefMezze Gıda A.Ş.",
+    "description": "Derya Grup bünyesinde faaliyet gösteren ChefMezze, gıda sektöründe \"tazelik, lezzet ve güven\" ilkeleriyle yola çıkmıştır. HoReCa (Otel, Restoran, Kafe) sektörünün ihtiyaçlarına yönelik profesyonel çözümler sunan markamız, geleneksel Türk mezelerini ve dünya mutfağından seçkin lezzetleri endüstriyel standartlarda üretmektedir.\n\nYüksek hijyen standartlarına sahip modern tesislerimizde, katkı maddesi kullanmadan, günlük ve taze hammadde ile üretim yapıyoruz. Soğuk zincir lojistik ağımız sayesinde, ürettiğimiz lezzetleri ilk günkü tazeliğinde Türkiye'nin dört bir yanındaki iş ortaklarımıza ulaştırıyoruz.",
+    "heroTitle": "Geleneksel Lezzetin Modern Yüzü",
+    "heroSubtitle": "ChefMezze ile sofralarınıza değer katıyor, endüstriyel gıda çözümlerinde kalite ve lezzeti buluşturuyoruz.",
+    "heroImage": "https://images.unsplash.com/photo-1544148103-0773bf10d330?q=80&w=2670&auto=format&fit=crop",
+    "brands": [],
+    "projects": []
+  },
+  "yapi": {
+    "title": "Derya Yapı",
+    "description": "Derya Grup bünyesinde faaliyet gösteren Derya Yapı, büyük ölçekli inşaat ve gayrimenkul geliştirme projelerinde sektörün öncü markalarından biridir. İnsan odaklı yaklaşımımızla, sadece bina değil, yaşam kalitesini artıran sürdürülebilir ekosistemler kuruyoruz. Teknolojiyi ve doğayı harmanlayan projelerimizle şehirlere değer katıyoruz.",
+    "heroTitle": "Geleceği Temelinden İnşa Ediyoruz",
+    "heroSubtitle": "Derya Yapı olarak, çeyrek asrı aşkın tecrübemizle modern mimari anlayışını, mühendislik çözümleri ve estetik tasarım ile buluşturuyoruz. Güvenli, sürdürülebilir ve kaliteli yapılarımızla yaşam standartlarını yükseltmeyi hedefliyoruz.",
+    "heroImage": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2670&auto=format&fit=crop",
+    "brands": [],
+    "projects": [],
+    "logoPath": "1766017005730-731313650-derya_yapi_tasarim.png"
+  },
+  "tasarim": {
+    "title": "D Yapı Tasarım",
+    "description": "D Yapı Tasarım, Derya Grup bünyesinde mimari proje ve uygulama hizmetleri veren bir tasarım stüdyosudur. Her projeyi kendine özgü bir hikaye olarak ele alıyor, mekanın ruhunu, işlevsellikle harmanlıyoruz.\n\nOfis, konut, otel ve ticari alanlardan, kamusal alan düzenlemelerine kadar geniş bir yelpazede hizmet vermekteyiz. Amacımız sadece bina inşa etmek değil, yaşam kalitesini artıran deneyimler tasarlamaktır.",
+    "heroTitle": "Estetik ve Fonksiyonun Buluşma Noktası",
+    "heroSubtitle": "D Yapı Tasarım olarak, sanatsal vizyonu mühendislik hassasiyetiyle birleştiriyor, yaşam alanlarına modern bir dokunuş katıyoruz.",
+    "heroImage": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=2653&auto=format&fit=crop",
+    "brands": [],
+    "projects": [],
+    "logoPath": "1766017015989-701894915-d_yapi.png"
+  },
+  "marble": {
+    "title": "Derya Marble A.Ş.",
+    "description": "Derya MARBLE, sektördeki 20 yıllık tecrübesiyle Türkiye'nin en zengin mermer rezervlerine sahip bölgelerinde faaliyet göstermektedir. Afyonkarahisar'daki modern tesislerimizde, doğanın bize sunduğu eşsiz taşları sanatla buluşturuyor; blok, plaka ve ebatlı ürünler olarak dünya pazarına sunuyoruz.\n\nSürdürülebilir madencilik ilkelerine bağlı kalarak, ocaklarımızdan çıkardığımız her bir taşı en verimli şekilde değerlendiriyoruz. İtalya, ABD, Çin ve Orta Doğu başta olmak üzere 35'ten fazla ülkeye gerçekleştirdiğimiz ihracatla, Türk mermerinin kalitesini ve estetiğini global ölçekte temsil etmekten gurur duyuyoruz.",
+    "heroTitle": "Doğanın Sanata Dönüştüğü Yer",
+    "heroSubtitle": "Derya MARBLE, Anadolu'nun eşsiz doğal taşlarını modern teknolojiyle işleyerek dünya projelerine değer katıyor.",
+    "heroImage": "https://images.unsplash.com/photo-1618221639257-2eec3c734493?q=80&w=2574&auto=format&fit=crop",
+    "brands": [],
+    "projects": []
+  }
+}

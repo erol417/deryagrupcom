@@ -1,0 +1,52 @@
+{
+  "heroTitle": "Derya Grup'da çalışmak bir aile olmaktır",
+  "heroSubtitle": "Her zaman Her yerde birlikte. ",
+  "values": [
+    {
+      "title": "Sürekli Gelişim",
+      "desc": "Eğitim programları ve mentorluk ile kariyer yolculuğunuzda sizi destekliyoruz.",
+      "icon": "star"
+    },
+    {
+      "title": "Takım Ruhu",
+      "desc": "Birlikte başarmanın gücüne inanıyor, şeffaf ve destekleyici bir ortam sunuyoruz.",
+      "icon": "star"
+    },
+    {
+      "title": "İnovasyon",
+      "desc": "En yeni teknolojileri ve yöntemleri kullanarak sektörde öncü olmaya devam ediyoruz.",
+      "icon": "star"
+    }
+  ],
+  "gallery": [],
+  "perks": [
+    {
+      "title": "Sürekli Eğitim",
+      "icon": "school"
+    },
+    {
+      "title": "Özel Sağlık Sigortası",
+      "icon": "health_and_safety"
+    },
+    {
+      "title": "Sosyal Etkinlikler",
+      "icon": "celebration"
+    },
+    {
+      "title": "Yemek & Ulaşım",
+      "icon": "restaurant"
+    }
+  ],
+  "quotes": [
+    {
+      "name": "Kuzey GUNES",
+      "position": "Şube Müdürü ",
+      "text": "Babam çok maaş verdi bana, büyüyünca geleceğim çalışmaya :) "
+    },
+    {
+      "name": "Erol Gunes",
+      "position": "Şube Müdür Yardımcısı",
+      "text": "Çalışıyoruz işte, Biraz tatil yapayım dedim olmadı :D"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+[
+  {
+    "id": 1,
+    "title": "Senior Frontend Developer",
+    "department": "Yazılım & IT",
+    "location": "İstanbul (Hibrit)",
+    "type": "Tam Zamanlı",
+    "description": "Derya Grup teknoloji ekibinde görev alacak, modern web teknolojilerine hakim deneyimli geliştirici arıyoruz.",
+    "responsibilities": "React ve TypeScript ile ölçeklenebilir arayüzler geliştirmek.\nUI/UX ekibiyle uyumlu çalışmak.\nKod kalitesini yüksek tutmak.",
+    "qualifications": "En az 5 yıl React deneyimi.\nSSR ve CSR konularına hakimiyet.\nİyi derecede İngilizce.",
+    "experience": "5-10 Yıl",
+    "education": "Üniversite (Mezun)",
+    "isActive": true
+  },
+  {
+    "id": 1765895885426,
+    "title": "mimnar",
+    "department": "İnsan Kaynakları",
+    "location": "ankara",
+    "type": "Tam Zamanlı",
+    "description": "Auto Home Otomotiv Ticaret Limited Şirketi olarak Üsküdar / Altunizade de bulunan Merkez ofisimizde büyüyen ekibimizin  ile , günlük muhasebe süreçlerinde aktif rol alacak  Muhasebe Uzmanı aranmaktadır.",
+    "responsibilities": "Alış/satış faturalarının, banka/kasa işlemlerinin muhasebeleştirilmesi\nCari hesap takibi, mutabakat süreçlerinin yürütülmesi\nE-Fatura / E-Arşiv / E-İrsaliye süreçlerinin takibi\nKDV, Muhtasar, SGK vb. dönemsel süreçlere destek\nAy sonu kapanış işlemleri, mizan ve raporlamaya destek\nBelgelerin düzeni, arşivleme ve süreç takibi",
+    "qualifications": "Otomobil (alım-satım-kiralama) sektöründe deneyimli (tercihen)\nEn az (3) yıl muhasebe deneyimi\nUyumsoft ERP programını aktif kullanmış olmak (zorunlu)\nMS Office (özellikle Excel) kullanımında iyi\nTekdüzen hesap planı ve temel vergi/muhasebe mevzuatına hakim\nTakipçi, düzenli, ekip çalışmasına yatkın\nEntegrasyonlu muhasebe sistemlerine vakıf",
+    "experience": "1",
+    "education": "lise",
+    "isActive": true
+  },
+  {
+    "id": 1766015251968,
+    "isActive": true,
+    "title": "Yardımcı Asistan/Halkla İlişkiler",
+    "department": "Operasyon",
+    "location": "İstanbul",
+    "type": "Tam Zamanlı",
+    "description": "karasal radyo yayıncılığı sektöründe faaliyet gösteren dinamik ve yenilikçi bir şirket için Reklam ve Halkla İlişkiler Sorumlusu arıyoruz. Bu pozisyonda, markamızın tanıtımını ve halkla ilişkiler stratejilerini yöneterek, şirketimizin pazar payını artırmak ve marka bilinirliğini güçlendirmek için çalışacaksınız. Yaratıcı kampanyalar geliştirecek, medya ilişkilerini yönetecek ve etkin iletişim stratejileri oluşturacaksınız. 1.diksiyon iyi olmasını bekliyoruz 2.ikna kabiliyetli 3.giyimi düzgün sahada reklam görüşmeleri yapacak işi bilmemeniz önemli deil esnek çalışmada sıkıntı olmayacak ve kendi kararlarını kendi verecek İletişim becerileri güçlü, çözüm odaklı ve ikna kabiliyeti yüksek  takım arkadaşları arıyoruz. Başlangıç olarak AYLIK 39.000TL potansiyel iş durumuna göre değişikliler gösterebilr.başvurular hemen değerlendirilecektir..iş aramayanlar boş başvurularla lütfen bizi meşgul etmeyin",
+    "responsibilities": "Marka bilinirliğini artırmak için yaratıcı reklam kampanyaları geliştirmek ve uygulamak\nHalkla ilişkiler stratejilerini oluşturmak ve uygulamak\nEtkinlikler ve tanıtım organizasyonları düzenlemek\nŞirketin sosyal medya hesaplarını yönetmek ve içerik üretmek\nİkna kabiliyeti ve diksiyon yeteneği ile etkili iletişim kurmak\nSorunlara alternatif çözümler üretebilme ve çözüm odaklı yaklaşım sergilemek\nReklam ve halkla ilişkiler bütçelerini yönetmek\nPazar araştırmaları yaparak, hedef kitle analizleri gerçekleştirmek\nŞirketin kurumsal imajını güçlendirmek için stratejiler geliştirmek",
+    "qualifications": "İşyerinde çalışma koşullarına uyum sağlayabilen\nReklam ve halkla ilişkiler alanında bilgi sahibi\nGüçlü iletişim ve sunum becerilerine sahip\nYaratıcı düşünme ve problem çözme yeteneği\nTakım çalışmasına yatkın ve iş birliği yapabilen\nMedya ve iletişim araçlarını etkin kullanabilen\nStratejik planlama ve organizasyon becerileri gelişmiş",
+    "experience": "5",
+    "education": "lisans"
+  }
+]
