@@ -3,9 +3,12 @@ const express = require('express');
 const nodemailer = require('nodemailer');
 const cors = require('cors');
 const multer = require('multer');
+const multler = require('multer');
 const path = require('path');
 const fs = require('fs');
-require('dotenv').config();
+const axios = require('axios');
+const rateLimit = require('express-rate-limit');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 const app = express();
 const PORT = process.env.PORT || 3003;
@@ -19,7 +22,41 @@ const CULTURE_FILE = path.join(__dirname, 'data', 'culture.json');
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // CV'lere erişim için
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// --- MAIL TRANSPORTER AYARLARI ---
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'deryagrupcom@gmail.com',
+        pass: 'yutxmbkawrpdnzlv' // Boşluksuz yazıldı
+    }
+});
+
+// --- RATE LIMITING (GÜVENLİK) ---
+// Proxy arkasında çalışıyorsa IP'yi doğru almak için
+app.set('trust proxy', 1);
+
+// 1. Genel API Limiti (DDoS Koruması): Her IP için 15 dakikada 300 istek
+const apiLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 300,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { success: false, message: 'Çok fazla istek gönderdiniz, lütfen 15 dakika sonra tekrar deneyin.' }
+});
+
+// 2. Hassas İşlem Limiti (Brute-Force & Spam Koruması): 15 dakikada max 10 deneme
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 10,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { success: false, message: 'Çok fazla işlem denemesi yaptınız. Lütfen 15 dakika bekleyin.' }
+});
+
+// Genel limiti tüm /api endpointlerine uygula
+app.use('/api/', apiLimiter);
 
 // Dosya yükleme ayarları (Disk'e kaydetme)
 const storage = multer.diskStorage({
@@ -35,19 +72,25 @@ const storage = multer.diskStorage({
     }
 });
 
-const upload = multer({
-    storage: storage,
-    limits: { fileSize: 5 * 1024 * 1024 } // Max 5MB
-});
+// Güvenlik: 5MB Limit ve Dosya Tipi Filtresi
+const limits = { fileSize: 5 * 1024 * 1024 }; // 5MB
 
-// Mail Ayarları
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: process.env.EMAIL_USER || 'test@gmail.com',
-        pass: process.env.EMAIL_PASS || 'password'
+const fileFilter = (req, file, cb) => {
+    const allowedMimes = [
+        'image/jpeg', 'image/png', 'image/webp', // Görseller
+        'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' // Dokümanlar
+    ];
+    if (allowedMimes.includes(file.mimetype)) {
+        cb(null, true);
+    } else {
+        cb(new Error('Geçersiz dosya türü! Sadece resim ve belge (PDF, DOC) yüklenebilir.'), false);
     }
-});
+};
+
+const upload = multer({ storage, limits, fileFilter });
+
+// Eski transporter tanımını siliyoruz veya yukarı taşıdık, burayı boş geçiyoruz.
+// (Not: Yukarıdaki chunk zaten tanımladı)
 
 // Yardımcı Fonksiyonlar: JSON Okuma/Yazma
 const readData = (filePath) => {
@@ -60,12 +103,38 @@ const writeData = (filePath, data) => {
     fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
 };
 
+// --- CAPTCHA MIDDLEWARE ---
+const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY || '6LdPFjEsAAAAAHztYqa_6SYCTQQHoMsEErOOB1hx';
+
+const verifyCaptcha = async (req, res, next) => {
+    // FormData ile geliyorsa req.body'de (multer sayesinde), JSON ise direkt req.body'de
+    const token = req.body.captchaToken;
+
+    if (!token) {
+        return res.status(400).json({ success: false, message: 'Lütfen robot olmadığınızı doğrulayın (Captcha).' });
+    }
+
+    try {
+        const url = `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_SECRET_KEY}&response=${token}`;
+        const response = await axios.post(url);
+
+        if (response.data.success) {
+            next();
+        } else {
+            return res.status(400).json({ success: false, message: 'Captcha doğrulaması başarısız. Lütfen tekrar deneyin.' });
+        }
+    } catch (error) {
+        console.error('Captcha Error:', error);
+        return res.status(500).json({ success: false, message: 'Captcha sunucu hatası.' });
+    }
+};
+
 // --- ENDPOINTS ---
 
 
 
 // 2. BAŞVURULAR (Applications)
-app.post('/api/apply', upload.single('cv'), async (req, res) => {
+app.post('/api/apply', upload.single('cv'), authLimiter, verifyCaptcha, async (req, res) => {
     try {
         const { name, surname, email, phone, position, coverLetter, consent } = req.body;
         const cvFile = req.file;
@@ -90,7 +159,7 @@ app.post('/api/apply', upload.single('cv'), async (req, res) => {
         try {
             const mailOptions = {
                 from: `"Derya Grup Kariyer" <${process.env.EMAIL_USER}>`,
-                to: 'ik@deryagrup.com.tr',
+                to: 'deryagrupcom@gmail.com',
                 subject: `Yeni İş Başvurusu: ${name} ${surname} - ${position}`,
                 html: `
                     <h3>Yeni İş Başvurusu</h3>
@@ -111,6 +180,33 @@ app.post('/api/apply', upload.single('cv'), async (req, res) => {
     } catch (error) {
         console.error('Başvuru hatası:', error);
         res.status(500).json({ success: false, message: 'Sunucu hatası.' });
+    }
+});
+
+// 2.1 İLETİŞİM FORMU (Contact)
+app.post('/api/contact', authLimiter, verifyCaptcha, async (req, res) => {
+    try {
+        const { name, surname, email, message } = req.body;
+
+        const mailOptions = {
+            from: `"Derya Grup İletişim" <${process.env.EMAIL_USER}>`,
+            to: 'deryagrupcom@gmail.com',
+            subject: `İletişim Formu: ${name} ${surname}`,
+            html: `
+                <h3>Yeni İletişim Mesajı</h3>
+                <p><strong>Ad Soyad:</strong> ${name} ${surname}</p>
+                <p><strong>E-posta:</strong> ${email}</p>
+                <p><strong>Mesaj:</strong></p>
+                <p>${message}</p>
+            `
+        };
+
+        await transporter.sendMail(mailOptions);
+        res.json({ success: true, message: 'Mesajınız başarıyla iletildi.' });
+
+    } catch (error) {
+        console.error('Contact Error:', error);
+        res.status(500).json({ success: false, message: 'Mesaj gönderilemedi.' });
     }
 });
 
@@ -140,16 +236,71 @@ app.put('/api/applications/:id', (req, res) => {
 const CONTENT_FILE = path.join(__dirname, 'data', 'company_content.json');
 const USERS_FILE = path.join(__dirname, 'data', 'users.json');
 
-app.post('/api/login', (req, res) => {
+// LOGİN (1. Adım: Kullanıcı Adı/Şifre Kontrolü ve Kod Gönderimi)
+app.post('/api/login', authLimiter, verifyCaptcha, async (req, res) => {
     const { username, password } = req.body;
     const users = readData(USERS_FILE);
-    const user = users.find(u => u.username === username && u.password === password);
+    const userIndex = users.findIndex(u => u.username === username && u.password === password);
 
-    if (user) {
-        const { password, ...tokenData } = user;
-        res.json({ success: true, user: tokenData });
+    if (userIndex !== -1) {
+        const user = users[userIndex];
+
+        // 6 haneli kod üret
+        const code = Math.floor(100000 + Math.random() * 900000).toString();
+        const expires = Date.now() + 5 * 60 * 1000; // 5 dakika geçerli
+
+        // Kodu kullanıcı verisine (dosyaya) kaydet
+        users[userIndex].twoFactorCode = code;
+        users[userIndex].twoFactorExpires = expires;
+        writeData(USERS_FILE, users);
+
+        // Mail Gönder
+        try {
+            await transporter.sendMail({
+                from: `"Derya Grup Güvenlik" <${process.env.EMAIL_USER}>`,
+                to: user.email || 'deryagrupcom@gmail.com', // Kullanıcının maili yoksa default maile gönder
+                subject: 'Giriş Doğrulama Kodu',
+                html: `<h3>Doğrulama Kodunuz: <span style="font-size: 24px; color: blue;">${code}</span></h3><p>Bu kod 5 dakika süreyle geçerlidir.</p>`
+            });
+
+            // Frontend'e "2FA Gerekli" cevabı dön
+            // Güvenlik: Email'in tamamını gösterme, maskele (örn: d****@gmail.com)
+            const maskedEmail = user.email ? user.email.replace(/(.{2})(.*)(@.*)/, "$1****$3") : 'mail adresinize';
+            res.json({ success: true, require2FA: true, userId: user.id, message: `Doğrulama kodu ${maskedEmail} adresine gönderildi.` });
+
+        } catch (error) {
+            console.error('Mail Hatası:', error);
+            res.status(500).json({ success: false, message: 'Kod gönderilemedi. SMTP ayarlarını kontrol edin.' });
+        }
+
     } else {
         res.status(401).json({ success: false, message: 'Hatalı kullanıcı adı veya şifre.' });
+    }
+});
+
+// LOGİN (2. Adım: Kod Doğrulama)
+app.post('/api/verify-2fa', authLimiter, (req, res) => {
+    const { userId, code } = req.body;
+    const users = readData(USERS_FILE);
+    const user = users.find(u => u.id === userId);
+
+    if (!user) return res.status(404).json({ success: false, message: 'Kullanıcı bulunamadı.' });
+
+    if (user.twoFactorCode === code && user.twoFactorExpires > Date.now()) {
+        // Kod doğru ve süresi dolmamış
+
+        // Kodu temizle
+        delete user.twoFactorCode;
+        delete user.twoFactorExpires;
+        // Dosyayı güncelle (user referans olduğu için users arrayi güncellenir mi? Evet find referans döner ama emin olmak için index bulup update edelim)
+        const index = users.findIndex(u => u.id === userId);
+        users[index] = user;
+        writeData(USERS_FILE, users);
+
+        const { password, twoFactorCode, twoFactorExpires, ...tokenData } = user;
+        res.json({ success: true, user: tokenData });
+    } else {
+        res.status(400).json({ success: false, message: 'Geçersiz veya süresi dolmuş kod!' });
     }
 });
 
@@ -163,7 +314,7 @@ app.get('/api/users', (req, res) => {
 
 app.post('/api/users', (req, res) => {
     const users = readData(USERS_FILE);
-    const { username, name, password, role, scope } = req.body;
+    const { username, name, password, role, scope, email } = req.body;
 
     if (users.find(u => u.username === username)) {
         return res.status(400).json({ success: false, message: 'Bu kullanıcı adı zaten kullanılıyor.' });
@@ -174,6 +325,7 @@ app.post('/api/users', (req, res) => {
         username,
         password, // Gerçek projede hashlenmeli
         name,
+        email,
         role,
         scope: scope || 'all'
     };
@@ -232,7 +384,7 @@ const brandStorage = multer.diskStorage({
         cb(null, Date.now() + '-' + file.originalname.replace(/[^a-zA-Z0-9.]/g, '_'));
     }
 });
-const uploadBrand = multer({ storage: brandStorage });
+const uploadBrand = multer({ storage: brandStorage, limits, fileFilter });
 
 // Yardımcı Fonksiyon: Resmi Boyutlandır (400x200, Contain, Transparent)
 const processBrandLogo = async (filePath) => {
@@ -377,7 +529,7 @@ const newsStorage = multer.diskStorage({
         cb(null, `news-${Date.now()}-${sanitized}`);
     }
 });
-const uploadNews = multer({ storage: newsStorage });
+const uploadNews = multer({ storage: newsStorage, limits, fileFilter });
 
 // Tüm Haberleri Getir
 app.get('/api/news', (req, res) => {
@@ -469,7 +621,7 @@ const socialStorage = multer.diskStorage({
         cb(null, `social-${Date.now()}-${file.originalname.replace(/[^a-zA-Z0-9.]/g, '_')}`);
     }
 });
-const uploadSocial = multer({ storage: socialStorage });
+const uploadSocial = multer({ storage: socialStorage, limits, fileFilter });
 
 // Get All
 app.get('/api/social', (req, res) => {
@@ -711,6 +863,16 @@ app.post('/api/about', (req, res) => {
         console.error("About Save Error:", error);
         res.status(500).json({ error: "Veri kaydedilemedi" });
     }
+});
+
+// Global Error Handler (Multer hatalarını yakalamak için)
+app.use((err, req, res, next) => {
+    if (err instanceof multer.MulterError) {
+        return res.status(400).json({ success: false, message: `Dosya Yükleme Hatası: ${err.message}` });
+    } else if (err) {
+        return res.status(500).json({ success: false, message: err.message });
+    }
+    next();
 });
 
 app.listen(PORT, () => {

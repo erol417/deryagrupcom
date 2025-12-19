@@ -1,4 +1,42 @@
+import { useState, useRef } from 'react';
+import ReCAPTCHA from 'react-google-recaptcha';
+import { API_BASE_URL, RECAPTCHA_SITE_KEY } from '../config';
+
 export default function Contact() {
+  const [formData, setFormData] = useState({ name: '', surname: '', email: '', message: '' });
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!captchaToken) {
+      alert("Lütfen robot olmadığınızı doğrulayın.");
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/contact`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...formData, captchaToken })
+      });
+      const result = await res.json();
+      if (result.success) {
+        alert(result.message);
+        setFormData({ name: '', surname: '', email: '', message: '' });
+        recaptchaRef.current?.reset();
+        setCaptchaToken(null);
+      } else {
+        alert(result.message);
+      }
+    } catch (err) {
+      alert("Mesaj gönderilemedi.");
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
   return (
     <>
       <section className="bg-secondary text-white py-20 relative overflow-hidden">
@@ -64,24 +102,28 @@ export default function Contact() {
             <div className="bg-white dark:bg-black/20 p-8 md:p-10 rounded-3xl shadow-xl border border-gray-100 dark:border-white/5">
               <h2 className="text-2xl font-bold text-secondary dark:text-white mb-2">İletişim Formu</h2>
               <p className="text-gray-500 mb-8">Bize yazın, en kısa sürede size dönüş yapalım.</p>
-              <form className="space-y-5">
+              <form className="space-y-5" onSubmit={handleSubmit}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div>
                     <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">Adınız</label>
-                    <input type="text" className="w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" placeholder="Adınız" />
+                    <input name="name" value={formData.name} onChange={handleChange} required type="text" className="w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" placeholder="Adınız" />
                   </div>
                   <div>
                     <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">Soyadınız</label>
-                    <input type="text" className="w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" placeholder="Soyadınız" />
+                    <input name="surname" value={formData.surname} onChange={handleChange} required type="text" className="w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" placeholder="Soyadınız" />
                   </div>
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">E-posta</label>
-                  <input type="email" className="w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" placeholder="ornek@mail.com" />
+                  <input name="email" value={formData.email} onChange={handleChange} required type="email" className="w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" placeholder="ornek@mail.com" />
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">Mesajınız</label>
-                  <textarea rows={4} className="w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" placeholder="Konut projesi hakkında bilgi almak istiyorum..."></textarea>
+                  <textarea name="message" value={formData.message} onChange={handleChange} required rows={4} className="w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" placeholder="Konut projesi hakkında bilgi almak istiyorum..."></textarea>
+                </div>
+
+                <div className="flex justify-center">
+                  <ReCAPTCHA ref={recaptchaRef} sitekey={RECAPTCHA_SITE_KEY} onChange={(t) => setCaptchaToken(t)} />
                 </div>
                 <button type="submit" className="w-full bg-primary hover:bg-blue-700 text-white font-bold py-4 rounded-lg transition-colors shadow-lg shadow-primary/30 flex items-center justify-center gap-2">
                   <span>Mesajı Gönder</span>

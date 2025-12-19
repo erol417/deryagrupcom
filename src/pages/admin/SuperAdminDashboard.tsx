@@ -7,6 +7,7 @@ interface User {
     id: number;
     username: string;
     name: string;
+    email?: string;
     role: 'super' | 'hr' | 'manager';
     scope: string;
     password?: string;
@@ -19,7 +20,7 @@ export default function SuperAdminDashboard() {
 
     // Form States
     const [editingUser, setEditingUser] = useState<User | null>(null);
-    const [formData, setFormData] = useState({ username: '', password: '', name: '', role: 'manager', scope: 'all' });
+    const [formData, setFormData] = useState({ username: '', password: '', name: '', email: '', role: 'manager', scope: 'all' });
 
     useEffect(() => {
         const userData = localStorage.getItem('adminUser');
@@ -85,6 +86,7 @@ export default function SuperAdminDashboard() {
             username: user.username,
             password: '', // Güvenlik için şifre boş gelir, isterse değiştirir
             name: user.name,
+            email: user.email || '',
             role: user.role,
             scope: user.scope
         });
@@ -93,7 +95,7 @@ export default function SuperAdminDashboard() {
 
     const resetForm = () => {
         setEditingUser(null);
-        setFormData({ username: '', password: '', name: '', role: 'manager', scope: 'all' });
+        setFormData({ username: '', password: '', name: '', email: '', role: 'manager', scope: 'all' });
     };
 
     // Navigasyon Yardımcıları
@@ -193,6 +195,7 @@ export default function SuperAdminDashboard() {
                                                 <td className="px-6 py-4">
                                                     <div className="font-bold text-gray-800">{user.name}</div>
                                                     <div className="text-gray-400 text-xs">@{user.username}</div>
+                                                    {user.email && <div className="text-blue-500 text-xs mt-1">{user.email}</div>}
                                                 </td>
                                                 <td className="px-6 py-4">
                                                     <span className={`px-2 py-1 rounded text-xs font-bold uppercase ${user.role === 'super' ? 'bg-purple-50 text-purple-600' :
@@ -245,6 +248,12 @@ export default function SuperAdminDashboard() {
                                     <label className="block text-xs font-bold text-gray-500 mb-1">Kullanıcı Adı</label>
                                     <input required className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-yellow-400 outline-none"
                                         value={formData.username} onChange={e => setFormData({ ...formData, username: e.target.value })} placeholder="Örn: ahmet123" />
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs font-bold text-gray-500 mb-1">E-posta Adresi (Giriş doğrulaması için)</label>
+                                    <input type="email" required className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-yellow-400 outline-none"
+                                        value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} placeholder="kullanici@deryagrup.com" />
                                 </div>
 
                                 <div>

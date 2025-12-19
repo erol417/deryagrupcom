@@ -1,7 +1,8 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { API_BASE_URL } from '../config';
+import { API_BASE_URL, RECAPTCHA_SITE_KEY } from '../config';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 interface Job {
     id: number;
@@ -12,6 +13,8 @@ export default function JobApplication() {
     const navigate = useNavigate();
     const [file, setFile] = useState<File | null>(null);
     const [positions, setPositions] = useState<Job[]>([]);
+    const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+    const recaptchaRef = useRef<ReCAPTCHA>(null);
 
     useEffect(() => {
         fetch(`${API_BASE_URL}/api/jobs`)
@@ -25,6 +28,13 @@ export default function JobApplication() {
 
         const form = e.target as HTMLFormElement;
         const formData = new FormData(form);
+
+        if (!captchaToken) {
+            alert("Lütfen robot olmadığınızı doğrulayın.");
+            return;
+        }
+
+        formData.append('captchaToken', captchaToken);
 
         // Consent (Checkbox) unchecked durumunda gitmez ama required oldugu icin isaretli olmali.
         // File input name="cv" olmalı. Aşağıda input elementine name ekledik.
@@ -44,6 +54,8 @@ export default function JobApplication() {
 
             if (response.ok) {
                 alert(result.message || "Başvurunuz başarıyla alınmıştır!");
+                recaptchaRef.current?.reset();
+                setCaptchaToken(null);
                 navigate('/kariyer');
             } else {
                 alert("Hata: " + (result.message || "Bir şeyler ters gitti."));
@@ -169,6 +181,14 @@ export default function JobApplication() {
                                 Kişisel verilerimin, <a href="#" className="text-blue-600 font-bold hover:underline">Aydınlatma Metni</a> kapsamında işlenmesine, saklanmasına ve gerektiğinde ilgili üçüncü taraflarla paylaşılmasına rıza gösteriyorum.
                             </div>
                         </label>
+                    </div>
+
+                    <div className="flex justify-center mb-6">
+                        <ReCAPTCHA
+                            ref={recaptchaRef}
+                            sitekey={RECAPTCHA_SITE_KEY}
+                            onChange={(token) => setCaptchaToken(token)}
+                        />
                     </div>
 
                     <div className="flex flex-col md:flex-row items-center justify-between gap-4">
