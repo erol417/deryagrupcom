@@ -368,6 +368,27 @@ app.get('/api/company-content/:id', (req, res) => {
     res.json(companyData);
 });
 
+// --- YASAL METİNLER (Legal) ---
+const LEGAL_FILE = path.join(__dirname, 'company_content_legal.json');
+
+app.get('/api/legal', (req, res) => {
+    // Dosya yoksa oluştur (Boş obje)
+    if (!fs.existsSync(LEGAL_FILE)) {
+        fs.writeFileSync(LEGAL_FILE, JSON.stringify({ kvkk: '', cookiePolicy: '', cookiePreferences: '' }));
+    }
+    const data = readData(LEGAL_FILE);
+    res.json(data);
+});
+
+app.put('/api/legal', (req, res) => {
+    try {
+        writeData(LEGAL_FILE, req.body);
+        res.json({ success: true, message: 'Yasal metinler güncellendi.' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Güncelleme hatası.' });
+    }
+});
+
 const sharp = require('sharp'); // Resim işleme kütüphanesi
 
 // Marka Logoları İçin Storage Ayarı

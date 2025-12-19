@@ -13,6 +13,7 @@ import CompanyBrands from "./pages/CompanyBrands"
 import NewsList from "./pages/NewsList"
 import NewsDetail from "./pages/NewsDetail"
 import CompanyCulture from "./pages/CompanyCulture"
+import LegalPage from "./pages/LegalPage"
 
 import AdminLogin from "./pages/admin/Login"
 import AdminDashboard from "./pages/admin/Dashboard"
@@ -35,6 +36,9 @@ function App() {
           <Route path="sirket/:id/markalar" element={<CompanyBrands />} />
           <Route path="bizden-haberler" element={<NewsList />} />
           <Route path="news/:id" element={<NewsDetail />} />
+          <Route path="kvkk" element={<LegalPage type="kvkk" title="Kişisel Verilerin Korunması" />} />
+          <Route path="cerez-politikasi" element={<LegalPage type="cookiePolicy" title="Çerez Politikası" />} />
+          <Route path="cerez-tercihleri" element={<LegalPage type="cookiePreferences" title="Çerez Tercihleri" />} />
         </Route>
 
         {/* Admin Routes - Layout dışı tam sayfa */}

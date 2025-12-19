@@ -97,7 +97,7 @@ export default function AdminDashboard() {
 
 
     const navigate = useNavigate();
-    const [activeTab, setActiveTab] = useState<'applications' | 'jobs' | 'news' | 'social' | 'culture' | 'hero' | 'about'>('applications');
+    const [activeTab, setActiveTab] = useState<'applications' | 'jobs' | 'news' | 'social' | 'culture' | 'hero' | 'about' | 'legal'>('applications');
     const [currentUser, setCurrentUser] = useState<any>(null);
 
     const [jobs, setJobs] = useState<Job[]>([]);
@@ -279,6 +279,12 @@ export default function AdminDashboard() {
                     >
                         Hakkımızda
                     </button>
+                    <button
+                        onClick={() => setActiveTab('legal')}
+                        className={`pb-3 px-4 text-sm font-bold border-b-2 transition-colors ${activeTab === 'legal' ? 'border-gray-800 text-gray-800' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+                    >
+                        Yasal Metinler
+                    </button>
                 </div>
 
                 {/* TAB: APPLICATIONS */}
@@ -389,6 +395,10 @@ export default function AdminDashboard() {
                 {/* TAB: ABOUT */}
                 {activeTab === 'about' && (
                     <AboutTab />
+                )}
+                {/* TAB: LEGAL */}
+                {activeTab === 'legal' && (
+                    <LegalTab />
                 )}
 
             </div>
@@ -1765,6 +1775,90 @@ function AboutTab() {
                     {loading ? 'Kaydediliyor...' : 'Tüm Değişiklikleri Kaydet'}
                     {!loading && <span className="material-symbols-outlined">save</span>}
                 </button>
+            </div>
+        </div>
+    );
+}
+
+// --- YASAL METİNLER (LEGAL) ---
+function LegalTab() {
+    const [data, setData] = useState({ kvkk: '', cookiePolicy: '', cookiePreferences: '' });
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        fetch(`${API_BASE_URL}/api/legal`)
+            .then(res => res.json())
+            .then(d => {
+                // Eğer null gelirse boş string ver
+                setData({
+                    kvkk: d.kvkk || '',
+                    cookiePolicy: d.cookiePolicy || '',
+                    cookiePreferences: d.cookiePreferences || ''
+                });
+            })
+            .catch(e => console.error(e));
+    }, []);
+
+    const handleSave = async () => {
+        setLoading(true);
+        try {
+            await fetch(`${API_BASE_URL}/api/legal`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            alert("Yasal metinler güncellendi!");
+        } catch (error) {
+            console.error(error);
+            alert("Hata oluştu.");
+        }
+        setLoading(false);
+    };
+
+    return (
+        <div className="space-y-8 pb-20">
+            <div className="flex justify-between items-center bg-white p-6 rounded-xl border border-gray-200 shadow-sm sticky top-24 z-10">
+                <h3 className="font-bold text-lg text-gray-800">Yasal Metin Yönetimi</h3>
+                <button
+                    onClick={handleSave}
+                    disabled={loading}
+                    className="bg-gray-900 text-white px-6 py-2 rounded-lg font-bold hover:bg-black transition-colors shadow-lg disabled:opacity-50"
+                >
+                    {loading ? 'Kaydediliyor...' : 'Tümünü Kaydet'}
+                </button>
+            </div>
+
+            <div className="grid grid-cols-1 gap-8">
+                <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
+                    <h4 className="font-bold text-gray-800 mb-2 border-l-4 border-blue-500 pl-3">KVKK & Aydınlatma Metni</h4>
+                    <p className="text-xs text-gray-400 mb-4">"/kvkk" sayfasında görünür.</p>
+                    <textarea
+                        className="w-full border rounded-lg p-4 font-mono text-sm min-h-[400px] focus:ring-2 focus:ring-blue-500/20 outline-none"
+                        value={data.kvkk}
+                        onChange={e => setData({ ...data, kvkk: e.target.value })}
+                        placeholder="KVKK metni..."
+                    />
+                </div>
+
+                <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
+                    <h4 className="font-bold text-gray-800 mb-2 border-l-4 border-orange-500 pl-3">Çerez (Cookie) Politikası</h4>
+                    <p className="text-xs text-gray-400 mb-4">"/cerez-politikasi" sayfasında görünür.</p>
+                    <textarea
+                        className="w-full border rounded-lg p-4 font-mono text-sm min-h-[300px] focus:ring-2 focus:ring-orange-500/20 outline-none"
+                        value={data.cookiePolicy}
+                        onChange={e => setData({ ...data, cookiePolicy: e.target.value })}
+                    />
+                </div>
+
+                <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
+                    <h4 className="font-bold text-gray-800 mb-2 border-l-4 border-green-500 pl-3">Çerez Tercihleri Metni</h4>
+                    <p className="text-xs text-gray-400 mb-4">"/cerez-tercihleri" sayfasında görünür veya banner içerisinde kullanılır.</p>
+                    <textarea
+                        className="w-full border rounded-lg p-4 font-mono text-sm min-h-[200px] focus:ring-2 focus:ring-green-500/20 outline-none"
+                        value={data.cookiePreferences}
+                        onChange={e => setData({ ...data, cookiePreferences: e.target.value })}
+                    />
+                </div>
             </div>
         </div>
     );

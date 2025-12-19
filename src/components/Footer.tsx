@@ -57,6 +57,11 @@ export default function Footer() {
         </div>
         <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-gray-500 text-xs">© 2026 Derya Grup. Tüm hakları saklıdır.</p>
+          <div className="flex flex-wrap justify-center gap-4 md:gap-6">
+            <Link to="/kvkk" className="text-gray-500 hover:text-primary text-xs transition-colors">KVKK ve Aydınlatma Metni</Link>
+            <Link to="/cerez-politikasi" className="text-gray-500 hover:text-primary text-xs transition-colors">Çerez Politikası</Link>
+            <Link to="/cerez-tercihleri" className="text-gray-500 hover:text-primary text-xs transition-colors">Çerez Tercihleri</Link>
+          </div>
         </div>
       </div>
     </footer>
