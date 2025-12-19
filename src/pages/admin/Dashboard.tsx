@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { API_BASE_URL } from '../../config';
 import { useNavigate } from 'react-router-dom';
 import ReactQuill from 'react-quill';
@@ -22,6 +22,52 @@ const convertToDirectLink = (url: string) => {
         }
     } catch (e) { console.error('Link conversion error', e); }
     return url;
+};
+
+// HELPER: Upload file to server and return filename
+const uploadFileToServer = async (file: File): Promise<string | null> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    try {
+        const res = await fetch(`${API_BASE_URL}/api/upload`, { method: 'POST', body: formData });
+        const result = await res.json();
+        if (result.success) return result.filePath;
+    } catch (error) { console.error("Upload error:", error); }
+    return null;
+};
+
+// COMPONENT: Image Input (URL + File)
+const ImageInput = ({ value, onChange, label, recommendedSize }: { value: string, onChange: (val: string) => void, label: string, recommendedSize?: string }) => {
+    return (
+        <div className="space-y-2 mb-4">
+            {label && <label className="block text-xs font-bold text-gray-500 mb-1">{label} {recommendedSize && <span className="font-normal text-gray-400">({recommendedSize})</span>}</label>}
+
+            {value && (
+                <div className="relative group w-full h-32 bg-gray-100 rounded-lg overflow-hidden border mb-2">
+                    <img src={value.startsWith('http') ? value : `${API_BASE_URL}/uploads/${value}`} className="w-full h-full object-cover" alt="Preview" />
+                    <button type="button" onClick={() => onChange('')} className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 shadow-md hover:scale-110 transition-transform"><span className="material-symbols-outlined text-sm block">close</span></button>
+                </div>
+            )}
+
+            <input
+                className="w-full border rounded p-2 text-sm"
+                placeholder="URL Yapıştır (https://...)"
+                value={value && value.startsWith('http') ? value : ''}
+                onChange={(e) => onChange(e.target.value)}
+                onBlur={(e) => {
+                    const fixed = convertToDirectLink(e.target.value);
+                    if (fixed !== e.target.value) onChange(fixed);
+                }}
+            />
+            <div className="text-[10px] text-gray-400 text-center font-bold flex items-center gap-2 justify-center before:h-px before:flex-1 before:bg-gray-200 after:h-px after:flex-1 after:bg-gray-200">VEYA</div>
+            <input type="file" className="text-xs w-full text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" onChange={async (e) => {
+                if (e.target.files?.[0]) {
+                    const fileName = await uploadFileToServer(e.target.files[0]);
+                    if (fileName) onChange(fileName);
+                }
+            }} />
+        </div>
+    );
 };
 
 interface Job {
@@ -360,9 +406,9 @@ function HeroTab() {
             .then(d => {
                 if (!d.type1) d.type1 = { slides: [] };
                 if (!d.type2) d.type2 = { slides: [] };
-                if (!d.type3) d.type3 = { title: "Geleceği", titleSize: "large", words: [], description: "", rightImage: "", floatingBox: { title: "", text: "", icon: "" }, stats: [{ value: "40+", label: "Yıllık Tecrübe" }, { value: "9", label: "Grup Şirketi" }, { value: "1000+", label: "Mutlu Çalışan" }] };
+                if (!d.type3) d.type3 = { title: "Geleceği", titleSize: "large", words: [], description: "", rightImage: "", floatingBox: { title: "", text: "", icon: "" }, stats: [{ value: "40+", label: "Yıllık Tecrübe" }, { value: "9", label: "Grup �?irketi" }, { value: "1000+", label: "Mutlu Çalışan" }] };
                 else {
-                    if (!d.type3.stats) d.type3.stats = [{ value: "40+", label: "Yıllık Tecrübe" }, { value: "9", label: "Grup Şirketi" }, { value: "1000+", label: "Mutlu Çalışan" }];
+                    if (!d.type3.stats) d.type3.stats = [{ value: "40+", label: "Yıllık Tecrübe" }, { value: "9", label: "Grup �?irketi" }, { value: "1000+", label: "Mutlu Çalışan" }];
                     if (!d.type3.title) d.type3.title = "Geleceği";
                     if (!d.type3.titleSize) d.type3.titleSize = "large";
                 }
@@ -438,19 +484,16 @@ function HeroTab() {
                                     setData({ ...data, type1: { ...data.type1, slides: newSlides } });
                                 }} className="absolute top-2 right-2 text-red-500"><span className="material-symbols-outlined">delete</span></button>
 
-                                <label className="block text-xs font-bold text-gray-500 mb-1">Slide Görseli (1920x1080px)</label>
-                                <input className="w-full mb-2 p-2 border rounded text-sm" placeholder="Resim URL" value={slide.image} onChange={e => {
-                                    const newSlides = [...data.type1.slides];
-                                    newSlides[i].image = e.target.value;
-                                    setData({ ...data, type1: { ...data.type1, slides: newSlides } });
-                                }} onBlur={e => {
-                                    const fixed = convertToDirectLink(e.target.value);
-                                    if (fixed !== e.target.value) {
+                                <ImageInput
+                                    label="Slide Görseli"
+                                    recommendedSize="1920x1080px"
+                                    value={slide.image}
+                                    onChange={(val) => {
                                         const newSlides = [...data.type1.slides];
-                                        newSlides[i].image = fixed;
+                                        newSlides[i].image = val;
                                         setData({ ...data, type1: { ...data.type1, slides: newSlides } });
-                                    }
-                                }} />
+                                    }}
+                                />
                                 <label className="block text-xs font-bold text-gray-500 mb-1">Başlık</label>
                                 <input className="w-full mb-2 p-2 border rounded text-sm font-bold" placeholder="Başlık" value={slide.title} onChange={e => {
                                     const newSlides = [...data.type1.slides];
@@ -480,19 +523,16 @@ function HeroTab() {
                                     setData({ ...data, type2: { ...data.type2, slides: newSlides } });
                                 }} className="absolute top-2 right-2 text-red-500"><span className="material-symbols-outlined">delete</span></button>
 
-                                <label className="block text-xs font-bold text-gray-500 mb-1">Slide Görseli (1920x1080px)</label>
-                                <input className="w-full mb-2 p-2 border rounded text-sm" placeholder="Resim URL" value={slide.image} onChange={e => {
-                                    const newSlides = [...data.type2.slides];
-                                    newSlides[i].image = e.target.value;
-                                    setData({ ...data, type2: { ...data.type2, slides: newSlides } });
-                                }} onBlur={e => {
-                                    const fixed = convertToDirectLink(e.target.value);
-                                    if (fixed !== e.target.value) {
+                                <ImageInput
+                                    label="Slide Görseli"
+                                    recommendedSize="1920x1080px"
+                                    value={slide.image}
+                                    onChange={(val) => {
                                         const newSlides = [...data.type2.slides];
-                                        newSlides[i].image = fixed;
+                                        newSlides[i].image = val;
                                         setData({ ...data, type2: { ...data.type2, slides: newSlides } });
-                                    }
-                                }} />
+                                    }}
+                                />
                                 <label className="block text-xs font-bold text-gray-500 mb-1">Başlık</label>
                                 <input className="w-full mb-2 p-2 border rounded text-sm font-bold" placeholder="Başlık" value={slide.title} onChange={e => {
                                     const newSlides = [...data.type2.slides];
@@ -541,11 +581,12 @@ function HeroTab() {
                             <textarea className="w-full border rounded p-2 h-20" value={data.type3.description} onChange={e => setData({ ...data, type3: { ...data.type3, description: e.target.value } })} />
                         </div>
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-2">Sağ Görsel URL <span className="text-xs font-normal text-gray-500">(Önerilen: 800x1200px / Dikey)</span></label>
-                            <input className="w-full border rounded p-2 text-sm" value={data.type3.rightImage} onChange={e => setData({ ...data, type3: { ...data.type3, rightImage: e.target.value } })} onBlur={e => {
-                                const fixed = convertToDirectLink(e.target.value);
-                                if (fixed !== e.target.value) setData({ ...data, type3: { ...data.type3, rightImage: fixed } });
-                            }} />
+                            <ImageInput
+                                label="Sağ Görsel"
+                                recommendedSize="800x1200px / Dikey"
+                                value={data.type3.rightImage}
+                                onChange={(val) => setData({ ...data, type3: { ...data.type3, rightImage: val } })}
+                            />
                         </div>
 
                         <div className="bg-gray-50 p-4 rounded border border-gray-200">
@@ -557,7 +598,7 @@ function HeroTab() {
                                 </div>
                                 <div>
                                     <label className="block text-xs font-bold text-gray-500 mb-1">İkon <a href="https://fonts.google.com/icons" target="_blank" className="text-blue-500 font-normal hover:underline ml-1">(Google Fonts)</a></label>
-                                    <input className="w-full border rounded p-2 text-sm" placeholder="örn: eco" value={data.type3.floatingBox?.icon} onChange={e => setData({ ...data, type3: { ...data.type3, floatingBox: { ...data.type3.floatingBox, icon: e.target.value } } })} />
+                                    <input className="w-full border rounded p-2 text-sm" placeholder="örn: eco" value={data.type3.floatingBox?.icon} onChange={e => setData({ ...data, type3: { ...data.type3.floatingBox, icon: e.target.value } })} />
                                 </div>
                             </div>
                             <div>
@@ -644,7 +685,7 @@ function NewsTab() {
     const [title, setTitle] = useState('');
     const [summary, setSummary] = useState('');
     const [content, setContent] = useState('');
-    const [imageFile, setImageFile] = useState<File | null>(null);
+    const [imagePath, setImagePath] = useState('');
     const [category, setCategory] = useState('ETKİNLİK');
 
     const fetchNews = async () => {
@@ -675,7 +716,7 @@ function NewsTab() {
             setContent('');
             setCategory('ETKİNLİK');
         }
-        setImageFile(null);
+        setImagePath(item?.imagePath || '');
         setIsModalOpen(true);
     };
 
@@ -686,9 +727,7 @@ function NewsTab() {
         formData.append('summary', summary);
         formData.append('content', content);
         formData.append('category', category);
-        if (imageFile) {
-            formData.append('image', imageFile);
-        }
+        formData.append('imagePath', imagePath);
 
         try {
             let res;
@@ -840,19 +879,11 @@ function NewsTab() {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-1">Görsel Yukle</label>
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={(e) => setImageFile(e.target.files ? e.target.files[0] : null)}
-                                    className="w-full border border-gray-200 rounded-lg text-sm file:mr-4 file:py-2 file:px-4 file:rounded-l-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                                <ImageInput
+                                    label="Haber Görseli"
+                                    value={imagePath}
+                                    onChange={setImagePath}
                                 />
-                                {editingItem?.imagePath && !imageFile && (
-                                    <div className="mt-2 text-xs text-green-600 flex items-center gap-1">
-                                        <span className="material-symbols-outlined text-sm">check_circle</span>
-                                        Mevcut görsel korunacak. Değiştirmek isterseniz yeni dosya seçin.
-                                    </div>
-                                )}
                             </div>
 
                             <div className="pt-4 flex justify-end gap-3">
@@ -1125,7 +1156,6 @@ function ApplicationsTab({ applications: initialApps }: { applications: Applicat
                                     <option value="Olumsuz">Olumsuz</option>
                                 </select>
                             </div>
-
                             <div>
                                 <label className="block text-sm font-bold text-gray-700 mb-1">Puan (1-10)</label>
                                 <div className="flex gap-1 overflow-x-auto pb-2">
@@ -1174,14 +1204,13 @@ function ApplicationsTab({ applications: initialApps }: { applications: Applicat
         </div>
     );
 }
-
 function SocialTab() {
     const [data, setData] = useState<{ isVisible: boolean, posts: any[], instagramUrl?: string, linkedinUrl?: string }>({ isVisible: true, posts: [] });
     const [loading, setLoading] = useState(false);
 
     // Form
     const [newItem, setNewItem] = useState({ platform: 'instagram', date: '', description: '', link: '' });
-    const [imageFile, setImageFile] = useState<File | null>(null);
+    const [imagePath, setImagePath] = useState('');
 
     useEffect(() => {
         fetchSocial();
@@ -1217,7 +1246,7 @@ function SocialTab() {
         fd.append('date', newItem.date);
         fd.append('description', newItem.description);
         fd.append('link', newItem.link);
-        if (imageFile) fd.append('image', imageFile);
+        fd.append('imagePath', imagePath);
 
         await fetch(`${API_BASE_URL}/api/social`, {
             method: 'POST',
@@ -1225,7 +1254,7 @@ function SocialTab() {
         });
 
         setNewItem({ platform: 'instagram', date: '', description: '', link: '' });
-        setImageFile(null);
+        setImagePath('');
         setLoading(false);
         fetchSocial();
     };
@@ -1316,8 +1345,11 @@ function SocialTab() {
                             <input type="date" required className="w-full border rounded-lg p-2 text-sm" value={newItem.date} onChange={e => setNewItem({ ...newItem, date: e.target.value })} />
                         </div>
                         <div>
-                            <label className="block text-xs font-bold text-gray-500 mb-1">Görsel (Dikey/Portrait Önerilir)</label>
-                            <input type="file" required accept="image/*" className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" onChange={e => setImageFile(e.target.files ? e.target.files[0] : null)} />
+                            <ImageInput
+                                label="Görsel (Dikey/Portrait Önerilir)"
+                                value={imagePath}
+                                onChange={setImagePath}
+                            />
                         </div>
                         <div>
                             <label className="block text-xs font-bold text-gray-500 mb-1">Açıklama</label>
@@ -1704,47 +1736,18 @@ function AboutTab() {
                                 }} placeholder="Detaylı açıklama..." />
                             </div>
 
-                            {/* Resim Alanı (URL veya Upload) */}
-                            <div className="md:col-span-3 space-y-2">
-                                <label className="block text-xs font-bold text-gray-500">Görsel <span className="font-normal text-gray-400">(Önerilen: 600x400px)</span></label>
-
-                                {item.image && (
-                                    <div className="relative group mb-1">
-                                        <img
-                                            src={item.image.startsWith('http') ? item.image : `${API_BASE_URL}/uploads/${item.image}`}
-                                            className="w-full h-24 object-cover rounded border bg-white"
-                                            alt="Preview"
-                                        />
-                                        <button onClick={() => {
-                                            const newHistory = [...data.history];
-                                            newHistory[i].image = null;
-                                            setData({ ...data, history: newHistory });
-                                        }} className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity transform hover:scale-110"><span className="material-symbols-outlined text-xs">close</span></button>
-                                    </div>
-                                )}
-
-                                <div className="space-y-2">
-                                    <input
-                                        className="w-full border rounded p-2 text-xs bg-white"
-                                        placeholder="URL Yapıştır (https://...)"
-                                        value={item.image && item.image.startsWith('http') ? item.image : ''}
-                                        onChange={e => {
-                                            const newHistory = [...data.history];
-                                            newHistory[i].image = e.target.value;
-                                            setData({ ...data, history: newHistory });
-                                        }}
-                                        onBlur={e => {
-                                            const fixed = convertToDirectLink(e.target.value);
-                                            if (fixed !== e.target.value) {
-                                                const newHistory = [...data.history];
-                                                newHistory[i].image = fixed;
-                                                setData({ ...data, history: newHistory });
-                                            }
-                                        }}
-                                    />
-                                    <div className="text-[10px] text-gray-400 text-center font-bold">- VEYA -</div>
-                                    <input type="file" className="text-xs w-full text-gray-500" onChange={(e) => handleImageUpload(e, i)} />
-                                </div>
+                            {/* Resim Alanı */}
+                            <div className="md:col-span-3">
+                                <ImageInput
+                                    label="Görsel"
+                                    recommendedSize="600x400px"
+                                    value={item.image}
+                                    onChange={(val) => {
+                                        const newHistory = [...data.history];
+                                        newHistory[i].image = val;
+                                        setData({ ...data, history: newHistory });
+                                    }}
+                                />
                             </div>
                         </div>
                     ))}
@@ -1766,6 +1769,7 @@ function AboutTab() {
         </div>
     );
 }
+
 
 
 

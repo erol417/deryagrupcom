@@ -397,7 +397,7 @@ app.get('/api/news/:id', (req, res) => {
 // Haber Ekle
 app.post('/api/news', uploadNews.single('image'), (req, res) => {
     const news = readData(NEWS_FILE);
-    const { title, summary, content, date, category } = req.body;
+    const { title, summary, content, date, category, imagePath } = req.body;
 
     const newItem = {
         id: Date.now(),
@@ -406,7 +406,7 @@ app.post('/api/news', uploadNews.single('image'), (req, res) => {
         content,
         category: category || 'Genel',
         date: date || new Date().toISOString(),
-        imagePath: req.file ? req.file.filename : null
+        imagePath: req.file ? req.file.filename : (imagePath || null)
     };
 
     news.push(newItem);
@@ -423,7 +423,7 @@ app.put('/api/news/:id', uploadNews.single('image'), (req, res) => {
     if (index === -1) return res.status(404).json({ success: false, message: 'Haber bulunamadı' });
 
     const currentItem = news[index];
-    const { title, summary, content, date, category } = req.body;
+    const { title, summary, content, date, category, imagePath } = req.body;
 
     const updatedItem = {
         ...currentItem,
@@ -432,7 +432,7 @@ app.put('/api/news/:id', uploadNews.single('image'), (req, res) => {
         content: content || currentItem.content,
         category: category || currentItem.category || 'Genel',
         date: date || currentItem.date,
-        imagePath: req.file ? req.file.filename : currentItem.imagePath
+        imagePath: req.file ? req.file.filename : (imagePath || currentItem.imagePath)
     };
 
     news[index] = updatedItem;
@@ -500,7 +500,7 @@ app.post('/api/social', uploadSocial.single('image'), (req, res) => {
     let data = readData(SOCIAL_FILE);
     if (Array.isArray(data) || !data.posts) data = { isVisible: true, posts: [] };
 
-    const { platform, date, description, link } = req.body;
+    const { platform, date, description, link, imagePath } = req.body;
 
     const newPost = {
         id: Date.now(),
@@ -508,7 +508,7 @@ app.post('/api/social', uploadSocial.single('image'), (req, res) => {
         date,
         description,
         link,
-        imagePath: req.file ? req.file.filename : null
+        imagePath: req.file ? req.file.filename : (imagePath || null)
     };
 
     data.posts.unshift(newPost);
