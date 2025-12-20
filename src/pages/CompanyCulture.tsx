@@ -24,6 +24,7 @@ interface CultureData {
     heroTitle: string;
     heroSubtitle: string;
     heroImage?: string; // Opsiyonel
+    perksImage?: string; // Opsiyonel - Ayrıcalıklar resmi
     values: Value[];
     gallery: string[];
     perks: Perk[];
@@ -75,7 +76,7 @@ export default function CompanyCulture() {
             <div className="relative h-[80vh] w-full overflow-hidden flex items-center justify-center text-center px-4">
                 <div className="absolute inset-0 bg-gradient-to-b from-gray-900/70 to-gray-900/30 z-10"></div>
                 <img
-                    src={data.heroImage ? `${API_BASE_URL}/uploads/${data.heroImage}` : "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2670&auto=format&fit=crop"}
+                    src={data.heroImage ? (data.heroImage.startsWith('http') ? data.heroImage : `${API_BASE_URL}/uploads/${data.heroImage}`) : "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2670&auto=format&fit=crop"}
                     alt="Company Culture"
                     className="absolute inset-0 w-full h-full object-cover"
                 />
@@ -144,7 +145,11 @@ export default function CompanyCulture() {
                     ) : (
                         data.gallery.map((img, i) => (
                             <div key={i} className={`rounded-2xl overflow-hidden relative group ${i === 0 ? 'col-span-2 row-span-2' : ''}`}>
-                                <img src={`${API_BASE_URL}/uploads/${img}`} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Gallery" />
+                                <img
+                                    src={img.startsWith('http') ? img : `${API_BASE_URL}/uploads/${img}`}
+                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                                    alt="Gallery"
+                                />
                             </div>
                         ))
                     )}
@@ -171,7 +176,11 @@ export default function CompanyCulture() {
                             </div>
                         </div>
                         <div className="relative">
-                            <img src="https://images.unsplash.com/photo-1553028826-f4804a6dba3b?q=80&w=2070&auto=format&fit=crop" className="rounded-3xl shadow-2xl transform md:rotate-3 hover:rotate-0 transition-transform duration-500" alt="Perks" />
+                            <img
+                                src={data.perksImage ? (data.perksImage.startsWith('http') ? data.perksImage : `${API_BASE_URL}/uploads/${data.perksImage}`) : "https://images.unsplash.com/photo-1553028826-f4804a6dba3b?q=80&w=2070&auto=format&fit=crop"}
+                                className="rounded-3xl shadow-2xl transform md:rotate-3 hover:rotate-0 transition-transform duration-500"
+                                alt="Perks"
+                            />
                         </div>
                     </div>
                 </div>

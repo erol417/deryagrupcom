@@ -102,6 +102,7 @@ export default function AdminDashboard() {
 
     const [jobs, setJobs] = useState<Job[]>([]);
     const [applications, setApplications] = useState<Application[]>([]);
+    const [isJobModalOpen, setIsJobModalOpen] = useState(false);
 
     const [newJob, setNewJob] = useState({
         title: '',
@@ -181,6 +182,7 @@ export default function AdminDashboard() {
             experience: '',
             education: ''
         }); // Reset
+        setIsJobModalOpen(false); // Close Modal
         fetchJobs(); // Yenile
     };
 
@@ -345,64 +347,202 @@ export default function AdminDashboard() {
                     {activeTab === 'home' && <OverviewTab />}
                     {activeTab === 'applications' && <ApplicationsTab applications={applications} />}
                     {activeTab === 'jobs' && (
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                            <div className="md:col-span-2 space-y-4">
+                        <div>
+                            <div className="flex justify-end mb-6">
+                                <button
+                                    onClick={() => setIsJobModalOpen(true)}
+                                    className="bg-green-600 text-white px-6 py-2.5 rounded-lg font-bold hover:bg-green-700 shadow-lg shadow-green-200 flex items-center gap-2 transition-all hover:-translate-y-1"
+                                >
+                                    <span className="material-symbols-outlined">add_circle</span>
+                                    Yeni İlan Oluştur
+                                </button>
+                            </div>
+
+                            <div className="grid grid-cols-1 gap-4">
                                 {jobs.map(job => (
-                                    <div key={job.id} className={`bg-white p-6 rounded-xl border shadow-sm flex items-center justify-between ${job.isActive === false ? 'opacity-60 border-red-200' : 'border-gray-100'}`}>
-                                        <div>
-                                            <div className="flex items-center gap-2 mb-1">
-                                                <h3 className="font-bold text-lg text-gray-800">{job.title}</h3>
-                                                {job.isActive === false && <span className="bg-red-100 text-red-600 text-[10px] px-2 py-0.5 rounded font-bold">PASİF</span>}
+                                    <div key={job.id} className={`bg-white p-6 rounded-xl border shadow-sm flex items-center justify-between ${job.isActive === false ? 'opacity-60 border-red-200' : 'border-gray-100 hover:border-blue-200 transition-colors'}`}>
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-500 font-bold text-xl uppercase">
+                                                {job.title.charAt(0)}
                                             </div>
-                                            <p className="text-sm text-gray-500">{job.department} • {job.location}</p>
+                                            <div>
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <h3 className="font-bold text-lg text-gray-800">{job.title}</h3>
+                                                    {job.isActive === false && <span className="bg-red-100 text-red-600 text-[10px] px-2 py-0.5 rounded font-bold">PASİF</span>}
+                                                </div>
+                                                <p className="text-sm text-gray-500 flex items-center gap-3">
+                                                    <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[16px]">domain</span> {job.department}</span>
+                                                    <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
+                                                    <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[16px]">location_on</span> {job.location}</span>
+                                                </p>
+                                            </div>
                                         </div>
                                         <div className="flex items-center gap-2">
-                                            <button onClick={() => handleToggleJobStatus(job.id, job.isActive)} className="text-gray-400 hover:text-blue-600 p-2 rounded hover:bg-blue-50" title={job.isActive === false ? "Aktif Yap" : "Pasif Yap"}>
+                                            <button onClick={() => handleToggleJobStatus(job.id, job.isActive)} className="text-gray-400 hover:text-blue-600 p-2 rounded hover:bg-blue-50 transition-colors" title={job.isActive === false ? "Aktif Yap" : "Pasif Yap"}>
                                                 <span className="material-symbols-outlined">{job.isActive === false ? 'visibility_off' : 'visibility'}</span>
                                             </button>
-                                            <button onClick={() => handleDeleteJob(job.id)} className="text-red-400 hover:text-red-600 p-2 rounded hover:bg-red-50" title="Sil">
+                                            <button onClick={() => handleDeleteJob(job.id)} className="text-red-400 hover:text-red-600 p-2 rounded hover:bg-red-50 transition-colors" title="Sil">
                                                 <span className="material-symbols-outlined">delete</span>
                                             </button>
                                         </div>
                                     </div>
                                 ))}
-                                {jobs.length === 0 && <p className="text-gray-500 italic">Henüz ilan bulunmuyor.</p>}
+                                {jobs.length === 0 && (
+                                    <div className="text-center py-20 bg-white rounded-xl border border-dashed border-gray-300">
+                                        <span className="material-symbols-outlined text-4xl text-gray-400 mb-2">work_off</span>
+                                        <p className="text-gray-500 font-medium">Henüz aktif bir iş ilanı bulunmuyor.</p>
+                                    </div>
+                                )}
                             </div>
 
-                            <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm h-fit sticky top-24">
-                                <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
-                                    <span className="material-symbols-outlined text-green-600">add_circle</span>
-                                    Yeni İlan Ekle
-                                </h3>
-                                <form onSubmit={handleAddJob} className="space-y-4">
-                                    <div>
-                                        <label className="block text-xs font-bold text-gray-500 uppercase mb-1">İlan Başlığı</label>
-                                        <input name="title" required className="w-full border rounded-lg p-2.5 text-sm font-bold text-gray-800" placeholder="Örn: Satış Temsilcisi" />
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div>
-                                            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Departman</label>
-                                            <input name="department" required className="w-full border rounded-lg p-2.5 text-sm" placeholder="Örn: Pazarlama" />
+                            {/* Job Modal */}
+                            {isJobModalOpen && (
+                                <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+                                    <div className="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl animate-fadeIn">
+                                        <div className="sticky top-0 bg-white px-8 py-5 border-b border-gray-100 flex justify-between items-center z-10">
+                                            <h3 className="font-bold text-xl text-gray-800 flex items-center gap-2">
+                                                <span className="material-symbols-outlined text-green-600">add_circle</span>
+                                                Yeni İlan Ekle
+                                            </h3>
+                                            <button onClick={() => setIsJobModalOpen(false)} className="bg-gray-100 hover:bg-gray-200 text-gray-500 rounded-full p-2 transition-colors">
+                                                <span className="material-symbols-outlined">close</span>
+                                            </button>
                                         </div>
-                                        <div>
-                                            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Lokasyon</label>
-                                            <input name="location" required className="w-full border rounded-lg p-2.5 text-sm" placeholder="Örn: İstanbul" />
-                                        </div>
+
+                                        <form onSubmit={handleAddJob} className="p-8 space-y-6">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                <div className="md:col-span-2">
+                                                    <label className="block text-xs font-bold text-gray-500 uppercase mb-1">İlan Başlığı</label>
+                                                    <input
+                                                        required
+                                                        className="w-full border rounded-lg p-3 text-sm font-bold text-gray-800 focus:ring-2 focus:ring-green-100 outline-none"
+                                                        placeholder="Örn: Satış Temsilcisi"
+                                                        value={newJob.title}
+                                                        onChange={e => setNewJob({ ...newJob, title: e.target.value })}
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Departman</label>
+                                                    <input
+                                                        required
+                                                        className="w-full border rounded-lg p-3 text-sm focus:ring-2 focus:ring-green-100 outline-none"
+                                                        placeholder="Örn: Pazarlama"
+                                                        value={newJob.department}
+                                                        onChange={e => setNewJob({ ...newJob, department: e.target.value })}
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Lokasyon</label>
+                                                    <input
+                                                        required
+                                                        className="w-full border rounded-lg p-3 text-sm focus:ring-2 focus:ring-green-100 outline-none"
+                                                        placeholder="Örn: İstanbul"
+                                                        value={newJob.location}
+                                                        onChange={e => setNewJob({ ...newJob, location: e.target.value })}
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Çalışma Şekli</label>
+                                                    <select
+                                                        className="w-full border rounded-lg p-3 text-sm bg-white focus:ring-2 focus:ring-green-100 outline-none"
+                                                        value={newJob.type}
+                                                        onChange={e => setNewJob({ ...newJob, type: e.target.value })}
+                                                    >
+                                                        <option value="Tam Zamanlı">Tam Zamanlı</option>
+                                                        <option value="Yarı Zamanlı">Yarı Zamanlı</option>
+                                                        <option value="Uzaktan">Uzaktan</option>
+                                                        <option value="Staj">Staj</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div className="border-t border-gray-100 pt-6 space-y-6">
+                                                <div>
+                                                    <label className="block text-xs font-bold text-gray-500 uppercase mb-1">İş Tanımı</label>
+                                                    <textarea
+                                                        required
+                                                        rows={4}
+                                                        className="w-full border rounded-lg p-3 text-sm focus:ring-2 focus:ring-green-100 outline-none"
+                                                        placeholder="Pozisyon hakkında genel bilgilendirme..."
+                                                        value={newJob.description}
+                                                        onChange={e => setNewJob({ ...newJob, description: e.target.value })}
+                                                    />
+                                                </div>
+
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                    <div>
+                                                        <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Sorumluluklar</label>
+                                                        <textarea
+                                                            required
+                                                            rows={6}
+                                                            className="w-full border rounded-lg p-3 text-sm focus:ring-2 focus:ring-green-100 outline-none font-mono text-xs"
+                                                            placeholder="- Sorumluluk 1&#10;- Sorumluluk 2&#10;- Sorumluluk 3"
+                                                            value={newJob.responsibilities}
+                                                            onChange={e => setNewJob({ ...newJob, responsibilities: e.target.value })}
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Aranan Nitelikler</label>
+                                                        <textarea
+                                                            required
+                                                            rows={6}
+                                                            className="w-full border rounded-lg p-3 text-sm focus:ring-2 focus:ring-green-100 outline-none font-mono text-xs"
+                                                            placeholder="- Nitelik 1&#10;- Nitelik 2&#10;- Nitelik 3"
+                                                            value={newJob.qualifications}
+                                                            onChange={e => setNewJob({ ...newJob, qualifications: e.target.value })}
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                <div className="bg-blue-50 text-blue-800 p-4 rounded-lg text-sm flex items-start gap-2">
+                                                    <span className="material-symbols-outlined text-blue-600 mt-0.5">info</span>
+                                                    Gireceğiniz maddeler (sorumluluklar vb.), detay sayfasında otomatik olarak madde işaretli (bullet point) liste haline dönüşecek. Her maddeyi yeni bir satıra yazınız.
+                                                </div>
+                                            </div>
+
+                                            <div className="border-t border-gray-100 pt-6">
+                                                <h4 className="font-bold text-gray-700 mb-4">Aday Kriterleri (Opsiyonel)</h4>
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                    <div>
+                                                        <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Minimum Tecrübe</label>
+                                                        <input
+                                                            className="w-full border rounded-lg p-3 text-sm focus:ring-2 focus:ring-green-100 outline-none"
+                                                            placeholder="Örn: En az 2 yıl"
+                                                            value={newJob.experience}
+                                                            onChange={e => setNewJob({ ...newJob, experience: e.target.value })}
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Eğitim Seviyesi</label>
+                                                        <input
+                                                            className="w-full border rounded-lg p-3 text-sm focus:ring-2 focus:ring-green-100 outline-none"
+                                                            placeholder="Örn: Lisans Mezunu"
+                                                            value={newJob.education}
+                                                            onChange={e => setNewJob({ ...newJob, education: e.target.value })}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex justify-end gap-4 pt-4 border-t border-gray-100">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setIsJobModalOpen(false)}
+                                                    className="px-6 py-3 text-gray-500 font-bold hover:bg-gray-100 rounded-lg transition-colors"
+                                                >
+                                                    İptal
+                                                </button>
+                                                <button
+                                                    type="submit"
+                                                    className="px-8 py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 shadow-lg shadow-green-200 transition-all hover:-translate-y-1"
+                                                >
+                                                    İlanı Yayınla
+                                                </button>
+                                            </div>
+                                        </form>
                                     </div>
-                                    <div>
-                                        <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Çalışma Şekli</label>
-                                        <select name="type" className="w-full border rounded-lg p-2.5 text-sm bg-white">
-                                            <option value="Tam Zamanlı">Tam Zamanlı</option>
-                                            <option value="Yarı Zamanlı">Yarı Zamanlı</option>
-                                            <option value="Uzaktan">Uzaktan</option>
-                                            <option value="Staj">Staj</option>
-                                        </select>
-                                    </div>
-                                    <button type="submit" className="w-full bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 transition-all shadow-lg shadow-green-200">
-                                        İlan Oluştur
-                                    </button>
-                                </form>
-                            </div>
+                                </div>
+                            )}
                         </div>
                     )}
                     {activeTab === 'news' && <NewsTab />}
@@ -1397,6 +1537,7 @@ function SocialTab() {
 function CultureTab() {
     const [data, setData] = useState<any>(null);
     const [loading, setLoading] = useState(false);
+    const [galleryUrl, setGalleryUrl] = useState('');
 
     useEffect(() => {
         fetch(`${API_BASE_URL}/api/culture`)
@@ -1536,17 +1677,54 @@ function CultureTab() {
             {/* GALLERY */}
             <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
                 <h4 className="font-bold border-l-4 border-green-500 pl-3">Galeri</h4>
-                <div className="flex gap-4 items-center">
-                    <input type="file" onChange={e => handleFileUpload(e, 'gallery')} />
-                    <span className="text-xs text-gray-500">Yeni fotoğraf ekleyin (Önerilen: 800x800px)</span>
+                <div className="bg-blue-50 p-4 rounded-lg flex items-start gap-3 text-blue-800 text-sm">
+                    <span className="material-symbols-outlined text-blue-600 mt-0.5">info</span>
+                    <div>
+                        <span className="font-bold block mb-1">Bilgi:</span>
+                        Buraya eklediğiniz görseller, <strong>Kültür & Yaşam</strong> sayfasındaki <strong>"Ofisten Kareler"</strong> bölümünde sergilenir.
+                    </div>
                 </div>
+
+                <div className="flex flex-col md:flex-row gap-4 items-end bg-gray-50 p-4 rounded-xl border border-dashed border-gray-300">
+                    <div className="flex-1 w-full">
+                        <label className="block text-xs font-bold text-gray-500 mb-1">URL (Link) ile Ekle</label>
+                        <div className="flex gap-2">
+                            <input
+                                className="flex-1 border rounded-lg p-2 text-sm"
+                                placeholder="https://..."
+                                value={galleryUrl}
+                                onChange={e => setGalleryUrl(e.target.value)}
+                            />
+                            <button
+                                onClick={() => {
+                                    if (!galleryUrl) return;
+                                    setData({ ...data, gallery: [...(data.gallery || []), galleryUrl] });
+                                    setGalleryUrl('');
+                                }}
+                                className="bg-green-600 text-white px-4 rounded-lg font-bold hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                                disabled={!galleryUrl}
+                            >
+                                Ekle
+                            </button>
+                        </div>
+                    </div>
+                    <div className="flex items-center justify-center p-2 text-gray-400 font-bold text-xs uppercase self-center">VEYA</div>
+                    <div className="flex-1 w-full">
+                        <label className="block text-xs font-bold text-gray-500 mb-1">Dosya Yükle</label>
+                        <input type="file" className="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 bg-white border border-gray-200 rounded-full"
+                            onChange={e => handleFileUpload(e, 'gallery')}
+                        />
+                    </div>
+                </div>
+
                 <div className="grid grid-cols-4 md:grid-cols-6 gap-4">
                     {data.gallery?.map((img: string, i: number) => (
                         <div key={i} className="relative group aspect-square bg-gray-100 rounded overflow-hidden">
-                            <img src={`${API_BASE_URL}/uploads/${img}`} className="w-full h-full object-cover" />
-                            <button onClick={() => { const n = [...data.gallery]; n.splice(i, 1); setData({ ...data, gallery: n }) }} className="absolute top-1 right-1 bg-white/80 p-1 rounded-full text-red-500 hover:bg-white"><span className="material-symbols-outlined text-sm">close</span></button>
+                            <img src={img.startsWith('http') ? img : `${API_BASE_URL}/uploads/${img}`} className="w-full h-full object-cover" />
+                            <button onClick={() => { const n = [...data.gallery]; n.splice(i, 1); setData({ ...data, gallery: n }) }} className="absolute top-1 right-1 bg-white/80 p-1 rounded-full text-red-500 hover:bg-white shadow-sm hover:scale-110 transition-all"><span className="material-symbols-outlined text-sm">close</span></button>
                         </div>
                     ))}
+                    {(!data.gallery || data.gallery.length === 0) && <p className="col-span-4 text-gray-500 italic text-sm text-center py-4">Henüz görsel eklenmemiş.</p>}
                 </div>
             </div>
 
@@ -1556,6 +1734,16 @@ function CultureTab() {
                     <h4 className="font-bold border-l-4 border-orange-500 pl-3">Ayrıcalıklar</h4>
                     <button onClick={() => setData({ ...data, perks: [...(data.perks || []), { title: '', icon: 'star' }] })} className="text-sm bg-orange-50 text-orange-600 px-3 py-1 rounded font-bold">+ Ekle</button>
                 </div>
+
+                <div className="p-4 bg-orange-50/50 rounded-xl border border-orange-100">
+                    <ImageInput
+                        label="Ayrıcalıklar Yan Görseli"
+                        recommendedSize="Dikey / Portrait"
+                        value={data.perksImage || ''}
+                        onChange={val => setData({ ...data, perksImage: val })}
+                    />
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {data.perks?.map((p: any, i: number) => (
                         <div key={i} className="border p-4 rounded-lg relative bg-gray-50 flex items-center gap-4">
