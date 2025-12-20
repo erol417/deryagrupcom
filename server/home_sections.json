@@ -1,0 +1,49 @@
+{
+    "achievements": [
+        {
+            "year": "2023",
+            "title": "Yılın En İyi Otomotiv Bayisi",
+            "description": "Müşteri memnuniyeti ve satış performansı kategorisinde bölge birinciliği ödülü.",
+            "icon": "trophy"
+        },
+        {
+            "year": "2022",
+            "title": "Güvenilir İnşaat Markası",
+            "description": "Kalite standartları ve proje teslim sürelerindeki başarı ile sektör ödülü.",
+            "icon": "verified"
+        },
+        {
+            "year": "2021",
+            "title": "Kurumsal Sorumluluk Ödülü",
+            "description": "Eğitime destek ve çevre projeleri kapsamında verilen onur ödülü.",
+            "icon": "workspace_premium"
+        }
+    ],
+    "visionMission": {
+        "vision": {
+            "title": "Vizyonumuz",
+            "items": [
+                {
+                    "title": "Yenilikçilik",
+                    "text": "Sektördeki en yeni teknolojileri takip ederek sürekli gelişim sağlıyoruz.",
+                    "icon": "lightbulb"
+                },
+                {
+                    "title": "Sürdürülebilirlik",
+                    "text": "Gelecek nesillere yaşanabilir bir dünya bırakmak için çevre dostu çözümler.",
+                    "icon": "eco"
+                },
+                {
+                    "title": "Müşteri Odaklılık",
+                    "text": "Müşteri memnuniyetini işimizin merkezine koyarak güven inşa ediyoruz.",
+                    "icon": "diversity_3"
+                }
+            ]
+        },
+        "mission": {
+            "title": "Misyonumuz",
+            "text": "\"Topluma ve çevreye duyarlı, güvenilir ve kaliteli hizmet anlayışıyla sektörde fark yaratarak, ülkemizin ekonomik kalkınmasına değer katmak.\"",
+            "author": "Derya Grup Yönetim Kurulu"
+        }
+    }
+}

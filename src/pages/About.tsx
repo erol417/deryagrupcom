@@ -15,31 +15,32 @@ const getEmbedUrl = (url: string) => {
 }
 
 export default function About() {
-  const [history, setHistory] = useState<any[]>([]);
+  const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [videoUrl, setVideoUrl] = useState('');
 
   useEffect(() => {
     fetch(`${API_BASE_URL}/api/about`)
       .then(res => res.json())
-      .then(data => {
-        if (data.history) setHistory(data.history);
-        if (data.videoUrl) setVideoUrl(data.videoUrl);
-      })
+      .then(d => setData(d))
       .catch(err => console.error(err))
       .finally(() => setLoading(false));
   }, []);
 
+  const history = data?.history?.sort((a: any, b: any) => parseInt(a.year) - parseInt(b.year)) || [];
+
   return (
     <>
-      {/* 1. Header Section */}
+      {/* 1. Header Section (Hero) */}
       <section className="relative h-[400px] flex items-center justify-center text-center text-white bg-gray-900">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2670&auto=format&fit=crop')] bg-cover bg-center opacity-40"></div>
-        <div className="relative z-10 px-4">
-          <h1 className="text-5xl md:text-6xl font-bold mb-4">Hakkımızda</h1>
-          <p className="text-xl md:text-2xl text-gray-200 font-light max-w-3xl mx-auto">
-            1995'ten beri güven, kalite ve yenilikçi çözümlerle sektörde fark yaratıyoruz.
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-40 transition-all duration-1000"
+          style={{ backgroundImage: `url('${data?.hero?.image ? (data.hero.image.startsWith('http') ? data.hero.image : `${API_BASE_URL}/uploads/${data.hero.image}`) : 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2670&auto=format&fit=crop'}')` }}
+        ></div>
+        <div className="relative z-10 px-4 animate-fade-in-up">
+          <h1 className="text-5xl md:text-6xl font-bold mb-4 drop-shadow-lg">{data?.hero?.title || 'Hakkımızda'}</h1>
+          <p className="text-xl md:text-2xl text-gray-200 font-light max-w-3xl mx-auto drop-shadow-md">
+            {data?.hero?.subtitle || "1995'ten beri güven, kalite ve yenilikçi çözümlerle sektörde fark yaratıyoruz."}
           </p>
         </div>
       </section>
@@ -50,30 +51,39 @@ export default function About() {
           <div className="flex flex-col lg:flex-row gap-16 items-center">
             <div className="w-full lg:w-1/2">
               <h2 className="text-3xl md:text-4xl font-bold text-secondary dark:text-white mb-2">
-                Derya Grup Kimdir?
+                {data?.whoWeAre?.title || 'Derya Grup Kimdir?'}
               </h2>
               <div className="h-1 w-20 bg-primary mb-6"></div>
 
-              <h3 className="text-xl font-bold text-primary mb-4">Köklü Geçmiş, Güçlü Gelecek</h3>
-
-              <div className="text-gray-600 dark:text-gray-300 space-y-4 leading-relaxed mb-8">
-                <p>
-                  1979 yılından bu yana inşaat, otomotiv ve sigorta gibi farklı sektörde öncü adımlar atan Derya Grup, kalite standartlarını sürekli yükselterek müşterilerine en iyi hizmeti sunmayı amaçlamaktadır.
-                </p>
-                <p>
-                  Modern vizyonumuz ve uzman kadromuzla, sadece bugünü değil geleceği de inşa ediyoruz. Sürdürülebilirlik ilkelerine bağlı kalarak, topluma ve çevreye değer katan projeler geliştiriyoruz. Şeffaflık ve dürüstlük, ticari ilişkilerimizin temelini oluşturmaktadır.
-                </p>
+              <div className="text-gray-600 dark:text-gray-300 space-y-4 leading-relaxed mb-8 whitespace-pre-line text-lg">
+                {data?.whoWeAre?.content ? data.whoWeAre.content : (
+                  <>
+                    <p>1979 yılından bu yana inşaat, otomotiv ve sigorta gibi farklı sektörde öncü adımlar atan Derya Grup, kalite standartlarını sürekli yükselterek müşterilerine en iyi hizmeti sunmayı amaçlamaktadır.</p>
+                    <p>Modern vizyonumuz ve uzman kadromuzla, sadece bugünü değil geleceği de inşa ediyoruz.</p>
+                  </>
+                )}
               </div>
 
-              <div className="flex gap-6">
-                <div className="bg-gray-50 dark:bg-white/5 p-6 rounded-xl border border-gray-100 dark:border-white/10 min-w-[160px]">
-                  <span className="block text-3xl font-bold text-secondary dark:text-white mb-1">47+</span>
-                  <span className="text-sm text-gray-500">Yıllık Tecrübe</span>
-                </div>
-                <div className="bg-gray-50 dark:bg-white/5 p-6 rounded-xl border border-gray-100 dark:border-white/10 min-w-[160px]">
-                  <span className="block text-3xl font-bold text-secondary dark:text-white mb-1">100.000+</span>
-                  <span className="text-sm text-gray-500">Hizmet Verilmiş Müşteri </span>
-                </div>
+              <div className="flex flex-wrap gap-6">
+                {data?.stats && data.stats.length > 0 ? (
+                  data.stats.map((stat: any, i: number) => (
+                    <div key={i} className="bg-gray-50 dark:bg-white/5 p-6 rounded-xl border border-gray-100 dark:border-white/10 min-w-[160px] flex-1">
+                      <span className="block text-3xl font-bold text-secondary dark:text-white mb-1">{stat.value}</span>
+                      <span className="text-sm text-gray-500">{stat.label}</span>
+                    </div>
+                  ))
+                ) : (
+                  <>
+                    <div className="bg-gray-50 dark:bg-white/5 p-6 rounded-xl border border-gray-100 dark:border-white/10 min-w-[160px]">
+                      <span className="block text-3xl font-bold text-secondary dark:text-white mb-1">47+</span>
+                      <span className="text-sm text-gray-500">Yıllık Tecrübe</span>
+                    </div>
+                    <div className="bg-gray-50 dark:bg-white/5 p-6 rounded-xl border border-gray-100 dark:border-white/10 min-w-[160px]">
+                      <span className="block text-3xl font-bold text-secondary dark:text-white mb-1">100.000+</span>
+                      <span className="text-sm text-gray-500">Hizmet Verilmiş Müşteri</span>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
             <div className="w-full lg:w-1/2 relative">
@@ -85,7 +95,7 @@ export default function About() {
               <div className="relative aspect-video rounded-2xl shadow-2xl overflow-hidden border-4 border-white dark:border-white/10 group bg-black">
                 <iframe
                   className="w-full h-full"
-                  src={getEmbedUrl(videoUrl) || "https://www.youtube.com/embed/ZVaR0TnPf1Q?si=xHJ_OvNF6qC7FFpR&rel=0"}
+                  src={getEmbedUrl(data?.videoUrl) || "https://www.youtube.com/embed/ZVaR0TnPf1Q?si=xHJ_OvNF6qC7FFpR&rel=0"}
                   title="Derya Grup Tanıtım Filmi"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen
@@ -102,47 +112,39 @@ export default function About() {
           <h2 className="text-3xl font-bold text-secondary dark:text-white mb-4">Değerlerimiz</h2>
           <p className="text-gray-500 mb-16 max-w-2xl mx-auto">Bizi biz yapan, her projede rehber edindiğimiz temel prensiplerimiz.</p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {/* Card 1 */}
-            <div className="bg-white dark:bg-white/5 p-8 rounded-xl shadow-sm hover:shadow-lg transition-all text-left group">
-              <div className="size-12 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-primary flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-colors">
-                <span className="material-symbols-outlined">verified_user</span>
-              </div>
-              <h3 className="text-xl font-bold text-secondary dark:text-white mb-3">Güven</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                İş ortaklarımız ve müşterilerimize sunduğumuz hizmette dürüstlük ve şeffaflık esastır.
-              </p>
-            </div>
-            {/* Card 2 */}
-            <div className="bg-white dark:bg-white/5 p-8 rounded-xl shadow-sm hover:shadow-lg transition-all text-left group">
-              <div className="size-12 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-primary flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-colors">
-                <span className="material-symbols-outlined">lightbulb</span>
-              </div>
-              <h3 className="text-xl font-bold text-secondary dark:text-white mb-3">İnovasyon</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                En yeni teknolojileri takip ederek, süreçlerimizi ve hizmet kalitemizi sürekli geliştiriyoruz.
-              </p>
-            </div>
-            {/* Card 3 */}
-            <div className="bg-white dark:bg-white/5 p-8 rounded-xl shadow-sm hover:shadow-lg transition-all text-left group">
-              <div className="size-12 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-primary flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-colors">
-                <span className="material-symbols-outlined">diversity_3</span>
-              </div>
-              <h3 className="text-xl font-bold text-secondary dark:text-white mb-3">Müşteri Odaklılık</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                Müşterilerimizin ihtiyaçlarını doğru anlayıp, onlara en uygun ve etkili çözümleri sunarız.
-              </p>
-            </div>
-            {/* Card 4 */}
-            <div className="bg-white dark:bg-white/5 p-8 rounded-xl shadow-sm hover:shadow-lg transition-all text-left group">
-              <div className="size-12 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-primary flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-colors">
-                <span className="material-symbols-outlined">eco</span>
-              </div>
-              <h3 className="text-xl font-bold text-secondary dark:text-white mb-3">Sürdürülebilirlik</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                Çevreye duyarlı projeler geliştirerek, gelecek nesillere yaşanabilir bir dünya bırakmayı hedefliyoruz.
-              </p>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {data?.values && data.values.length > 0 ? (
+              data.values.map((val: any, i: number) => (
+                <div key={i} className="bg-white dark:bg-white/5 p-8 rounded-xl shadow-sm hover:shadow-lg transition-all text-left group">
+                  <div className="size-12 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-primary flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-colors">
+                    <span className="material-symbols-outlined">{val.icon || 'star'}</span>
+                  </div>
+                  <h3 className="text-xl font-bold text-secondary dark:text-white mb-3">{val.title}</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                    {val.desc}
+                  </p>
+                </div>
+              ))
+            ) : (
+              // Fallback Defaults if no values set
+              <>
+                <div className="bg-white dark:bg-white/5 p-8 rounded-xl shadow-sm hover:shadow-lg transition-all text-left group">
+                  <div className="size-12 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-primary flex items-center justify-center mb-6"><span className="material-symbols-outlined">verified_user</span></div>
+                  <h3 className="text-xl font-bold text-secondary dark:text-white mb-3">Güven</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">İş ortaklarımız ve müşterilerimize sunduğumuz hizmette dürüstlük ve şeffaflık esastır.</p>
+                </div>
+                <div className="bg-white dark:bg-white/5 p-8 rounded-xl shadow-sm hover:shadow-lg transition-all text-left group">
+                  <div className="size-12 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-primary flex items-center justify-center mb-6"><span className="material-symbols-outlined">lightbulb</span></div>
+                  <h3 className="text-xl font-bold text-secondary dark:text-white mb-3">İnovasyon</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">En yeni teknolojileri takip ederek, süreçlerimizi ve hizmet kalitemizi sürekli geliştiriyoruz.</p>
+                </div>
+                <div className="bg-white dark:bg-white/5 p-8 rounded-xl shadow-sm hover:shadow-lg transition-all text-left group">
+                  <div className="size-12 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-primary flex items-center justify-center mb-6"><span className="material-symbols-outlined">eco</span></div>
+                  <h3 className="text-xl font-bold text-secondary dark:text-white mb-3">Sürdürülebilirlik</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Çevreye duyarlı projeler geliştirerek, gelecek nesillere yaşanabilir bir dünya bırakmayı hedefliyoruz.</p>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </section>
@@ -159,15 +161,15 @@ export default function About() {
             </div>
           ) : history.length === 0 ? (
             <div className="text-center py-20 bg-gray-50 dark:bg-white/5 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700">
-              <span className="material-symbols-outlined text-5xl text-gray-300 dark:text-gray-600 mb-4 block mx-auto">sentiment_very_satisfied</span>
-              <p className="text-lg font-medium text-gray-500 dark:text-gray-400 italic">"Tarihçe kaydımız çooook uzun zaman oldu herşey başlayalı..." 😉</p>
+              <span className="material-symbols-outlined text-5xl text-gray-300 dark:text-gray-600 mb-4 block mx-auto">history_edu</span>
+              <p className="text-lg font-medium text-gray-500 dark:text-gray-400 italic">"Henüz tarihçe eklenmemiş."</p>
             </div>
           ) : (
             <div className="flex flex-col gap-12 select-none">
 
               {/* Timeline Navigation */}
               <div className="flex items-center gap-3 overflow-x-auto pb-6 no-scrollbar snap-x justify-start md:justify-center px-4">
-                {history.map((item, index) => (
+                {history.map((item: any, index: number) => (
                   <button
                     key={item.id}
                     onClick={() => setActiveIndex(index)}
@@ -192,11 +194,11 @@ export default function About() {
                   <div className="absolute inset-0 bg-secondary/5 transform rotate-2 rounded-2xl -z-20 transition-transform group-hover:rotate-0 duration-500 hidden lg:block"></div>
                   <img
                     key={history[activeIndex].id}
-                    src={history[activeIndex].image && (history[activeIndex].image.startsWith('http') || history[activeIndex].image.startsWith('blob:'))
-                      ? history[activeIndex].image
-                      : history[activeIndex].image
-                        ? `${API_BASE_URL}/uploads/${history[activeIndex].image}`
-                        : `https://placehold.co/800x600/e2e8f0/475569?text=${history[activeIndex].year}`
+                    src={history[activeIndex].image
+                      ? (history[activeIndex].image.startsWith('http') || history[activeIndex].image.startsWith('blob:')
+                        ? history[activeIndex].image
+                        : `${API_BASE_URL}/uploads/${history[activeIndex].image}`)
+                      : `https://placehold.co/800x600/e2e8f0/475569?text=${history[activeIndex].year}`
                     }
                     alt={history[activeIndex].title}
                     className="w-full max-w-lg lg:max-w-full h-[300px] sm:h-[400px] object-cover rounded-2xl shadow-xl animate-fade-in transition-all"
@@ -214,7 +216,7 @@ export default function About() {
                     </h3>
                   </div>
                   <div className="h-1.5 w-24 bg-primary rounded-full mx-auto lg:mx-0"></div>
-                  <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
+                  <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-line">
                     {history[activeIndex].description}
                   </p>
 
@@ -262,13 +264,13 @@ export default function About() {
             <div className="w-full lg:w-5/12 relative">
               <div className="relative rounded-lg overflow-hidden shadow-2xl">
                 <img
-                  src="/images/huseyin_kis.png"
-                  alt="Hüseyin Kış"
+                  src={data?.chairman?.image ? `${API_BASE_URL}/uploads/${data.chairman.image}` : "/images/huseyin_kis.png"}
+                  alt={data?.chairman?.name || "Hüseyin Kış"}
                   className="w-full h-auto object-cover aspect-[4/5]"
                 />
                 <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/90 via-black/50 to-transparent p-8">
-                  <h3 className="text-2xl font-bold text-white">Hüseyin Kış</h3>
-                  <p className="text-primary font-medium">Yönetim Kurulu Başkanı</p>
+                  <h3 className="text-2xl font-bold text-white">{data?.chairman?.name || "Hüseyin Kış"}</h3>
+                  <p className="text-primary font-medium">{data?.chairman?.title || "Yönetim Kurulu Başkanı"}</p>
                 </div>
               </div>
               {/* Decorative border matching design */}
@@ -279,24 +281,15 @@ export default function About() {
               <h2 className="text-3xl font-bold text-secondary dark:text-white mb-8">Yönetim Kurulu Başkanının Mesajı</h2>
               <span className="material-symbols-outlined text-6xl text-gray-200 mb-6 block">format_quote</span>
 
-              <div className="space-y-6 text-gray-600 dark:text-gray-300 leading-relaxed text-lg">
-                <p className="font-medium text-secondary dark:text-white">
-                  Değerli İş Ortaklarımız ve Çalışanlarımız,
-                </p>
-                <p>
-                  Derya Grup olarak çıktığımız bu yolda, her zaman daha iyisini hedefleyerek, sadece binalar değil, güven ve sürdürülebilir yaşam alanları inşa ettik. Bizim için başarı, yalnızca finansal rakamlardan ibaret değil; dokunduğumuz hayatlara kattığımız değerdir.
-                </p>
-                <p>
-                  Değişen dünya dinamiklerine uyum sağlarken, köklerimizden aldığımız güçle geleceği şekillendiriyoruz. Yenilikçi bakış açımız ve dürüst ticaret ilkemizle, sektörde standartları belirleyen bir marka olmaya devam edeceğiz. Hedefimiz, sadece Türkiye'de değil, global ölçekte de iz bırakan projelere imza atmaktır.
-                </p>
-                <p>
-                  Bize duydugünüz güven için teşekkür eder, birlikte nice başarılara imza atmayı dilerim.
-                </p>
+              <div className="space-y-6 text-gray-600 dark:text-gray-300 leading-relaxed text-lg whitespace-pre-line">
+                {data?.chairman?.message ? data.chairman.message : (
+                  <p>Değerli İş Ortaklarımız ve Çalışanlarımız...</p>
+                )}
               </div>
 
               <div className="mt-8 opacity-70">
                 {/* Placeholder for Signature */}
-                <span className="font-handwriting text-4xl text-secondary dark:text-white">Hüseyin Kış</span>
+                <span className="font-handwriting text-4xl text-secondary dark:text-white">{data?.chairman?.name || "Hüseyin Kış"}</span>
               </div>
             </div>
           </div>

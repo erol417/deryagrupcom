@@ -1,6 +1,16 @@
+import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
+import { API_BASE_URL } from "../config"
 
 export default function Footer() {
+  const [contactInfo, setContactInfo] = useState<any>(null);
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/contact-info`)
+      .then(res => res.json())
+      .then(data => setContactInfo(data))
+      .catch(console.error);
+  }, []);
   return (
     <footer className="bg-background-dark text-white pt-20 pb-10 border-t border-white/5 bg-[#23220f]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -42,15 +52,15 @@ export default function Footer() {
             <ul className="space-y-4">
               <li className="flex items-start gap-3 text-gray-400 text-sm">
                 <span className="material-symbols-outlined text-primary text-lg mt-0.5">location_on</span>
-                <span>Zümrütevler Mah. Çilek Sokak no 33 <br />Maltepe, İstanbul</span>
+                <span className="whitespace-pre-wrap">{contactInfo?.address || 'Yükleniyor...'}</span>
               </li>
               <li className="flex items-center gap-3 text-gray-400 text-sm">
                 <span className="material-symbols-outlined text-primary text-lg">call</span>
-                <span>+90 216 706 01 90</span>
+                <span>{contactInfo?.phone || '...'}</span>
               </li>
               <li className="flex items-center gap-3 text-gray-400 text-sm">
                 <span className="material-symbols-outlined text-primary text-lg">mail</span>
-                <span>info@deryagrup.com</span>
+                <span>{contactInfo?.email || '...'}</span>
               </li>
             </ul>
           </div>

@@ -1,11 +1,19 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { API_BASE_URL, RECAPTCHA_SITE_KEY } from '../config';
 
 export default function Contact() {
   const [formData, setFormData] = useState({ name: '', surname: '', email: '', message: '' });
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [contactInfo, setContactInfo] = useState<any>(null);
   const recaptchaRef = useRef<ReCAPTCHA>(null);
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/contact-info`)
+      .then(res => res.json())
+      .then(data => setContactInfo(data))
+      .catch(console.error);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,7 +68,7 @@ export default function Contact() {
                     </div>
                     <div>
                       <h3 className="font-bold text-secondary dark:text-white text-lg">Merkez Ofis</h3>
-                      <p className="text-gray-600 dark:text-gray-400">Maslak Mah. Büyükdere Cad. No:123<br />Sarıyer, İstanbul</p>
+                      <p className="text-gray-600 dark:text-gray-400 whitespace-pre-wrap">{contactInfo?.address || 'Yükleniyor...'}</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-4">
@@ -69,8 +77,9 @@ export default function Contact() {
                     </div>
                     <div>
                       <h3 className="font-bold text-secondary dark:text-white text-lg">Telefon</h3>
-                      <p className="text-gray-600 dark:text-gray-400">+90 212 123 45 67</p>
-                      <p className="text-gray-400 text-sm">Hafta içi 09:00 - 18:00</p>
+                      <p className="text-gray-600 dark:text-gray-400">{contactInfo?.phone || '...'}</p>
+                      <p className="text-gray-400 text-sm">{contactInfo?.workingHoursWeekdays || 'Hafta içi: 09:00 - 18:00'}</p>
+                      {contactInfo?.workingHoursWeekend && <p className="text-gray-400 text-sm">{contactInfo?.workingHoursWeekend}</p>}
                     </div>
                   </div>
                   <div className="flex items-start gap-4">
@@ -79,7 +88,7 @@ export default function Contact() {
                     </div>
                     <div>
                       <h3 className="font-bold text-secondary dark:text-white text-lg">E-posta</h3>
-                      <p className="text-gray-600 dark:text-gray-400">info@deryagrup.com</p>
+                      <p className="text-gray-600 dark:text-gray-400">{contactInfo?.email || '...'}</p>
                     </div>
                   </div>
                 </div>
@@ -87,7 +96,7 @@ export default function Contact() {
 
               <div className="h-80 bg-gray-200 rounded-2xl overflow-hidden relative shadow-lg">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3005.626884666076!2d29.0145263!3d41.1039804!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14cab5d2a6a68297%3A0x7d6b3846666b6c6!2sMaslak%2C%20B%C3%BCy%C3%BCkdere%20Cd.%2C%20Sar%C4%B1yer%2F%C4%B0stanbul!5e0!3m2!1str!2str!4v1702812345678!5m2!1str!2str"
+                  src={contactInfo?.mapUrl || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1!2d29.0!3d41.0!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTPCsDA2JzEzLjQiTiAyOcKwMDAnNTIuMyJF!5e0!3m2!1str!2str!4v1634567890123!5m2!1str!2str"}
                   width="100%"
                   height="100%"
                   style={{ border: 0 }}

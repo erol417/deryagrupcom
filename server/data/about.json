@@ -1,5 +1,21 @@
 {
+  "hero": {
+    "title": "Hakkımızda",
+    "subtitle": "1979'dan beri güven, kalite ve yenilikçi çözümlerle sektörlerde fark yaratıyoruz.",
+    "image": ""
+  },
+  "whoWeAre": {
+    "title": "Derya Grup Kimdir?",
+    "content": "1979 yılından bu yana inşaat, otomotiv, parekendecilikte ve sigorta gibi farklı sektörde öncü adımlar atan Derya Grup, kalite standartlarını sürekli yükselterek müşterilerine en iyi hizmeti sunmayı amaçlamaktadır.\n\nModern vizyonumuz ve uzman kadromuzla, sadece bugünü değil geleceği de inşa ediyoruz."
+  },
   "videoUrl": "https://www.youtube.com/watch?v=ZVaR0TnPf1Q",
+  "values": [],
+  "chairman": {
+    "name": "Hüseyin KIS",
+    "title": "Yönetim Kurulu Başkanı",
+    "message": "Derya Grup’un Değerli Müşterileri, Çok Kıymetli Dostlarımız ve Çalışanlarımız; Derya Grup olarak 1979 yılından bugüne, İnşaat, otomotiv, sigorta, beyaz eşya, bilişim, elektronik, gıda, mermer, tarım ve yapı sektörlerinde faaliyet gösterirken “Hizmette üretimde kalite” prensibimiz bize başarı ve sürekliliği getirdi. \n\nHer zaman sürekli kalite hedefimiz, müşteri geleceğimizdir dedik ve bu yörüngeden ayrılmadan, hedeflerimizi daha yukarı çıkartarak yolumuza devam edecek ve odaklandığımız sektörlerde en sağlam, güvenilir,dinamik ve kârlı olma kararlılığımızı devam ettireceğiz. \n\nŞirketimizin gelişiminde, Mersin’imizin ve ülkemizin büyümesi ve refahı her zaman ön planda olmuştur. Yeni yatırımlarımızı bu prensiblerimiz doğrultusunda planlıyoruz. Sürdürülebilir büyüme stratejilerimiz çerçevesinde ülkemize yatırım yapmaya devam edeceğiz.Bilgi ve tecrübe el ele verince üstesinden gelinmeyecek iş yoktur; gençlerimizin yaratıcı dinamizmleri ve tecrübeli mentorlarının yol göstericiliği ile emin adımlarla rotamızda ilerleyeceğiz. Her zaman söylediğim gibi sürekli kalite hedefimiz, müşteri geleceğimizdir. \n\nHepinize saygı, selam ve sevgilerimi sunarım.",
+    "image": "1766189970901-855286057-hkis_resmi.jpeg"
+  },
   "history": [
     {
       "id": 1766095169973,

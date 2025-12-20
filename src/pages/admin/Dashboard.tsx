@@ -97,7 +97,7 @@ export default function AdminDashboard() {
 
 
     const navigate = useNavigate();
-    const [activeTab, setActiveTab] = useState<'applications' | 'jobs' | 'news' | 'social' | 'culture' | 'hero' | 'about' | 'legal'>('applications');
+    const [activeTab, setActiveTab] = useState<'home' | 'applications' | 'jobs' | 'news' | 'social' | 'culture' | 'hero' | 'about' | 'legal' | 'contact_settings' | 'home_content' | 'users'>('home');
     const [currentUser, setCurrentUser] = useState<any>(null);
 
     const [jobs, setJobs] = useState<Job[]>([]);
@@ -208,202 +208,217 @@ export default function AdminDashboard() {
     };
 
     const handleLogout = () => {
-        localStorage.removeItem('adminUser');
-        navigate('/admin/login');
+        localStorage.removeItem('user');
+        navigate('/login');
     };
 
+    const menuGroups = [
+        {
+            title: "Genel Bakış",
+            items: [
+                { id: "home", label: "Ana Sayfa", icon: "dashboard" }
+            ]
+        },
+        {
+            title: "İnsan Kaynakları",
+            items: [
+                { id: "applications", label: "Başvuru Havuzu", icon: "folder_shared" },
+                { id: "jobs", label: "İlan Yönetimi", icon: "work" },
+                { id: "culture", label: "Kültür & Yaşam", icon: "diversity_3" }
+            ]
+        },
+        {
+            title: "Ana Sayfa",
+            items: [
+                { id: "hero", label: "Manşet (Hero) Yönetimi", icon: "view_carousel" },
+                { id: "home_content", label: "İçerik (Vizyon/Başarı)", icon: "edit_document" }
+            ]
+        },
+        {
+            title: "Kurumsal",
+            items: [
+                { id: "about", label: "Hakkımızda Sayfası", icon: "business" },
+            ]
+        },
+        {
+            title: "Medya & Haberler",
+            items: [
+                { id: "news", label: "Haber Yönetimi", icon: "newspaper" },
+                { id: "social", label: "Sosyal Medya", icon: "share" },
+            ]
+        },
+        {
+            title: "Site Ayarları",
+            items: [
+                { id: "contact_settings", label: "İletişim Ayarları", icon: "contact_phone" },
+                { id: "legal", label: "Yasal Metinler", icon: "gavel" },
+            ]
+        },
+    ];
+
+    if (currentUser?.role === 'super' || currentUser?.role === 'superadmin') {
+        menuGroups.push({
+            title: "Genel Ayarlar",
+            items: [
+                { id: "users", label: "Kullanıcı Yönetimi", icon: "manage_accounts" },
+            ]
+        });
+    }
+
     return (
-        <div className="min-h-screen bg-gray-50 font-sans">
-            {/* Navbar */}
-            <nav className="bg-white px-6 py-4 shadow-sm flex items-center justify-between sticky top-0 z-10">
-                <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-2">
-                        <span className="material-symbols-outlined text-blue-600 text-3xl">admin_panel_settings</span>
-                        <span className="font-bold text-lg text-gray-800">İK Yönetim Paneli</span>
+        <div className="min-h-screen bg-gray-50 flex font-sans text-gray-800">
+            {/* SIDEBAR */}
+            <aside className="w-72 bg-[#0f172a] text-gray-300 flex flex-col fixed h-full overflow-y-auto border-r border-[#1e293b] z-50">
+                <div className="p-6 flex items-center gap-3 border-b border-white/10">
+                    <div className="size-10 bg-primary rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-primary/20">D</div>
+                    <div>
+                        <h1 className="text-white font-bold text-lg tracking-wide">YÖNETİM</h1>
+                        <p className="text-xs text-gray-500 uppercase tracking-widest">Genel Panel</p>
+                    </div>
+                </div>
+
+                <nav className="flex-1 py-6 px-3 space-y-8">
+                    {menuGroups.map((group, gIndex) => (
+                        <div key={gIndex}>
+                            <h3 className="px-3 text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">{group.title}</h3>
+                            <ul className="space-y-1">
+                                {group.items.map((item) => (
+                                    <li key={item.id}>
+                                        <button
+                                            onClick={() => setActiveTab(item.id as any)}
+                                            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === item.id
+                                                ? 'bg-primary text-white shadow-lg shadow-primary/20 translate-x-1'
+                                                : 'text-gray-400 hover:text-white hover:bg-white/5'
+                                                }`}
+                                        >
+                                            <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
+                                            {item.label}
+                                        </button>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    ))}
+                </nav>
+
+                <div className="p-4 border-t border-white/10 bg-[#0b1120]">
+                    <div className="flex items-center gap-3 mb-4 px-2">
+                        <div className="size-8 rounded-full bg-gray-700 flex items-center justify-center text-white font-bold">
+                            {currentUser?.username?.charAt(0).toUpperCase()}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <p className="text-sm font-bold text-white truncate">{currentUser?.username}</p>
+                            <p className="text-xs text-gray-500 truncate capitalize">{currentUser?.role}</p>
+                        </div>
                     </div>
                     {currentUser?.role === 'super' && (
-                        <button onClick={() => navigate('/admin/super')} className="bg-gray-800 text-white px-3 py-1 rounded text-xs font-bold hover:bg-black transition-colors flex items-center gap-1">
-                            <span className="material-symbols-outlined text-sm">arrow_back</span> Genel Yönetim
+                        <button
+                            onClick={() => navigate('/admin/super')}
+                            className="w-full flex items-center justify-center gap-2 bg-blue-600/10 hover:bg-blue-600 hover:text-white text-blue-500 p-2 rounded-lg transition-colors text-sm font-bold mb-2"
+                        >
+                            <span className="material-symbols-outlined text-lg">arrow_back</span>
+                            Panel Ana Sayfası
                         </button>
                     )}
-                </div>
-                <button onClick={handleLogout} className="text-red-500 hover:bg-red-50 px-3 py-2 rounded-lg text-sm font-bold transition-colors">
-                    Çıkış Yap
-                </button>
-            </nav>
-
-            {/* Main Content */}
-            <div className="max-w-7xl mx-auto px-6 py-8">
-
-                {/* Tabs */}
-                <div className="flex gap-4 mb-8 border-b border-gray-200">
                     <button
-                        onClick={() => setActiveTab('applications')}
-                        className={`pb-3 px-4 text-sm font-bold border-b-2 transition-colors ${activeTab === 'applications' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+                        onClick={handleLogout}
+                        className="w-full flex items-center justify-center gap-2 bg-red-500/10 hover:bg-red-500 hover:text-white text-red-500 p-2 rounded-lg transition-colors text-sm font-bold"
                     >
-                        Başvuru Havuzu
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('jobs')}
-                        className={`pb-3 px-4 text-sm font-bold border-b-2 transition-colors ${activeTab === 'jobs' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
-                    >
-                        İlan Yönetimi
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('news')}
-                        className={`pb-3 px-4 text-sm font-bold border-b-2 transition-colors ${activeTab === 'news' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
-                    >
-                        Haber Yönetimi
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('social')}
-                        className={`pb-3 px-4 text-sm font-bold border-b-2 transition-colors ${activeTab === 'social' ? 'border-orange-600 text-orange-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
-                    >
-                        Sosyal Medya
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('culture')}
-                        className={`pb-3 px-4 text-sm font-bold border-b-2 transition-colors ${activeTab === 'culture' ? 'border-purple-600 text-purple-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
-                    >
-                        Kültür & Yaşam
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('hero')}
-                        className={`pb-3 px-4 text-sm font-bold border-b-2 transition-colors ${activeTab === 'hero' ? 'border-purple-600 text-purple-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
-                    >
-                        Hero Yönetimi
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('about')}
-                        className={`pb-3 px-4 text-sm font-bold border-b-2 transition-colors ${activeTab === 'about' ? 'border-cyan-600 text-cyan-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
-                    >
-                        Hakkımızda
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('legal')}
-                        className={`pb-3 px-4 text-sm font-bold border-b-2 transition-colors ${activeTab === 'legal' ? 'border-gray-800 text-gray-800' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
-                    >
-                        Yasal Metinler
+                        <span className="material-symbols-outlined text-lg">logout</span>
+                        Çıkış Yap
                     </button>
                 </div>
+            </aside>
 
-                {/* TAB: APPLICATIONS */}
-                {activeTab === 'applications' && (
-                    <ApplicationsTab applications={applications} />
-                )}
-                {/* TAB: JOBS */}
-                {activeTab === 'jobs' && (
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {/* Job List */}
-                        <div className="md:col-span-2 space-y-4">
-                            {jobs.map(job => (
-                                <div key={job.id} className={`bg-white p-6 rounded-xl border shadow-sm flex items-center justify-between ${job.isActive === false ? 'opacity-60 border-red-200' : 'border-gray-100'}`}>
-                                    <div>
-                                        <div className="flex items-center gap-2 mb-1">
-                                            <h3 className="font-bold text-lg text-gray-800">{job.title}</h3>
-                                            {job.isActive === false && <span className="bg-red-100 text-red-600 text-[10px] px-2 py-0.5 rounded font-bold">PASİF</span>}
-                                        </div>
-                                        <p className="text-sm text-gray-500">{job.department} • {job.location}</p>
-                                    </div>
-                                    <div className="flex items-center gap-3">
-                                        <button
-                                            // @ts-ignore
-                                            onClick={() => handleToggleJobStatus(job.id, job.isActive)}
-                                            className={`w-12 h-6 rounded-full p-1 transition-colors ${job.isActive !== false ? 'bg-green-500' : 'bg-gray-300'}`}
-                                            title={job.isActive !== false ? 'İlan Yayında' : 'İlan Gizli'}
-                                        >
-                                            <div className={`w-4 h-4 bg-white rounded-full shadow-md transform transition-transform ${job.isActive !== false ? 'translate-x-6' : 'translate-x-0'}`}></div>
-                                        </button>
-                                        <button onClick={() => handleDeleteJob(job.id)} className="text-red-500 bg-red-50 p-2 rounded-lg hover:bg-red-100 transition-colors">
-                                            <span className="material-symbols-outlined">delete</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-
-                        {/* Add Job Form */}
-                        <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm h-fit sticky top-24 overflow-y-auto max-h-[80vh]">
-                            <h3 className="font-bold text-gray-800 mb-4">Yeni İlan Ekle</h3>
-                            <form onSubmit={handleAddJob} className="space-y-4">
-                                <input required placeholder="Pozisyon Adı (Örn: Mimar)" className="w-full px-4 py-2 border rounded-lg text-sm"
-                                    value={newJob.title} onChange={e => setNewJob({ ...newJob, title: e.target.value })} />
-
-                                <select className="w-full px-4 py-2 border rounded-lg text-sm bg-white"
-                                    value={newJob.department} onChange={e => setNewJob({ ...newJob, department: e.target.value })}>
-                                    <option value="">Departman Seçin</option>
-                                    <option value="Yazılım & IT">Yazılım & IT</option>
-                                    <option value="Satış & Pazarlama">Satış & Pazarlama</option>
-                                    <option value="İnsan Kaynakları">İnsan Kaynakları</option>
-                                    <option value="Finans">Finans</option>
-                                    <option value="Mimari">Mimari</option>
-                                    <option value="Mühendislik">Mühendislik</option>
-                                    <option value="Operasyon">Operasyon</option>
-                                </select>
-
-                                <input required placeholder="Lokasyon (Örn: İstanbul)" className="w-full px-4 py-2 border rounded-lg text-sm"
-                                    value={newJob.location} onChange={e => setNewJob({ ...newJob, location: e.target.value })} />
-
-                                <select className="w-full px-4 py-2 border rounded-lg text-sm bg-white"
-                                    value={newJob.type} onChange={e => setNewJob({ ...newJob, type: e.target.value })}>
-                                    <option value="Tam Zamanlı">Tam Zamanlı</option>
-                                    <option value="Yarı Zamanlı">Yarı Zamanlı</option>
-                                    <option value="Staj">Staj</option>
-                                </select>
-
-                                <textarea placeholder="İş Tanımı" className="w-full px-4 py-2 border rounded-lg text-sm min-h-[80px]"
-                                    value={newJob.description} onChange={e => setNewJob({ ...newJob, description: e.target.value })} />
-
-                                <textarea placeholder="Sorumluluklar (Her satıra bir madde)" className="w-full px-4 py-2 border rounded-lg text-sm min-h-[80px]"
-                                    value={newJob.responsibilities} onChange={e => setNewJob({ ...newJob, responsibilities: e.target.value })} />
-
-                                <textarea placeholder="Aranan Nitelikler (Her satıra bir madde)" className="w-full px-4 py-2 border rounded-lg text-sm min-h-[80px]"
-                                    value={newJob.qualifications} onChange={e => setNewJob({ ...newJob, qualifications: e.target.value })} />
-
-                                <div className="grid grid-cols-2 gap-2">
-                                    <input placeholder="Tecrübe (Örn: 3-5 Yıl)" className="w-full px-4 py-2 border rounded-lg text-sm"
-                                        value={newJob.experience} onChange={e => setNewJob({ ...newJob, experience: e.target.value })} />
-                                    <input placeholder="Eğitim (Örn: Lisans)" className="w-full px-4 py-2 border rounded-lg text-sm"
-                                        value={newJob.education} onChange={e => setNewJob({ ...newJob, education: e.target.value })} />
-                                </div>
-
-                                <button type="submit" className="w-full bg-blue-600 text-white font-bold py-2 rounded-lg hover:bg-blue-700">
-                                    Yayınla
-                                </button>
-                            </form>
-                        </div>
+            {/* CONTENT AREA */}
+            <main className="ml-72 flex-1 min-w-0">
+                {/* Header Section */}
+                <header className="bg-white border-b border-gray-200 sticky top-0 z-30 px-8 py-5 flex items-center justify-between shadow-sm/50">
+                    <div>
+                        <h2 className="text-2xl font-bold text-gray-800">
+                            {menuGroups.flatMap(g => g.items).find(i => i.id === activeTab)?.label || 'Panel'}
+                        </h2>
                     </div>
-                )}
+                </header>
 
-                {/* TAB: NEWS */}
-                {activeTab === 'news' && (
-                    <NewsTab />
-                )}
+                <div className="p-8 max-w-7xl mx-auto">
+                    {activeTab === 'home' && <OverviewTab />}
+                    {activeTab === 'applications' && <ApplicationsTab applications={applications} />}
+                    {activeTab === 'jobs' && (
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            <div className="md:col-span-2 space-y-4">
+                                {jobs.map(job => (
+                                    <div key={job.id} className={`bg-white p-6 rounded-xl border shadow-sm flex items-center justify-between ${job.isActive === false ? 'opacity-60 border-red-200' : 'border-gray-100'}`}>
+                                        <div>
+                                            <div className="flex items-center gap-2 mb-1">
+                                                <h3 className="font-bold text-lg text-gray-800">{job.title}</h3>
+                                                {job.isActive === false && <span className="bg-red-100 text-red-600 text-[10px] px-2 py-0.5 rounded font-bold">PASİF</span>}
+                                            </div>
+                                            <p className="text-sm text-gray-500">{job.department} • {job.location}</p>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <button onClick={() => handleToggleJobStatus(job.id, job.isActive)} className="text-gray-400 hover:text-blue-600 p-2 rounded hover:bg-blue-50" title={job.isActive === false ? "Aktif Yap" : "Pasif Yap"}>
+                                                <span className="material-symbols-outlined">{job.isActive === false ? 'visibility_off' : 'visibility'}</span>
+                                            </button>
+                                            <button onClick={() => handleDeleteJob(job.id)} className="text-red-400 hover:text-red-600 p-2 rounded hover:bg-red-50" title="Sil">
+                                                <span className="material-symbols-outlined">delete</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                                {jobs.length === 0 && <p className="text-gray-500 italic">Henüz ilan bulunmuyor.</p>}
+                            </div>
 
-                {/* TAB: SOCIAL */}
-                {activeTab === 'social' && (
-                    <SocialTab />
-                )}
-                {/* TAB: CULTURE */}
-                {activeTab === 'culture' && (
-                    <CultureTab />
-                )}
-                {/* TAB: HERO */}
-                {activeTab === 'hero' && (
-                    <HeroTab />
-                )}
-                {/* TAB: ABOUT */}
-                {activeTab === 'about' && (
-                    <AboutTab />
-                )}
-                {/* TAB: LEGAL */}
-                {activeTab === 'legal' && (
-                    <LegalTab />
-                )}
-
-            </div>
+                            <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm h-fit sticky top-24">
+                                <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
+                                    <span className="material-symbols-outlined text-green-600">add_circle</span>
+                                    Yeni İlan Ekle
+                                </h3>
+                                <form onSubmit={handleAddJob} className="space-y-4">
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-500 uppercase mb-1">İlan Başlığı</label>
+                                        <input name="title" required className="w-full border rounded-lg p-2.5 text-sm font-bold text-gray-800" placeholder="Örn: Satış Temsilcisi" />
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Departman</label>
+                                            <input name="department" required className="w-full border rounded-lg p-2.5 text-sm" placeholder="Örn: Pazarlama" />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Lokasyon</label>
+                                            <input name="location" required className="w-full border rounded-lg p-2.5 text-sm" placeholder="Örn: İstanbul" />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Çalışma Şekli</label>
+                                        <select name="type" className="w-full border rounded-lg p-2.5 text-sm bg-white">
+                                            <option value="Tam Zamanlı">Tam Zamanlı</option>
+                                            <option value="Yarı Zamanlı">Yarı Zamanlı</option>
+                                            <option value="Uzaktan">Uzaktan</option>
+                                            <option value="Staj">Staj</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" className="w-full bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 transition-all shadow-lg shadow-green-200">
+                                        İlan Oluştur
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    )}
+                    {activeTab === 'news' && <NewsTab />}
+                    {activeTab === 'social' && <SocialTab />}
+                    {activeTab === 'culture' && <CultureTab />}
+                    {activeTab === 'hero' && <HeroTab />}
+                    {activeTab === 'about' && <AboutTab />}
+                    {activeTab === 'legal' && <LegalTab />}
+                    {activeTab === 'contact_settings' && <ContactTab />}
+                    {activeTab === 'home_content' && <HomeContentTab />}
+                    {activeTab === 'users' && <UsersTab />}
+                </div>
+            </main>
         </div>
     );
+
 }
 
 function HeroTab() {
@@ -416,9 +431,9 @@ function HeroTab() {
             .then(d => {
                 if (!d.type1) d.type1 = { slides: [] };
                 if (!d.type2) d.type2 = { slides: [] };
-                if (!d.type3) d.type3 = { title: "Geleceği", titleSize: "large", words: [], description: "", rightImage: "", floatingBox: { title: "", text: "", icon: "" }, stats: [{ value: "40+", label: "Yıllık Tecrübe" }, { value: "9", label: "Grup �?irketi" }, { value: "1000+", label: "Mutlu Çalışan" }] };
+                if (!d.type3) d.type3 = { title: "Geleceği", titleSize: "large", words: [], description: "", rightImage: "", floatingBox: { title: "", text: "", icon: "" }, stats: [{ value: "40+", label: "Yıllık Tecrübe" }, { value: "9", label: "Grup Şirketi" }, { value: "1000+", label: "Mutlu Çalışan" }] };
                 else {
-                    if (!d.type3.stats) d.type3.stats = [{ value: "40+", label: "Yıllık Tecrübe" }, { value: "9", label: "Grup �?irketi" }, { value: "1000+", label: "Mutlu Çalışan" }];
+                    if (!d.type3.stats) d.type3.stats = [{ value: "40+", label: "Yıllık Tecrübe" }, { value: "9", label: "Grup Şirketi" }, { value: "1000+", label: "Mutlu Çalışan" }];
                     if (!d.type3.title) d.type3.title = "Geleceği";
                     if (!d.type3.titleSize) d.type3.titleSize = "large";
                 }
@@ -428,8 +443,8 @@ function HeroTab() {
             .catch(e => console.error(e));
     }, []);
 
-    const handleSave = () => {
-        setLoading(true);
+
+    const handleSave = async () => {
         fetch(`${API_BASE_URL}/api/hero`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -1587,15 +1602,33 @@ function CultureTab() {
 
 // --- ABOUT MANAGEMENT ---
 function AboutTab() {
-    const [data, setData] = useState<any>({ history: [] });
+    const [data, setData] = useState<any>({
+        hero: { title: 'Hakkımızda', subtitle: 'Biz Kimiz?', image: '' },
+        whoWeAre: { title: 'Derya Grup Kimdir?', content: '' },
+        videoUrl: '',
+        stats: [],
+        values: [],
+        chairman: { name: '', title: 'Yönetim Kurulu Başkanı', message: '', image: '' },
+        history: []
+    });
     const [loading, setLoading] = useState(false);
+    const [activeSection, setActiveSection] = useState<'hero' | 'who' | 'video' | 'stats' | 'values' | 'chairman' | 'history'>('hero');
 
     useEffect(() => {
         fetch(`${API_BASE_URL}/api/about`)
             .then(res => res.json())
             .then(d => {
-                if (!d.history) d.history = [];
-                setData(d);
+                const def = {
+                    hero: { title: 'Hakkımızda', subtitle: 'Biz Kimiz?', image: '' },
+                    whoWeAre: { title: 'Derya Grup Kimdir?', content: '' },
+                    videoUrl: '',
+                    stats: [{ value: '47+', label: 'Yıllık Tecrübe' }, { value: '100.000+', label: 'Hizmet Verilmiş Müşteri' }],
+                    values: [],
+                    chairman: { name: 'Hüseyin Kış', title: 'Yönetim Kurulu Başkanı', message: '', image: '' },
+                    history: []
+                };
+                // Merge loaded data with defaults to ensure all fields exist
+                setData({ ...def, ...d });
             })
             .catch(err => console.error(err));
     }, []);
@@ -1617,164 +1650,393 @@ function AboutTab() {
         }
     };
 
-    const handleImageUpload = async (e: any, index: number) => {
-        const file = e.target.files[0];
+    const handleFileUpload = async (file: File, callback: (path: string) => void) => {
         if (!file) return;
-
         const formData = new FormData();
         formData.append('file', file);
-
         try {
-            const res = await fetch(`${API_BASE_URL}/api/upload`, {
-                method: 'POST',
-                body: formData
-            });
+            const res = await fetch(`${API_BASE_URL}/api/upload`, { method: 'POST', body: formData });
             const result = await res.json();
-            if (result.success) {
-                const newHistory = [...data.history];
-                newHistory[index].image = result.filePath;
-                setData({ ...data, history: newHistory });
-            }
-        } catch (error) {
-            console.error(error);
-            alert('Resim yüklenemedi.');
-        }
+            if (result.success) callback(result.filePath);
+        } catch (error) { console.error(error); alert('Resim yüklenemedi.'); }
     };
 
-    const handleMove = (index: number, direction: 'up' | 'down') => {
-        const newHistory = [...data.history];
-        if (direction === 'up' && index > 0) {
-            [newHistory[index], newHistory[index - 1]] = [newHistory[index - 1], newHistory[index]];
-        } else if (direction === 'down' && index < newHistory.length - 1) {
-            [newHistory[index], newHistory[index + 1]] = [newHistory[index + 1], newHistory[index]];
-        }
-        setData({ ...data, history: newHistory });
-    };
+    // Helper functions for updating state
+    const updateHero = (key: string, val: string) => setData((prev: any) => ({ ...prev, hero: { ...prev.hero, [key]: val } }));
+    const updateWho = (key: string, val: string) => setData((prev: any) => ({ ...prev, whoWeAre: { ...prev.whoWeAre, [key]: val } }));
+    const updateChairman = (key: string, val: string) => setData((prev: any) => ({ ...prev, chairman: { ...prev.chairman, [key]: val } }));
 
-    const handleSort = (direction: 'asc' | 'desc') => {
-        if (!confirm('Tüm listeyi yıla göre yeniden sıralamak istediğinize emin misiniz?')) return;
-        const newHistory = [...data.history].sort((a: any, b: any) => {
-            return direction === 'asc'
-                ? parseInt(a.year) - parseInt(b.year)
-                : parseInt(b.year) - parseInt(a.year);
+    // Stats Management
+    const addStat = () => setData((prev: any) => ({ ...prev, stats: [...(prev.stats || []), { value: '', label: '' }] }));
+    const removeStat = (index: number) => setData((prev: any) => {
+        const n = [...prev.stats]; n.splice(index, 1); return { ...prev, stats: n };
+    });
+    const updateStat = (index: number, key: string, val: string) => setData((prev: any) => {
+        const n = [...prev.stats]; n[index] = { ...n[index], [key]: val }; return { ...prev, stats: n };
+    });
+
+    // Values Management
+    const addValue = () => setData((prev: any) => ({ ...prev, values: [...(prev.values || []), { title: '', desc: '', icon: 'star' }] }));
+    const removeValue = (index: number) => setData((prev: any) => {
+        const n = [...prev.values]; n.splice(index, 1); return { ...prev, values: n };
+    });
+    const updateValue = (index: number, key: string, val: string) => setData((prev: any) => {
+        const n = [...prev.values]; n[index] = { ...n[index], [key]: val }; return { ...prev, values: n };
+    });
+
+    // History Management
+    const addHistory = () => {
+        setData((prev: any) => {
+            const newHistory = [...(prev.history || [])];
+            newHistory.push({
+                id: Date.now(),
+                year: new Date().getFullYear().toString(),
+                title: '',
+                description: '',
+                image: null // Changed from 'null' string to null value
+            });
+            return { ...prev, history: newHistory };
         });
-        setData({ ...data, history: newHistory });
     };
+
+    const removeHistory = (index: number) => {
+        setData((prev: any) => {
+            const newHistory = [...prev.history];
+            newHistory.splice(index, 1);
+            return { ...prev, history: newHistory };
+        });
+    };
+
+    const updateHistory = (index: number, field: string, value: any) => {
+        setData((prev: any) => {
+            const newHistory = [...prev.history];
+            newHistory[index] = { ...newHistory[index], [field]: value };
+            return { ...prev, history: newHistory };
+        });
+    };
+
+    const getEmbedUrl = (url: string) => {
+        if (!url) return '';
+        let id = '';
+        try {
+            if (url.includes('embed/')) id = url.split('embed/')[1].split('?')[0];
+            else if (url.includes('watch?v=')) id = url.split('watch?v=')[1].split('&')[0];
+            else if (url.includes('youtu.be/')) id = url.split('youtu.be/')[1].split('?')[0];
+        } catch (e) { return ''; }
+        if (id) return `https://www.youtube.com/embed/${id}?rel=0`;
+        return '';
+    };
+
 
     return (
-        <div className="space-y-8">
-            {/* Video Settings */}
-            <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-                <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                    <span className="material-symbols-outlined text-primary">play_circle</span>
-                    Tanıtım Videosu
+        <div className="space-y-8 pb-20">
+            <div className="flex justify-between items-center border-b border-gray-200 pb-4">
+                <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+                    <span className="material-symbols-outlined text-purple-600">apartment</span>
+                    Kurumsal / Hakkımızda Yönetimi
                 </h3>
-                <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-2">YouTube Video Linki</label>
-                    <input
-                        type="text"
-                        className="w-full border rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary/20 outline-none"
-                        placeholder="https://www.youtube.com/watch?v=..."
-                        value={data.videoUrl || ''}
-                        onChange={(e) => setData({ ...data, videoUrl: e.target.value })}
-                    />
-                    <p className="text-xs text-gray-500 mt-2 flex items-center gap-1">
-                        <span className="material-symbols-outlined text-xs">info</span>
-                        Örnek: https://www.youtube.com/watch?v=ZVaR0TnPf1Q (veya tarayıcıdaki linki direkt yapıştırın)
-                    </p>
-                </div>
-            </div>
-
-            <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-                <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-lg font-bold text-gray-800">Tarihçe Yönetimi</h3>
-                    <div className="flex items-center gap-2">
-                        <div className="flex bg-gray-100 rounded-lg p-1 mr-2">
-                            <button onClick={() => handleSort('asc')} className="text-xs text-gray-600 px-2 py-1 rounded hover:bg-white hover:shadow-sm transition flex items-center gap-1" title="Eskiden Yeniye Sırala"><span className="material-symbols-outlined text-sm">arrow_upward</span> 1-9</button>
-                            <button onClick={() => handleSort('desc')} className="text-xs text-gray-600 px-2 py-1 rounded hover:bg-white hover:shadow-sm transition flex items-center gap-1" title="Yeniden Eskiye Sırala"><span className="material-symbols-outlined text-sm">arrow_downward</span> 9-1</button>
-                        </div>
-                        <button onClick={() => setData({ ...data, history: [...data.history, { id: Date.now(), year: "", title: "", description: "", image: null }] })} className="text-sm bg-blue-100 text-blue-600 px-3 py-1.5 rounded-lg font-bold hover:bg-blue-200 transition flex items-center gap-1">
-                            <span className="material-symbols-outlined text-sm">add</span> Yeni Dönem
-                        </button>
-                    </div>
-                </div>
-
-                <div className="space-y-6">
-                    {data.history.map((item: any, i: number) => (
-                        <div key={i} className="bg-gray-50 p-4 rounded-lg relative border border-gray-200 grid grid-cols-1 md:grid-cols-12 gap-4 group hover:border-blue-200 hover:shadow-md transition-all">
-
-                            {/* Action Buttons */}
-                            <div className="absolute top-2 right-2 flex items-center gap-1 bg-white/80 backdrop-blur-sm p-1 rounded-lg border border-gray-100 shadow-sm opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                                <button onClick={() => handleMove(i, 'up')} type="button" disabled={i === 0} className="text-gray-400 hover:text-primary hover:bg-gray-100 rounded p-1 disabled:opacity-30 transition-colors" title="Yukarı Taşı"><span className="material-symbols-outlined text-base">arrow_upward</span></button>
-                                <button onClick={() => handleMove(i, 'down')} type="button" disabled={i === data.history.length - 1} className="text-gray-400 hover:text-primary hover:bg-gray-100 rounded p-1 disabled:opacity-30 transition-colors" title="Aşağı Taşı"><span className="material-symbols-outlined text-base">arrow_downward</span></button>
-                                <div className="w-px h-4 bg-gray-200 mx-1"></div>
-                                <button onClick={() => {
-                                    if (!confirm('Silmek istediğinize emin misiniz?')) return;
-                                    const newHistory = [...data.history];
-                                    newHistory.splice(i, 1);
-                                    setData({ ...data, history: newHistory });
-                                }} type="button" className="text-red-500 hover:bg-red-50 rounded p-1 transition-colors" title="Sil"><span className="material-symbols-outlined text-base">delete</span></button>
-                            </div>
-
-                            {/* Yıl ve Başlık */}
-                            <div className="md:col-span-3 space-y-2">
-                                <div>
-                                    <label className="block text-xs font-bold text-gray-500 mb-1">Yıl</label>
-                                    <input className="w-full border rounded p-2 text-sm font-bold" value={item.year} onChange={e => {
-                                        const newHistory = [...data.history];
-                                        newHistory[i].year = e.target.value;
-                                        setData({ ...data, history: newHistory });
-                                    }} placeholder="1979" />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-bold text-gray-500 mb-1">Başlık</label>
-                                    <input className="w-full border rounded p-2 text-sm" value={item.title} onChange={e => {
-                                        const newHistory = [...data.history];
-                                        newHistory[i].title = e.target.value;
-                                        setData({ ...data, history: newHistory });
-                                    }} placeholder="Kuruluş" />
-                                </div>
-                            </div>
-
-                            {/* Açıklama */}
-                            <div className="md:col-span-6">
-                                <label className="block text-xs font-bold text-gray-500 mb-1">Açıklama</label>
-                                <textarea className="w-full border rounded p-2 text-sm h-full min-h-[100px]" value={item.description} onChange={e => {
-                                    const newHistory = [...data.history];
-                                    newHistory[i].description = e.target.value;
-                                    setData({ ...data, history: newHistory });
-                                }} placeholder="Detaylı açıklama..." />
-                            </div>
-
-                            {/* Resim Alanı */}
-                            <div className="md:col-span-3">
-                                <ImageInput
-                                    label="Görsel"
-                                    recommendedSize="600x400px"
-                                    value={item.image}
-                                    onChange={(val) => {
-                                        const newHistory = [...data.history];
-                                        newHistory[i].image = val;
-                                        setData({ ...data, history: newHistory });
-                                    }}
-                                />
-                            </div>
-                        </div>
-                    ))}
-
-                    {data.history.length === 0 && (
-                        <div className="text-center py-10 text-gray-400 italic">
-                            Henüz kayıt yok. "Yeni Dönem Ekle" diyerek başlayabilirsiniz.
-                        </div>
-                    )}
-                </div>
-            </div>
-
-            <div className="flex justify-end sticky bottom-6">
-                <button onClick={handleSave} disabled={loading} className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition-all flex items-center gap-2">
-                    {loading ? 'Kaydediliyor...' : 'Tüm Değişiklikleri Kaydet'}
-                    {!loading && <span className="material-symbols-outlined">save</span>}
+                <button onClick={handleSave} disabled={loading} className="bg-purple-900 text-white px-6 py-2 rounded-lg font-bold hover:bg-purple-950 transition-colors shadow-lg disabled:opacity-50 flex items-center gap-2">
+                    {loading ? <span className="material-symbols-outlined animate-spin text-sm">refresh</span> : <span className="material-symbols-outlined text-sm">save</span>}
+                    {loading ? 'Kaydediliyor...' : 'Tümünü Kaydet'}
                 </button>
+            </div>
+
+            {/* Navigation Tabs */}
+            <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                {[
+                    { id: 'hero', label: 'Sayfa Başlığı (Hero)', icon: 'image' },
+                    { id: 'who', label: 'Biz Kimiz?', icon: 'info' },
+                    { id: 'video', label: 'Tanıtım Videosu', icon: 'play_circle' },
+                    { id: 'stats', label: 'İstatistikler', icon: 'bar_chart' },
+                    { id: 'values', label: 'Değerlerimiz', icon: 'diamond' },
+                    { id: 'chairman', label: 'Yön. Kurulu Başkanı', icon: 'person_celebrate' },
+                    { id: 'history', label: 'Tarihçe', icon: 'history' },
+                ].map(tab => (
+                    <button key={tab.id} onClick={() => setActiveSection(tab.id as any)}
+                        className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold whitespace-nowrap transition-all ${activeSection === tab.id ? 'bg-purple-100 text-purple-700 shadow-sm ring-1 ring-purple-200' : 'bg-white text-gray-500 hover:bg-gray-50 border border-transparent'}`}>
+                        <span className="material-symbols-outlined text-lg">{tab.icon}</span>
+                        {tab.label}
+                    </button>
+                ))}
+            </div>
+
+            <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm min-h-[400px]">
+
+                {/* HERO SECTION */}
+                {activeSection === 'hero' && (
+                    <div className="space-y-6">
+                        <h4 className="font-bold border-l-4 border-purple-500 pl-3 text-lg">Sayfa Üst Bölümü (Hero)</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label className="block text-xs font-bold uppercase text-gray-500 mb-1">Başlık</label>
+                                <input className="w-full border border-gray-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-purple-200 outline-none"
+                                    value={data.hero?.title || ''} onChange={e => updateHero('title', e.target.value)} placeholder="Örn: Hakkımızda" />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-bold uppercase text-gray-500 mb-1">Alt Başlık</label>
+                                <input className="w-full border border-gray-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-purple-200 outline-none"
+                                    value={data.hero?.subtitle || ''} onChange={e => updateHero('subtitle', e.target.value)} placeholder="Örn: Biz Kimiz?" />
+                            </div>
+                            <div className="md:col-span-2">
+                                <label className="block text-xs font-bold uppercase text-gray-500 mb-1">Arkaplan Görseli</label>
+                                <div className="flex items-start gap-4 p-4 border border-dashed border-gray-300 rounded-xl bg-gray-50">
+                                    {data.hero?.image ? (
+                                        <div className="relative group shrink-0">
+                                            <img src={data.hero.image.startsWith('http') ? data.hero.image : `${API_BASE_URL}/uploads/${data.hero.image}`} className="h-32 rounded-lg object-cover shadow-sm" />
+                                            <button onClick={() => updateHero('image', '')} className="absolute -top-2 -right-2 bg-white text-red-500 rounded-full p-1 shadow-md hover:bg-red-50"><span className="material-symbols-outlined text-sm">close</span></button>
+                                        </div>
+                                    ) : (
+                                        <div className="h-32 w-48 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400 text-xs shrink-0">Görsel Yok</div>
+                                    )}
+                                    <div className="flex-1 space-y-3">
+                                        <div>
+                                            <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Dosya Yükle</label>
+                                            <input type="file" className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100"
+                                                onChange={e => handleFileUpload(e.target.files?.[0] as File, path => updateHero('image', path))} />
+                                        </div>
+                                        <div className="relative flex items-center py-1">
+                                            <div className="grow border-t border-gray-200"></div>
+                                            <span className="shrink-0 mx-2 text-[10px] font-bold text-gray-400 uppercase">VEYA</span>
+                                            <div className="grow border-t border-gray-200"></div>
+                                        </div>
+                                        <div>
+                                            <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Görsel URL (Link)</label>
+                                            <div className="flex items-center gap-2">
+                                                <span className="material-symbols-outlined text-gray-400">link</span>
+                                                <input className="w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-purple-200 outline-none"
+                                                    value={data.hero?.image || ''}
+                                                    onChange={e => updateHero('image', e.target.value)}
+                                                    placeholder="https://..." />
+                                            </div>
+                                        </div>
+                                        <p className="text-[10px] text-gray-500">Önerilen Boyut: 1920x600px. JPG veya PNG.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* WHO WE ARE */}
+                {activeSection === 'who' && (
+                    <div className="space-y-6">
+                        <h4 className="font-bold border-l-4 border-purple-500 pl-3 text-lg">Derya Grup Kimdir?</h4>
+                        <div>
+                            <label className="block text-xs font-bold uppercase text-gray-500 mb-1">Başlık</label>
+                            <input className="w-full border border-gray-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-purple-200 outline-none mb-4"
+                                value={data.whoWeAre?.title || ''} onChange={e => updateWho('title', e.target.value)} placeholder="Örn: Derya Grup Kimdir?" />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-bold uppercase text-gray-500 mb-1">İçerik Metni</label>
+                            <textarea className="w-full border border-gray-300 rounded-lg p-3 text-sm h-64 focus:ring-2 focus:ring-purple-200 outline-none resize-none leading-relaxed"
+                                value={data.whoWeAre?.content || ''} onChange={e => updateWho('content', e.target.value)} placeholder="Şirket hakkında detaylı bilgi..." />
+                        </div>
+                    </div>
+                )}
+
+                {/* VIDEO SECTION */}
+                {activeSection === 'video' && (
+                    <div className="space-y-6">
+                        <h4 className="font-bold border-l-4 border-purple-500 pl-3 text-lg">Tanıtım Videosu</h4>
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-xs font-bold uppercase text-gray-500 mb-1">YouTube Video URL</label>
+                                <div className="flex items-center gap-2">
+                                    <span className="material-symbols-outlined text-gray-400">link</span>
+                                    <input className="w-full border border-gray-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-red-200 outline-none"
+                                        value={data.videoUrl || ''} onChange={e => setData({ ...data, videoUrl: e.target.value })} placeholder="https://www.youtube.com/watch?v=..." />
+                                </div>
+                                <p className="text-[10px] text-gray-500 mt-2">YouTube video linkini olduğu gibi yapıştırın. Sistem otomatik olarak algılayacaktır.</p>
+                            </div>
+
+                            {data.videoUrl && (
+                                <div className="mt-4">
+                                    <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Önizleme</label>
+                                    <div className="aspect-video w-full md:w-2/3 bg-black rounded-xl overflow-hidden shadow-lg mx-auto md:mx-0">
+                                        {getEmbedUrl(data.videoUrl) ? (
+                                            <iframe src={getEmbedUrl(data.videoUrl)} className="w-full h-full" allowFullScreen></iframe>
+                                        ) : (
+                                            <div className="flex items-center justify-center h-full text-white/50 text-sm">Geçersiz URL</div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
+
+                {/* STATS SECTION */}
+                {activeSection === 'stats' && (
+                    <div className="space-y-6">
+                        <div className="flex justify-between items-center">
+                            <h4 className="font-bold border-l-4 border-purple-500 pl-3 text-lg">İstatistikler</h4>
+                            <button onClick={addStat} className="bg-green-100 text-green-700 px-3 py-1.5 rounded-lg text-sm font-bold hover:bg-green-200 flex items-center gap-1 transition-colors">
+                                <span className="material-symbols-outlined text-sm">add</span> Yeni İstatistik Ekle
+                            </button>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {data.stats?.map((stat: any, i: number) => (
+                                <div key={i} className="border border-gray-200 p-4 rounded-xl bg-gray-50 relative group hover:shadow-md transition-all">
+                                    <button onClick={() => removeStat(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 bg-white rounded-full p-1 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"><span className="material-symbols-outlined text-lg">delete</span></button>
+                                    <div className="space-y-3">
+                                        <div>
+                                            <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Değer (Sayı)</label>
+                                            <input className="w-full border border-gray-300 rounded-lg p-2 text-sm font-bold text-gray-800"
+                                                value={stat.value} onChange={e => updateStat(i, 'value', e.target.value)} placeholder="Örn: 47+" />
+                                        </div>
+                                        <div>
+                                            <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Etiket (Açıklama)</label>
+                                            <input className="w-full border border-gray-300 rounded-lg p-2 text-sm"
+                                                value={stat.label} onChange={e => updateStat(i, 'label', e.target.value)} placeholder="Örn: Yıllık Tecrübe" />
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                            {(!data.stats || data.stats.length === 0) && <p className="text-gray-500 italic text-sm md:col-span-2">Henüz istatistik eklenmemiş.</p>}
+                        </div>
+                    </div>
+                )}
+
+                {/* VALUES */}
+                {activeSection === 'values' && (
+                    <div className="space-y-6">
+                        <div className="flex justify-between items-center">
+                            <h4 className="font-bold border-l-4 border-purple-500 pl-3 text-lg">Değerlerimiz</h4>
+                            <button onClick={addValue} className="bg-green-100 text-green-700 px-3 py-1.5 rounded-lg text-sm font-bold hover:bg-green-200 flex items-center gap-1 transition-colors">
+                                <span className="material-symbols-outlined text-sm">add</span> Yeni Değer Ekle
+                            </button>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {data.values?.map((val: any, i: number) => (
+                                <div key={i} className="border border-gray-200 p-4 rounded-xl bg-gray-50 relative group hover:shadow-md transition-all">
+                                    <button onClick={() => removeValue(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 bg-white rounded-full p-1 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"><span className="material-symbols-outlined text-lg">delete</span></button>
+                                    <div className="space-y-3">
+                                        <div>
+                                            <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">İkon</label>
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center border shadow-sm text-purple-600">
+                                                    <span className="material-symbols-outlined">{val.icon}</span>
+                                                </div>
+                                                <input className="w-full border border-gray-300 rounded-lg p-2 text-sm font-mono"
+                                                    value={val.icon} onChange={e => updateValue(i, 'icon', e.target.value)} placeholder="star" />
+                                            </div>
+                                            <a href="https://fonts.google.com/icons" target="_blank" className="text-[10px] text-blue-500 hover:underline mt-1 block">Google Fonts Icon isimleri</a>
+                                        </div>
+                                        <div>
+                                            <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Başlık</label>
+                                            <input className="w-full border border-gray-300 rounded-lg p-2 text-sm font-bold"
+                                                value={val.title} onChange={e => updateValue(i, 'title', e.target.value)} placeholder="Değer Başlığı" />
+                                        </div>
+                                        <div>
+                                            <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Açıklama</label>
+                                            <textarea className="w-full border border-gray-300 rounded-lg p-2 text-xs h-20 resize-none"
+                                                value={val.desc} onChange={e => updateValue(i, 'desc', e.target.value)} placeholder="Kısa açıklama..." />
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* CHAIRMAN */}
+                {activeSection === 'chairman' && (
+                    <div className="space-y-6">
+                        <h4 className="font-bold border-l-4 border-purple-500 pl-3 text-lg">Yönetim Kurulu Başkanı Mesajı</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            <div className="md:col-span-1">
+                                <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Fotoğraf</label>
+                                <div className="border-2 border-dashed border-gray-300 rounded-xl p-4 text-center hover:bg-gray-50 transition-colors bg-gray-50">
+                                    {data.chairman?.image ? (
+                                        <img src={`${API_BASE_URL}/uploads/${data.chairman.image}`} className="w-full h-auto rounded-lg shadow-md mb-4 object-cover" />
+                                    ) : (
+                                        <div className="w-full h-64 bg-gray-200 rounded-lg flex items-center justify-center mb-4 text-gray-400">
+                                            <div className="text-center">
+                                                <span className="material-symbols-outlined text-4xl block mb-2">add_photo_alternate</span>
+                                                <span className="text-xs">Görsel Seçin</span>
+                                            </div>
+                                        </div>
+                                    )}
+                                    <input type="file" className="block w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100"
+                                        onChange={e => handleFileUpload(e.target.files?.[0] as File, path => updateChairman('image', path))} />
+                                </div>
+                            </div>
+                            <div className="md:col-span-2 space-y-4">
+                                <div>
+                                    <label className="block text-xs font-bold uppercase text-gray-500 mb-1">Ad Soyad</label>
+                                    <input className="w-full border border-gray-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-purple-200 outline-none"
+                                        value={data.chairman?.name || ''} onChange={e => updateChairman('name', e.target.value)} placeholder="Örn: Hüseyin Kış" />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold uppercase text-gray-500 mb-1">Ünvan</label>
+                                    <input className="w-full border border-gray-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-purple-200 outline-none"
+                                        value={data.chairman?.title || ''} onChange={e => updateChairman('title', e.target.value)} placeholder="Örn: Yönetim Kurulu Başkanı" />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold uppercase text-gray-500 mb-1">Mesaj Metni</label>
+                                    <textarea className="w-full border border-gray-300 rounded-lg p-3 text-sm h-64 focus:ring-2 focus:ring-purple-200 outline-none resize-none leading-relaxed"
+                                        value={data.chairman?.message || ''} onChange={e => updateChairman('message', e.target.value)} placeholder="Başkanın mesajı..." />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* HISTORY */}
+                {activeSection === 'history' && (
+                    <div className="space-y-6">
+                        <div className="flex justify-between items-center">
+                            <h4 className="font-bold border-l-4 border-purple-500 pl-3 text-lg">Tarihçe</h4>
+                            <button onClick={addHistory} className="bg-blue-100 text-blue-700 px-3 py-1.5 rounded-lg text-sm font-bold hover:bg-blue-200 flex items-center gap-1 transition-colors">
+                                <span className="material-symbols-outlined text-sm">add</span> Yeni Dönem Ekle
+                            </button>
+                        </div>
+                        <div className="space-y-4">
+                            {data.history?.sort((a: any, b: any) => parseInt(a.year) - parseInt(b.year)).map((item: any, i: number) => (
+                                <div key={item.id} className="border border-gray-200 p-4 rounded-xl bg-gray-50 relative flex flex-col md:flex-row gap-6 items-start hover:shadow-md transition-all">
+                                    <button onClick={() => removeHistory(i)} className="absolute top-2 right-2 text-white bg-red-400 hover:bg-red-600 p-1.5 rounded-lg shadow-sm transition-colors text-xs z-10" title="Kaldır"><span className="material-symbols-outlined text-sm">delete</span></button>
+
+                                    <div className="w-full md:w-32 shrink-0">
+                                        <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Görsel</label>
+                                        <div className="relative">
+                                            {item.image ? (
+                                                <img src={`${API_BASE_URL}/uploads/${item.image}`} className="w-full h-24 object-cover rounded-lg border shadow-sm mb-2" />
+                                            ) : <div className="w-full h-24 bg-gray-200 rounded-lg border mb-2 flex items-center justify-center text-xs text-gray-500">Görsel Yok</div>}
+                                            <input type="file" className="text-[10px] w-full file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-[10px] file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200"
+                                                onChange={e => handleFileUpload(e.target.files?.[0] as File, path => updateHistory(i, 'image', path))} />
+                                        </div>
+                                    </div>
+
+                                    <div className="flex-1 w-full space-y-3">
+                                        <div className="grid grid-cols-4 gap-4">
+                                            <div className="col-span-1">
+                                                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Yıl</label>
+                                                <input className="w-full border border-gray-300 rounded-lg p-2 text-sm font-bold bg-white focus:ring-2 focus:ring-blue-100 outline-none"
+                                                    value={item.year} onChange={e => updateHistory(i, 'year', e.target.value)} placeholder="1979" />
+                                            </div>
+                                            <div className="col-span-3">
+                                                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Başlık</label>
+                                                <input className="w-full border border-gray-300 rounded-lg p-2 text-sm bg-white focus:ring-2 focus:ring-blue-100 outline-none"
+                                                    value={item.title} onChange={e => updateHistory(i, 'title', e.target.value)} placeholder="Olay Başlığı" />
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Açıklama</label>
+                                            <textarea className="w-full border border-gray-300 rounded-lg p-2 text-sm h-20 bg-white focus:ring-2 focus:ring-blue-100 outline-none resize-none"
+                                                value={item.description} onChange={e => updateHistory(i, 'description', e.target.value)} placeholder="Detaylı açıklama..." />
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                            {(!data.history || data.history.length === 0) && (
+                                <div className="text-center py-8 bg-gray-50 rounded-xl border border-dashed border-gray-300 text-gray-400">
+                                    <span className="material-symbols-outlined text-3xl mb-2 opacity-50">history_edu</span>
+                                    <p className="text-sm">Henüz tarihçe kaydı bulunmuyor.</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
@@ -1859,6 +2121,515 @@ function LegalTab() {
                         onChange={e => setData({ ...data, cookiePreferences: e.target.value })}
                     />
                 </div>
+            </div>
+        </div>
+    );
+}
+
+// --- İLETİŞİM BİLGİLERİ ---
+function ContactTab() {
+    const [data, setData] = useState({ address: '', phone: '', email: '', mapUrl: '', workingHoursWeekdays: '', workingHoursWeekend: '' });
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        fetch(`${API_BASE_URL}/api/contact-info`)
+            .then(res => res.json())
+            .then(d => setData(d))
+            .catch(console.error);
+    }, []);
+
+    const handleSave = async () => {
+        setLoading(true);
+        try {
+            await fetch(`${API_BASE_URL}/api/contact-info`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            alert('İletişim bilgileri güncellendi!');
+        } catch (e) {
+            alert('Hata!');
+        }
+        setLoading(false);
+    };
+
+    return (
+        <div className="bg-white p-8 rounded-xl border border-gray-200 shadow-sm max-w-2xl mx-auto space-y-6">
+            <h3 className="text-xl font-bold text-gray-800 border-b pb-4 mb-6">Site İletişim Bilgileri</h3>
+
+            <div>
+                <label className="block text-sm font-bold text-gray-700 mb-1">Adres</label>
+                <textarea className="w-full border rounded-lg p-3 text-sm h-24" value={data.address} onChange={e => setData({ ...data, address: e.target.value })} />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+                <div>
+                    <label className="block text-sm font-bold text-gray-700 mb-1">Telefon</label>
+                    <input className="w-full border rounded-lg p-3 text-sm" value={data.phone} onChange={e => setData({ ...data, phone: e.target.value })} />
+                </div>
+                <div>
+                    <label className="block text-sm font-bold text-gray-700 mb-1">E-Posta (Görünen)</label>
+                    <input className="w-full border rounded-lg p-3 text-sm" value={data.email} onChange={e => setData({ ...data, email: e.target.value })} />
+                </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+                <div>
+                    <label className="block text-sm font-bold text-gray-700 mb-1">Hafta İçi Çalışma Saatleri</label>
+                    <input className="w-full border rounded-lg p-3 text-sm" placeholder="Hafta içi: 09:00 - 18:00" value={data.workingHoursWeekdays || ''} onChange={e => setData({ ...data, workingHoursWeekdays: e.target.value })} />
+                </div>
+                <div>
+                    <label className="block text-sm font-bold text-gray-700 mb-1">Hafta Sonu Çalışma Saatleri</label>
+                    <input className="w-full border rounded-lg p-3 text-sm" placeholder="Cumartesi: 09:00 - 13:00" value={data.workingHoursWeekend || ''} onChange={e => setData({ ...data, workingHoursWeekend: e.target.value })} />
+                </div>
+            </div>
+
+            <div>
+                <label className="block text-sm font-bold text-gray-700 mb-1">Google Maps Embed Linki (iframe src)</label>
+                <input className="w-full border rounded-lg p-3 text-sm font-mono text-xs" value={data.mapUrl} onChange={e => setData({ ...data, mapUrl: e.target.value })} />
+                <p className="text-[10px] text-gray-400 mt-1">Google Maps - Paylaş - Harita Yerleştir - src içindeki linki kopyalayın.</p>
+            </div>
+
+            <button onClick={handleSave} disabled={loading} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition-colors">
+                {loading ? 'Kaydediliyor...' : 'Kaydet'}
+            </button>
+        </div>
+    )
+}
+
+// --- ANA SAYFA İÇERİK YÖNETİMİ ---
+function HomeContentTab() {
+    const [data, setData] = useState<any>(null);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        fetch(`${API_BASE_URL}/api/home-sections`)
+            .then(res => res.json())
+            .then(d => setData(d))
+            .catch(console.error);
+    }, []);
+
+    const handleSave = async () => {
+        setLoading(true);
+        try {
+            await fetch(`${API_BASE_URL}/api/home-sections`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            alert("İçerik güncellendi!");
+        } catch (error) {
+            console.error(error);
+            alert("Hata oluştu.");
+        }
+        setLoading(false);
+    };
+
+    if (!data) return <div className="p-10 text-center">Yükleniyor...</div>;
+
+    // Helpers
+    const updateMission = (field: string, val: string) => {
+        setData({ ...data, visionMission: { ...data.visionMission, mission: { ...data.visionMission.mission, [field]: val } } });
+    };
+
+    const updateVisionItem = (index: number, field: string, val: string) => {
+        const newItems = [...data.visionMission.vision.items];
+        newItems[index] = { ...newItems[index], [field]: val };
+        setData({ ...data, visionMission: { ...data.visionMission, vision: { ...data.visionMission.vision, items: newItems } } });
+    };
+
+    const updateAchievement = (index: number, field: string, val: string) => {
+        const newList = [...data.achievements];
+        newList[index] = { ...newList[index], [field]: val };
+        setData({ ...data, achievements: newList });
+    };
+
+    const addAchievement = () => {
+        const newAch = { year: new Date().getFullYear().toString(), title: "Yeni Ödül", description: "Açıklama...", icon: "trophy" };
+        setData({ ...data, achievements: [newAch, ...data.achievements] });
+    };
+
+    const removeAchievement = (index: number) => {
+        if (!confirm("Bu başarıyı silmek istediğinize emin misiniz?")) return;
+        const newList = data.achievements.filter((_: any, i: number) => i !== index);
+        setData({ ...data, achievements: newList });
+    };
+
+    return (
+        <div className="space-y-12 pb-20">
+            {/* Sticky Header */}
+            <div className="flex justify-between items-center bg-white p-6 rounded-xl border border-gray-200 shadow-sm sticky top-24 z-10 transition-all">
+                <h3 className="font-bold text-lg text-gray-800">Ana Sayfa İçerik Yönetimi</h3>
+                <button
+                    onClick={handleSave}
+                    disabled={loading}
+                    className="bg-purple-900 text-white px-6 py-2 rounded-lg font-bold hover:bg-purple-950 transition-colors shadow-lg disabled:opacity-50 flex items-center gap-2"
+                >
+                    <span className="material-symbols-outlined">save</span>
+                    {loading ? 'Kaydediliyor...' : 'Kaydet'}
+                </button>
+            </div>
+
+            {/* MİSYON */}
+            <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
+                <h4 className="font-bold text-gray-800 mb-6 border-b pb-2 flex items-center gap-2">
+                    <span className="material-symbols-outlined text-primary">target</span>
+                    Misyon Bölümü
+                </h4>
+                <div className="space-y-4">
+                    <div>
+                        <label className="block text-sm font-bold text-gray-700 mb-1">Misyon Metni</label>
+                        <textarea
+                            className="w-full border rounded-lg p-3 text-sm h-24 focus:ring-2 focus:ring-purple-500/20 outline-none"
+                            value={data.visionMission?.mission?.text || ''}
+                            onChange={e => updateMission('text', e.target.value)}
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-bold text-gray-700 mb-1">İmza (Alt Metin)</label>
+                        <input
+                            className="w-full border rounded-lg p-3 text-sm focus:ring-2 focus:ring-purple-500/20 outline-none"
+                            value={data.visionMission?.mission?.author || ''}
+                            onChange={e => updateMission('author', e.target.value)}
+                        />
+                    </div>
+                </div>
+            </div>
+
+            {/* VİZYON */}
+            <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
+                <h4 className="font-bold text-gray-800 mb-6 border-b pb-2 flex items-center gap-2">
+                    <span className="material-symbols-outlined text-primary">visibility</span>
+                    Vizyon Maddeleri
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {data.visionMission?.vision?.items?.map((item: any, i: number) => (
+                        <div key={i} className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <div className="mb-2">
+                                <label className="text-xs font-bold text-gray-500 uppercase">Başlık</label>
+                                <input
+                                    className="w-full border rounded p-2 text-sm font-bold"
+                                    value={item.title}
+                                    onChange={e => updateVisionItem(i, 'title', e.target.value)}
+                                />
+                            </div>
+                            <div className="mb-2">
+                                <label className="text-xs font-bold text-gray-500 uppercase">İçerik</label>
+                                <textarea
+                                    className="w-full border rounded p-2 text-xs h-20"
+                                    value={item.text}
+                                    onChange={e => updateVisionItem(i, 'text', e.target.value)}
+                                />
+                            </div>
+                            <div>
+                                <label className="text-xs font-bold text-gray-500 uppercase">İkon (Material Symbol)</label>
+                                <div className="flex items-center gap-2">
+                                    <input
+                                        className="flex-1 border rounded p-2 text-sm font-mono"
+                                        value={item.icon}
+                                        onChange={e => updateVisionItem(i, 'icon', e.target.value)}
+                                    />
+                                    <span className="material-symbols-outlined text-gray-600 bg-white p-1 rounded border">{item.icon}</span>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* BAŞARILAR */}
+            <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
+                <div className="flex justify-between items-center mb-6 border-b pb-2">
+                    <h4 className="font-bold text-gray-800 flex items-center gap-2">
+                        <span className="material-symbols-outlined text-primary">trophy</span>
+                        Başarılar & Ödüller
+                    </h4>
+                    <button onClick={addAchievement} className="text-sm bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-1.5 rounded-lg transition-colors font-bold">
+                        + Yeni Ekle
+                    </button>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4">
+                    {data.achievements?.map((ach: any, i: number) => (
+                        <div key={i} className="flex flex-col md:flex-row gap-4 items-start bg-gray-50 p-4 rounded-xl border border-gray-200 group relative">
+                            <button
+                                onClick={() => removeAchievement(i)}
+                                className="absolute top-2 right-2 text-red-400 hover:text-red-600 p-1 hover:bg-red-50 rounded"
+                                title="Sil"
+                            >
+                                <span className="material-symbols-outlined text-lg">delete</span>
+                            </button>
+
+                            <div className="w-full md:w-32 shrink-0">
+                                <label className="text-[10px] font-bold text-gray-400 uppercase">Yıl</label>
+                                <input
+                                    className="w-full border rounded p-2 text-sm font-bold"
+                                    value={ach.year}
+                                    onChange={e => updateAchievement(i, 'year', e.target.value)}
+                                />
+                                <div className="mt-2">
+                                    <label className="text-[10px] font-bold text-gray-400 uppercase">İkon</label>
+                                    <div className="flex items-center gap-1">
+                                        <input
+                                            className="w-full border rounded p-1 text-xs font-mono"
+                                            value={ach.icon}
+                                            onChange={e => updateAchievement(i, 'icon', e.target.value)}
+                                        />
+                                        <span className="material-symbols-outlined text-lg text-primary">{ach.icon}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="flex-1 w-full space-y-2">
+                                <div>
+                                    <label className="text-[10px] font-bold text-gray-400 uppercase">Ödül Başlığı</label>
+                                    <input
+                                        className="w-full border rounded p-2 text-sm font-bold text-gray-800"
+                                        value={ach.title}
+                                        onChange={e => updateAchievement(i, 'title', e.target.value)}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="text-[10px] font-bold text-gray-400 uppercase">Açıklama</label>
+                                    <textarea
+                                        className="w-full border rounded p-2 text-sm text-gray-600 h-16 resize-none"
+                                        value={ach.description}
+                                        onChange={e => updateAchievement(i, 'description', e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                    {data.achievements?.length === 0 && <p className="text-gray-500 italic text-sm p-4">Listed başarı bulunmuyor.</p>}
+                </div>
+            </div>
+        </div>
+    );
+}
+
+// --- KULLANICI YÖNETİMİ ---
+function UsersTab() {
+    const [users, setUsers] = useState<any[]>([]);
+    const [loading, setLoading] = useState(false);
+
+    // Form States
+    const [editingUser, setEditingUser] = useState<any>(null);
+    const [formData, setFormData] = useState({ username: '', password: '', name: '', email: '', role: 'manager', scope: 'all' });
+
+    useEffect(() => {
+        fetchUsers();
+    }, []);
+
+    const fetchUsers = () => {
+        fetch(`${API_BASE_URL}/api/users`)
+            .then(res => res.json())
+            .then(d => setUsers(d))
+            .catch(console.error);
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+        const method = editingUser ? 'PUT' : 'POST';
+        const url = editingUser ? `${API_BASE_URL}/api/users/${editingUser.id}` : `${API_BASE_URL}/api/users`;
+
+        const body: any = { ...formData };
+        if (editingUser && !body.password) delete body.password;
+
+        try {
+            const res = await fetch(url, {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            const result = await res.json();
+
+            if (res.ok) {
+                alert(editingUser ? "Kullanıcı güncellendi!" : "Kullanıcı oluşturuldu!");
+                fetchUsers();
+                resetForm();
+            } else {
+                alert(result.message || "İşlem başarısız.");
+            }
+        } catch (e) {
+            console.error(e);
+            alert("Sunucu hatası.");
+        }
+        setLoading(false);
+    };
+
+    const handleDelete = async (id: number) => {
+        if (!confirm('Kullanıcıyı silmek istediğinize emin misiniz?')) return;
+        try {
+            await fetch(`${API_BASE_URL}/api/users/${id}`, { method: 'DELETE' });
+            fetchUsers();
+        } catch (e) { console.error(e); }
+    };
+
+    const handleEdit = (user: any) => {
+        setEditingUser(user);
+        setFormData({
+            username: user.username,
+            password: '',
+            name: user.name,
+            email: user.email || '',
+            role: user.role,
+            scope: user.scope
+        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const resetForm = () => {
+        setEditingUser(null);
+        setFormData({ username: '', password: '', name: '', email: '', role: 'manager', scope: 'all' });
+    };
+
+    return (
+        <div className="space-y-8 pb-20">
+            <h3 className="text-xl font-bold border-b pb-4 flex items-center gap-2">
+                <span className="material-symbols-outlined text-gray-400">manage_accounts</span>
+                Kullanıcı Yönetimi
+            </h3>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* LİSTE */}
+                <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                        <h2 className="font-bold text-gray-800 text-lg">Kullanıcı Listesi ({users.length})</h2>
+                        <button onClick={fetchUsers} className="text-gray-500 hover:text-blue-600 transition-colors" title="Yenile">
+                            <span className="material-symbols-outlined">refresh</span>
+                        </button>
+                    </div>
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-sm text-left">
+                            <thead className="bg-white text-gray-500 uppercase font-bold text-xs border-b">
+                                <tr>
+                                    <th className="px-6 py-4">Kullanıcı</th>
+                                    <th className="px-6 py-4">Rol</th>
+                                    <th className="px-6 py-4">Kapsam</th>
+                                    <th className="px-6 py-4 text-right">İşlem</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-100">
+                                {users.map(u => (
+                                    <tr key={u.id} className="hover:bg-gray-50 transition-colors">
+                                        <td className="px-6 py-4">
+                                            <div className="font-bold text-gray-800">{u.name || u.username}</div>
+                                            <div className="text-gray-400 text-xs text-nowrap">@{u.username}</div>
+                                            {u.email && <div className="text-blue-500 text-[10px] mt-0.5">{u.email}</div>}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${u.role === 'super' || u.role === 'superadmin' ? 'bg-purple-100 text-purple-700' :
+                                                u.role === 'hr' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'
+                                                }`}>
+                                                {u.role}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4 text-gray-500 font-medium text-xs">
+                                            {u.scope === 'all' ? 'Tüm Sistem' : <span className="capitalize">{u.scope}</span>}
+                                        </td>
+                                        <td className="px-6 py-4 text-right">
+                                            <div className="flex justify-end gap-1">
+                                                <button onClick={() => handleEdit(u)} className="p-2 text-blue-500 hover:bg-blue-50 rounded transition-colors" title="Düzenle">
+                                                    <span className="material-symbols-outlined text-lg">edit</span>
+                                                </button>
+                                                {u.role !== 'super' && u.role !== 'superadmin' && (
+                                                    <button onClick={() => handleDelete(u.id)} className="p-2 text-red-500 hover:bg-red-50 rounded transition-colors" title="Sil">
+                                                        <span className="material-symbols-outlined text-lg">delete</span>
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                {/* FORM */}
+                <div>
+                    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 sticky top-24">
+                        <div className="flex justify-between items-center mb-6 pb-4 border-b">
+                            <h3 className="font-bold text-gray-800 border-l-4 border-yellow-400 pl-3">
+                                {editingUser ? 'Kullanıcı Düzenle' : 'Yeni Kullanıcı'}
+                            </h3>
+                            {editingUser && (
+                                <button onClick={resetForm} className="text-xs text-red-500 hover:underline font-bold">VAZGEÇ</button>
+                            )}
+                        </div>
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <div>
+                                <label className="block text-xs font-bold text-gray-500 mb-1 uppercase">Ad Soyad</label>
+                                <input required className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-yellow-400 outline-none"
+                                    value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} placeholder="Örn: Ahmet Yılmaz" />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-bold text-gray-500 mb-1 uppercase">Kullanıcı Adı</label>
+                                <input required className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-yellow-400 outline-none"
+                                    value={formData.username} onChange={e => setFormData({ ...formData, username: e.target.value })} placeholder="ahmet123" />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-bold text-gray-500 mb-1 uppercase">E-posta</label>
+                                <input type="email" required className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-yellow-400 outline-none"
+                                    value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} placeholder="mail@derya.com" />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-bold text-gray-500 mb-1 uppercase">Şifre {editingUser && '(Opsiyonel)'}</label>
+                                <input className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-yellow-400 outline-none"
+                                    type="password"
+                                    value={formData.password} onChange={e => setFormData({ ...formData, password: e.target.value })}
+                                    required={!editingUser} placeholder="******" />
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-xs font-bold text-gray-500 mb-1 uppercase">Rol</label>
+                                    <select className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white"
+                                        value={formData.role} onChange={e => setFormData({ ...formData, role: e.target.value })}>
+                                        <option value="manager">Manager</option>
+                                        <option value="hr">HR</option>
+                                        <option value="super">Super Admin</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-gray-500 mb-1 uppercase">Kapsam</label>
+                                    <select className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white"
+                                        value={formData.scope} onChange={e => setFormData({ ...formData, scope: e.target.value })}>
+                                        <option value="all">Tümü</option>
+                                        <option value="otomotiv">Otomotiv</option>
+                                        <option value="insaat">İnşaat</option>
+                                        <option value="sigorta">Sigorta</option>
+                                        <option value="elektronik">Elektronik</option>
+                                        <option value="bilisim">Bilişim</option>
+                                        <option value="chefmezze">Chef Mezze</option>
+                                        <option value="yapi">Yapı</option>
+                                        <option value="tasarim">Tasarım</option>
+                                        <option value="marble">Marble</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="submit" disabled={loading} className={`w-full font-bold text-white py-3 rounded-lg mt-2 transition-colors shadow-lg ${editingUser ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-900 hover:bg-black'}`}>
+                                {loading ? 'İşleniyor...' : (editingUser ? 'Bilgileri Güncelle' : 'Kullanıcı Oluştur')}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function OverviewTab() {
+    return (
+        <div className="space-y-8 animate-fade-in pb-10">
+            <div className="bg-gradient-to-r from-gray-900 to-blue-900 rounded-2xl p-8 text-white shadow-xl relative overflow-hidden">
+                <div className="relative z-10 max-w-3xl">
+                    <h2 className="text-3xl font-bold mb-3">Yönetim Paneline Hoş Geldiniz</h2>
+                    <p className="text-blue-100 text-lg font-light">
+                        Tüm operasyonel süreçlerinizi buradan yönetebilirsiniz.
+                    </p>
+                </div>
+                <div className="absolute top-0 right-0 w-96 h-96 bg-white opacity-5 rounded-full -mr-20 -mt-20 blur-3xl"></div>
             </div>
         </div>
     );

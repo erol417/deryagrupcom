@@ -389,6 +389,53 @@ app.put('/api/legal', (req, res) => {
     }
 });
 
+// --- İLETİŞİM BİLGİLERİ (Contact Info) ---
+const CONTACT_INFO_FILE = path.join(__dirname, 'contact_info.json');
+
+app.get('/api/contact-info', (req, res) => {
+    if (!fs.existsSync(CONTACT_INFO_FILE)) {
+        // Varsayılan dosya oluştur
+        const defaultInfo = {
+            address: "Adres giriniz",
+            phone: "+90 216 000 00 00",
+            email: "info@ornek.com",
+            mapUrl: ""
+        };
+        fs.writeFileSync(CONTACT_INFO_FILE, JSON.stringify(defaultInfo));
+    }
+    const data = readData(CONTACT_INFO_FILE);
+    res.json(data);
+});
+
+app.post('/api/contact-info', (req, res) => {
+    try {
+        writeData(CONTACT_INFO_FILE, req.body);
+        res.json({ success: true, message: 'İletişim bilgileri güncellendi.' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Güncelleme hatası.' });
+    }
+});
+
+// --- ANA SAYFA BÖLÜMLERİ (Vision/Mission/Achievements) ---
+const HOME_SECTIONS_FILE = path.join(__dirname, 'home_sections.json');
+
+app.get('/api/home-sections', (req, res) => {
+    if (!fs.existsSync(HOME_SECTIONS_FILE)) {
+        res.json({ achievements: [], visionMission: {} });
+    } else {
+        res.json(readData(HOME_SECTIONS_FILE));
+    }
+});
+
+app.post('/api/home-sections', (req, res) => {
+    try {
+        writeData(HOME_SECTIONS_FILE, req.body);
+        res.json({ success: true, message: 'Ana sayfa bölümleri güncellendi.' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Güncelleme hatası.' });
+    }
+});
+
 const sharp = require('sharp'); // Resim işleme kütüphanesi
 
 // Marka Logoları İçin Storage Ayarı
@@ -883,6 +930,63 @@ app.post('/api/about', (req, res) => {
     } catch (error) {
         console.error("About Save Error:", error);
         res.status(500).json({ error: "Veri kaydedilemedi" });
+    }
+});
+
+// --- RSS HABERLERİ API (CANLI BESLEME) ---
+app.get('/api/news', async (req, res) => {
+    const https = require('https');
+
+    // Basit RSS Parser 
+    const parseRSS = (xml) => {
+        const items = [];
+        const itemRegex = /<item>([\s\S]*?)<\/item>/g;
+        let match;
+        let count = 0;
+
+        while ((match = itemRegex.exec(xml)) !== null && count < 6) {
+            const content = match[1];
+
+            let title = "";
+            const titleMatch = /<title>(?:<!\[CDATA\[(.*?)]]>|(.*?))<\/title>/s.exec(content);
+            if (titleMatch) title = (titleMatch[1] || titleMatch[2] || "").trim();
+
+            let link = "";
+            const linkMatch = /<link>(.*?)<\/link>/s.exec(content);
+            if (linkMatch) link = (linkMatch[1] || "").trim();
+
+            if (title && link) {
+                items.push({ title, link });
+                count++;
+            }
+        }
+        return items;
+    };
+
+    const fetchRSS = (url) => {
+        return new Promise((resolve) => {
+            const req = https.get(url, { headers: { 'User-Agent': 'Mozilla/5.0' } }, (resp) => {
+                let data = '';
+                resp.on('data', (chunk) => { data += chunk; });
+                resp.on('end', () => { resolve(parseRSS(data)); });
+            });
+            req.on('error', (err) => {
+                console.error("RSS Error:", err.message);
+                resolve([]);
+            });
+        });
+    };
+
+    try {
+        const [economy, finance, personal] = await Promise.all([
+            fetchRSS('https://www.bloomberght.com/rss'),
+            fetchRSS('https://www.ntv.com.tr/ekonomi.rss'),
+            fetchRSS('https://www.uplifers.com/feed/')
+        ]);
+
+        res.json({ economy, finance, personal });
+    } catch (e) {
+        res.status(500).json({ error: 'News Error' });
     }
 });
 

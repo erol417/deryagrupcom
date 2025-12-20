@@ -17,6 +17,7 @@ export default function Home() {
   const [latestNews, setLatestNews] = useState<News | null>(null);
   const [brands, setBrands] = useState<any[]>([]);
   const [socialData, setSocialData] = useState<any>(null);
+  const [homeSections, setHomeSections] = useState<any>(null);
 
   // Hero Data
   const [heroData, setHeroData] = useState<any>(null);
@@ -83,7 +84,14 @@ export default function Home() {
     fetch(`${API_BASE_URL}/api/social`)
       .then(res => res.json())
       .then(data => setSocialData(data))
+      .then(data => setSocialData(data))
       .catch(err => console.error("Sosyal medya hatası:", err));
+
+    // Ana Sayfa Bölümlerini Getir
+    fetch(`${API_BASE_URL}/api/home-sections`)
+      .then(res => res.json())
+      .then(data => setHomeSections(data))
+      .catch(console.error);
 
   }, []);
 
@@ -152,33 +160,17 @@ export default function Home() {
               <span className="text-sm font-bold tracking-widest text-gray-500 uppercase mb-2 block">Kurumsal</span>
               <h2 className="text-3xl font-bold text-white mb-8">Vizyonumuz</h2>
               <div className="space-y-8">
-                <div className="flex gap-4 group">
-                  <div className="size-12 rounded-full bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-primary transition-colors">
-                    <span className="material-symbols-outlined text-white">lightbulb</span>
+                {homeSections?.visionMission?.vision?.items?.map((item: any, i: number) => (
+                  <div key={i} className="flex gap-4 group">
+                    <div className="size-12 rounded-full bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-primary transition-colors">
+                      <span className="material-symbols-outlined text-white">{item.icon}</span>
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-white mb-1">{item.title}</h3>
+                      <p className="text-gray-400">{item.text}</p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-white mb-1">Yenilikçilik</h3>
-                    <p className="text-gray-400">Sektördeki en yeni teknolojileri takip ederek sürekli gelişim sağlıyoruz.</p>
-                  </div>
-                </div>
-                <div className="flex gap-4 group">
-                  <div className="size-12 rounded-full bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-primary transition-colors">
-                    <span className="material-symbols-outlined text-white">eco</span>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-white mb-1">Sürdürülebilirlik</h3>
-                    <p className="text-gray-400">Gelecek nesillere yaşanabilir bir dünya bırakmak için çevre dostu çözümler.</p>
-                  </div>
-                </div>
-                <div className="flex gap-4 group">
-                  <div className="size-12 rounded-full bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-primary transition-colors">
-                    <span className="material-symbols-outlined text-white">diversity_3</span>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-white mb-1">Müşteri Odaklılık</h3>
-                    <p className="text-gray-400">Müşteri memnuniyetini işimizin merkezine koyarak güven inşa ediyoruz.</p>
-                  </div>
-                </div>
+                )) || <div className="text-gray-500">Yükleniyor...</div>}
               </div>
             </div>
             <div className="flex-1">
@@ -189,11 +181,11 @@ export default function Home() {
                 <div className="relative z-10">
                   <span className="material-symbols-outlined text-6xl text-primary mb-6">format_quote</span>
                   <p className="text-xl md:text-2xl font-medium text-gray-200 leading-relaxed">
-                    "Topluma ve çevreye duyarlı, güvenilir ve kaliteli hizmet anlayışıyla sektörde fark yaratarak, ülkemizin ekonomik kalkınmasına değer katmak."
+                    "{homeSections?.visionMission?.mission?.text || '...'}"
                   </p>
                   <div className="mt-8 flex items-center gap-3">
                     <div className="h-1 w-12 bg-primary"></div>
-                    <span className="text-sm font-bold text-gray-400">Derya Grup Yönetim Kurulu</span>
+                    <span className="text-sm font-bold text-gray-400">{homeSections?.visionMission?.mission?.author || 'Derya Grup'}</span>
                   </div>
                 </div>
               </div>
@@ -282,30 +274,16 @@ export default function Home() {
             </button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-8 hover:bg-white/10 transition-all cursor-pointer">
-              <div className="text-primary mb-4">
-                <span className="material-symbols-outlined text-4xl">trophy</span>
+            {homeSections?.achievements?.map((ach: any, i: number) => (
+              <div key={i} className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-8 hover:bg-white/10 transition-all cursor-pointer">
+                <div className="text-primary mb-4">
+                  <span className="material-symbols-outlined text-4xl">{ach.icon}</span>
+                </div>
+                <div className="text-sm text-gray-400 mb-2">{ach.year}</div>
+                <h3 className="text-xl font-bold mb-3">{ach.title}</h3>
+                <p className="text-gray-300 text-sm leading-relaxed">{ach.description}</p>
               </div>
-              <div className="text-sm text-gray-400 mb-2">2023</div>
-              <h3 className="text-xl font-bold mb-3">Yılın En İyi Otomotiv Bayisi</h3>
-              <p className="text-gray-300 text-sm leading-relaxed">Müşteri memnuniyeti ve satış performansı kategorisinde bölge birinciliği ödülü.</p>
-            </div>
-            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-8 hover:bg-white/10 transition-all cursor-pointer">
-              <div className="text-primary mb-4">
-                <span className="material-symbols-outlined text-4xl">verified</span>
-              </div>
-              <div className="text-sm text-gray-400 mb-2">2022</div>
-              <h3 className="text-xl font-bold mb-3">Güvenilir İnşaat Markası</h3>
-              <p className="text-gray-300 text-sm leading-relaxed">Kalite standartları ve proje teslim sürelerindeki başarı ile sektör ödülü.</p>
-            </div>
-            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-8 hover:bg-white/10 transition-all cursor-pointer">
-              <div className="text-primary mb-4">
-                <span className="material-symbols-outlined text-4xl">workspace_premium</span>
-              </div>
-              <div className="text-sm text-gray-400 mb-2">2021</div>
-              <h3 className="text-xl font-bold mb-3">Kurumsal Sorumluluk Ödülü</h3>
-              <p className="text-gray-300 text-sm leading-relaxed">Eğitime destek ve çevre projeleri kapsamında verilen onur ödülü.</p>
-            </div>
+            )) || <div className="col-span-3 text-center text-gray-500">Yükleniyor...</div>}
           </div>
         </div>
       </section>

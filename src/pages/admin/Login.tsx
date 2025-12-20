@@ -92,7 +92,7 @@ export default function AdminLogin() {
         <div className="min-h-screen flex items-center justify-center bg-gray-900 px-4">
             <div className="bg-white rounded-xl p-8 shadow-2xl w-full max-w-md">
                 <div className="text-center mb-8">
-                    <h1 className="text-2xl font-bold text-gray-800">İK Yönetim Paneli</h1>
+                    <h1 className="text-2xl font-bold text-gray-800">Genel Yönetim Paneli</h1>
                     <p className="text-gray-500 text-sm">Devam etmek için giriş yapın</p>
                 </div>
 

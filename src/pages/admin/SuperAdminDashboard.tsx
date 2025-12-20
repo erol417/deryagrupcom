@@ -141,7 +141,7 @@ export default function SuperAdminDashboard() {
                             <span className="material-symbols-outlined text-3xl">hr_resting</span>
                         </div>
                         <div>
-                            <h3 className="font-bold text-gray-800">İK Paneli</h3>
+                            <h3 className="font-bold text-gray-800">Admin Paneli</h3>
                             <p className="text-xs text-gray-500">Başvurular & İlanlar</p>
                         </div>
                     </div>
@@ -171,141 +171,7 @@ export default function SuperAdminDashboard() {
                     ))}
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-                    {/* User List */}
-                    <div className="lg:col-span-2">
-                        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                            <div className="p-6 border-b border-gray-100 flex justify-between items-center">
-                                <h2 className="font-bold text-gray-800 text-lg">Kullanıcı Listesi ({users.length})</h2>
-                            </div>
-                            <div className="overflow-x-auto">
-                                <table className="w-full text-sm text-left">
-                                    <thead className="bg-gray-50 text-gray-500 uppercase font-bold text-xs">
-                                        <tr>
-                                            <th className="px-6 py-4">Kullanıcı</th>
-                                            <th className="px-6 py-4">Rol</th>
-                                            <th className="px-6 py-4">Sorumluluk</th>
-                                            <th className="px-6 py-4 text-right">İşlemler</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-gray-100">
-                                        {users.map(user => (
-                                            <tr key={user.id} className="hover:bg-gray-50 transition-colors">
-                                                <td className="px-6 py-4">
-                                                    <div className="font-bold text-gray-800">{user.name}</div>
-                                                    <div className="text-gray-400 text-xs">@{user.username}</div>
-                                                    {user.email && <div className="text-blue-500 text-xs mt-1">{user.email}</div>}
-                                                </td>
-                                                <td className="px-6 py-4">
-                                                    <span className={`px-2 py-1 rounded text-xs font-bold uppercase ${user.role === 'super' ? 'bg-purple-50 text-purple-600' :
-                                                        user.role === 'hr' ? 'bg-blue-50 text-blue-600' : 'bg-green-50 text-green-600'
-                                                        }`}>
-                                                        {user.role}
-                                                    </span>
-                                                </td>
-                                                <td className="px-6 py-4 text-gray-600 font-medium">
-                                                    {user.scope === 'all' ? 'Tüm Sistem' : user.scope}
-                                                </td>
-                                                <td className="px-6 py-4 text-right">
-                                                    <button onClick={() => handleEdit(user)} className="text-blue-500 hover:text-blue-700 mx-1">
-                                                        <span className="material-symbols-outlined text-lg">edit</span>
-                                                    </button>
-                                                    {user.username !== 'super' && ( // Kendini silemez
-                                                        <button onClick={() => handleDelete(user.id)} className="text-red-500 hover:text-red-700 mx-1">
-                                                            <span className="material-symbols-outlined text-lg">delete</span>
-                                                        </button>
-                                                    )}
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Add/Edit Form */}
-                    <div>
-                        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 sticky top-24">
-                            <div className="flex justify-between items-center mb-6">
-                                <h3 className="font-bold text-gray-800 border-l-4 border-yellow-400 pl-3">
-                                    {editingUser ? 'Kullanıcı Düzenle' : 'Yeni Kullanıcı'}
-                                </h3>
-                                {editingUser && (
-                                    <button onClick={resetForm} className="text-xs text-red-500 hover:underline">Vazgeç</button>
-                                )}
-                            </div>
-
-                            <form onSubmit={handleSubmit} className="space-y-4">
-                                <div>
-                                    <label className="block text-xs font-bold text-gray-500 mb-1">Ad Soyad</label>
-                                    <input required className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-yellow-400 outline-none"
-                                        value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} placeholder="Örn: Ahmet Yılmaz" />
-                                </div>
-
-                                <div>
-                                    <label className="block text-xs font-bold text-gray-500 mb-1">Kullanıcı Adı</label>
-                                    <input required className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-yellow-400 outline-none"
-                                        value={formData.username} onChange={e => setFormData({ ...formData, username: e.target.value })} placeholder="Örn: ahmet123" />
-                                </div>
-
-                                <div>
-                                    <label className="block text-xs font-bold text-gray-500 mb-1">E-posta Adresi (Giriş doğrulaması için)</label>
-                                    <input type="email" required className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-yellow-400 outline-none"
-                                        value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} placeholder="kullanici@deryagrup.com" />
-                                </div>
-
-                                <div>
-                                    <label className="block text-xs font-bold text-gray-500 mb-1">Şifre {editingUser && '(Boş bırakılırsa değişmez)'}</label>
-                                    <input className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-yellow-400 outline-none"
-                                        type="password"
-                                        value={formData.password} onChange={e => setFormData({ ...formData, password: e.target.value })}
-                                        required={!editingUser}
-                                        placeholder="******" />
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="block text-xs font-bold text-gray-500 mb-1">Rol</label>
-                                        <select className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-yellow-400 outline-none bg-white"
-                                            value={formData.role}
-                                            // @ts-ignore
-                                            onChange={e => setFormData({ ...formData, role: e.target.value })}>
-                                            <option value="manager">Manager</option>
-                                            <option value="hr">HR (İK)</option>
-                                            <option value="super">Super Admin</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label className="block text-xs font-bold text-gray-500 mb-1">Kapsam (Scope)</label>
-                                        <select className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-yellow-400 outline-none bg-white"
-                                            value={formData.scope}
-                                            // @ts-ignore
-                                            onChange={e => setFormData({ ...formData, scope: e.target.value })}>
-                                            <option value="all">Tümü (İK/Super)</option>
-                                            <option value="otomotiv">Otomotiv</option>
-                                            <option value="insaat">İnşaat</option>
-                                            <option value="sigorta">Sigorta</option>
-                                            <option value="elektronik">Elektronik</option>
-                                            <option value="bilisim">Bilişim</option>
-                                            <option value="chefmezze">Chef Mezze</option>
-                                            <option value="yapi">Yapı</option>
-                                            <option value="tasarim">Tasarım</option>
-                                            <option value="marble">Marble (Mermer)</option>
-                                        </select>
-                                        <p className="text-[10px] text-gray-400 mt-1">Sadece Manager için bölüm seçin.</p>
-                                    </div>
-                                </div>
-
-                                <button type="submit" className={`w-full font-bold text-white py-3 rounded-lg mt-2 transition-colors ${editingUser ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-900 hover:bg-black'}`}>
-                                    {editingUser ? 'Güncelle' : 'Kullanıcı Oluştur'}
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-
-                </div>
             </div>
         </div>
     );
