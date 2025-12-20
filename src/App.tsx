@@ -20,9 +20,12 @@ import AdminDashboard from "./pages/admin/Dashboard"
 import ManagerDashboard from "./pages/admin/ManagerDashboard"
 import SuperAdminDashboard from "./pages/admin/SuperAdminDashboard"
 
+import AnalyticsTracker from "./components/AnalyticsTracker"
+
 function App() {
   return (
     <BrowserRouter>
+      <AnalyticsTracker />
       <Routes>
         <Route path="/" element={<MainLayout />}>
           <Route index element={<Home />} />

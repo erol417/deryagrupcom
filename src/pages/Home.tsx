@@ -84,7 +84,6 @@ export default function Home() {
     fetch(`${API_BASE_URL}/api/social`)
       .then(res => res.json())
       .then(data => setSocialData(data))
-      .then(data => setSocialData(data))
       .catch(err => console.error("Sosyal medya hatası:", err));
 
     // Ana Sayfa Bölümlerini Getir

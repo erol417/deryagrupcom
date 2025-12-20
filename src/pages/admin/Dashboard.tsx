@@ -97,7 +97,7 @@ export default function AdminDashboard() {
 
 
     const navigate = useNavigate();
-    const [activeTab, setActiveTab] = useState<'home' | 'applications' | 'jobs' | 'news' | 'social' | 'culture' | 'hero' | 'about' | 'legal' | 'contact_settings' | 'home_content' | 'users'>('home');
+    const [activeTab, setActiveTab] = useState<'home' | 'applications' | 'jobs' | 'news' | 'social' | 'culture' | 'hero' | 'about' | 'legal' | 'contact_settings' | 'home_content' | 'users' | 'reports'>('home');
     const [currentUser, setCurrentUser] = useState<any>(null);
 
     const [jobs, setJobs] = useState<Job[]>([]);
@@ -218,7 +218,8 @@ export default function AdminDashboard() {
         {
             title: "Genel Bakış",
             items: [
-                { id: "home", label: "Ana Sayfa", icon: "dashboard" }
+                { id: "home", label: "Ana Sayfa", icon: "dashboard" },
+                { id: "reports", label: "Raporlar & Analiz", icon: "analytics" }
             ]
         },
         {
@@ -554,6 +555,7 @@ export default function AdminDashboard() {
                     {activeTab === 'contact_settings' && <ContactTab />}
                     {activeTab === 'home_content' && <HomeContentTab />}
                     {activeTab === 'users' && <UsersTab />}
+                    {activeTab === 'reports' && <ReportsTab />}
                 </div>
             </main>
         </div>
@@ -2818,6 +2820,209 @@ function OverviewTab() {
                     </p>
                 </div>
                 <div className="absolute top-0 right-0 w-96 h-96 bg-white opacity-5 rounded-full -mr-20 -mt-20 blur-3xl"></div>
+            </div>
+        </div>
+    );
+}
+
+// --- REPORTS TAB ---
+function ReportsTab() {
+    const [data, setData] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        setLoading(true);
+        fetch(`${API_BASE_URL}/api/analytics/report`)
+            .then(res => res.json())
+            .then(d => {
+                setData(d);
+                setLoading(false);
+            })
+            .catch(e => {
+                console.error(e);
+                setLoading(false);
+            });
+    }, []);
+
+    if (loading) return <div className="p-10 text-center"><span className="material-symbols-outlined animate-spin text-4xl text-gray-300">progress_activity</span></div>;
+    if (!data) return <div className="p-10 text-center">Veri alınamadı.</div>;
+
+    const { summary, graph, topPages, topActions, devices, topLocations } = data;
+
+    // Basit Bar Chart (SVG veya CSS)
+    const maxGraphVal = Math.max(...graph.map((g: any) => g.count), 1);
+
+    return (
+        <div className="space-y-8 animate-fadeIn">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-teal-800 to-teal-600 p-8 rounded-2xl text-white shadow-xl relative overflow-hidden">
+                <div className="relative z-10">
+                    <h2 className="text-3xl font-bold mb-2">Analiz Raporları</h2>
+                    <p className="text-teal-100">Ziyaretçi trafiği, kullanıcı davranışları ve demografik veriler.</p>
+                </div>
+                <span className="material-symbols-outlined absolute right-0 bottom-0 text-[150px] text-white/10 -rotate-12 translate-x-10 translate-y-10">monitoring</span>
+            </div>
+
+            {/* Summary Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex items-center gap-4">
+                    <div className="w-14 h-14 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center">
+                        <span className="material-symbols-outlined text-3xl">visibility</span>
+                    </div>
+                    <div>
+                        <span className="block text-gray-500 text-xs font-bold uppercase tracking-wider">Toplam Görüntülenme</span>
+                        <span className="text-3xl font-bold text-gray-800">{summary.totalVisits}</span>
+                    </div>
+                </div>
+                <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex items-center gap-4">
+                    <div className="w-14 h-14 rounded-full bg-green-50 text-green-600 flex items-center justify-center">
+                        <span className="material-symbols-outlined text-3xl">today</span>
+                    </div>
+                    <div>
+                        <span className="block text-gray-500 text-xs font-bold uppercase tracking-wider">Bugünkü Ziyaretçi</span>
+                        <span className="text-3xl font-bold text-gray-800">{summary.dailyVisits}</span>
+                    </div>
+                </div>
+                <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex items-center gap-4">
+                    <div className="w-14 h-14 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center">
+                        <span className="material-symbols-outlined text-3xl">group</span>
+                    </div>
+                    <div>
+                        <span className="block text-gray-500 text-xs font-bold uppercase tracking-wider">Anlık Aktif (Tahmini)</span>
+                        <span className="text-3xl font-bold text-gray-800">{summary.activeUsers}</span>
+                        <span className="text-xs text-gray-400 ml-2">(Son 1 saat)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Traffic Graph */}
+                <div className="lg:col-span-2 bg-white p-6 rounded-xl border border-gray-100 shadow-sm max-h-[400px]">
+                    <h3 className="font-bold text-lg mb-6 flex items-center gap-2">
+                        <span className="material-symbols-outlined text-gray-400">bar_chart</span>
+                        Saatlik Trafik (Son 24 Saat)
+                    </h3>
+                    <div className="h-48 flex items-end justify-between gap-1 overflow-x-auto pb-2 px-2">
+                        {graph.map((item: any, i: number) => (
+                            <div key={i} className="flex flex-col items-center gap-2 group w-full min-w-[20px]">
+                                <div
+                                    className="w-full bg-teal-500 rounded-t-sm hover:bg-teal-600 transition-all relative group-hover:scale-110 origin-bottom"
+                                    style={{ height: `${(item.count / maxGraphVal) * 100}%`, minHeight: '4px' }}
+                                >
+                                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 pointer-events-none">
+                                        {item.count} Via
+                                    </div>
+                                </div>
+                                <span className="text-[10px] text-gray-400 rotate-0 whitespace-nowrap">{item.name}</span>
+                            </div>
+                        ))}
+                        {graph.length === 0 && <div className="w-full h-full flex items-center justify-center text-gray-400">Veri yok</div>}
+                    </div>
+                </div>
+
+                {/* Devices */}
+                <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
+                    <h3 className="font-bold text-lg mb-6 flex items-center gap-2">
+                        <span className="material-symbols-outlined text-gray-400">devices</span>
+                        Cihaz Dağılımı
+                    </h3>
+                    <div className="space-y-4">
+                        <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div className="flex items-center gap-3">
+                                <span className="material-symbols-outlined text-gray-600">smartphone</span>
+                                <span className="font-bold text-gray-700">Mobil</span>
+                            </div>
+                            <span className="font-bold text-lg">{devices.Mobile}</span>
+                        </div>
+                        <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div className="flex items-center gap-3">
+                                <span className="material-symbols-outlined text-gray-600">computer</span>
+                                <span className="font-bold text-gray-700">Masaüstü</span>
+                            </div>
+                            <span className="font-bold text-lg">{devices.Desktop}</span>
+                        </div>
+                        <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div className="flex items-center gap-3">
+                                <span className="material-symbols-outlined text-gray-600">help</span>
+                                <span className="font-bold text-gray-700">Diğer</span>
+                            </div>
+                            <span className="font-bold text-lg">{devices.Other}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Top Pages */}
+                <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
+                    <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
+                        <span className="material-symbols-outlined text-teal-600">pages</span>
+                        En Çok Gezilen Sayfalar
+                    </h3>
+                    <div className="overflow-hidden rounded-lg border border-gray-100">
+                        <table className="w-full text-sm">
+                            <thead className="bg-gray-50 text-gray-500 text-xs uppercase font-bold text-left">
+                                <tr>
+                                    <th className="px-4 py-3">Sayfa</th>
+                                    <th className="px-4 py-3 text-right">Görüntülenme</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-100">
+                                {topPages.map((p: any, i: number) => (
+                                    <tr key={i} className="hover:bg-gray-50">
+                                        <td className="px-4 py-3 font-medium text-teal-700 truncate max-w-[200px]">{p.path}</td>
+                                        <td className="px-4 py-3 text-right font-bold text-gray-700">{p.count}</td>
+                                    </tr>
+                                ))}
+                                {topPages.length === 0 && <tr><td colSpan={2} className="p-4 text-center text-gray-400">Veri yok</td></tr>}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                {/* Locations */}
+                <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
+                    <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
+                        <span className="material-symbols-outlined text-red-500">public</span>
+                        Ziyaretçi Konumları
+                    </h3>
+                    <div className="overflow-hidden rounded-lg border border-gray-100">
+                        <table className="w-full text-sm">
+                            <thead className="bg-gray-50 text-gray-500 text-xs uppercase font-bold text-left">
+                                <tr>
+                                    <th className="px-4 py-3">Şehir / Bölge</th>
+                                    <th className="px-4 py-3 text-right">Ziyaret</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-100">
+                                {topLocations.map((l: any, i: number) => (
+                                    <tr key={i} className="hover:bg-gray-50">
+                                        <td className="px-4 py-3 font-medium text-gray-700">{l.city}</td>
+                                        <td className="px-4 py-3 text-right font-bold text-gray-700">{l.count}</td>
+                                    </tr>
+                                ))}
+                                {topLocations.length === 0 && <tr><td colSpan={2} className="p-4 text-center text-gray-400">Konum verisi henüz toplanmadı</td></tr>}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            {/* Actions / Clicks */}
+            <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
+                <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
+                    <span className="material-symbols-outlined text-purple-500">touch_app</span>
+                    En Çok Tıklanan Alanlar (Aksiyonlar)
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                    {topActions.map((a: any, i: number) => (
+                        <div key={i} className="px-3 py-1.5 bg-purple-50 text-purple-700 rounded-lg text-sm font-medium border border-purple-100 flex items-center gap-2">
+                            <span>{a.action}</span>
+                            <span className="bg-purple-200 px-1.5 rounded text-xs font-bold text-purple-800">{a.count}</span>
+                        </div>
+                    ))}
+                    {topActions.length === 0 && <span className="text-gray-400 italic">Henüz etkileşim verisi yok.</span>}
+                </div>
             </div>
         </div>
     );

@@ -17,6 +17,7 @@ const PORT = process.env.PORT || 3003;
 const JOBS_FILE = path.join(__dirname, 'data', 'jobs.json');
 const APPS_FILE = path.join(__dirname, 'data', 'applications.json');
 const CULTURE_FILE = path.join(__dirname, 'data', 'culture.json');
+const ANALYTICS_FILE = path.join(__dirname, 'data', 'analytics.json');
 
 // Middleware
 app.use(cors());
@@ -932,6 +933,126 @@ app.post('/api/about', (req, res) => {
         res.status(500).json({ error: "Veri kaydedilemedi" });
     }
 });
+
+// --- ANALYTICS MODÜLÜ ---
+// 1. Veri Toplama Endpoint'i
+app.post('/api/analytics/collect', (req, res) => {
+    try {
+        const { type, path, action, meta } = req.body;
+        const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+        const userAgent = req.headers['user-agent'];
+
+        const log = {
+            id: Date.now(),
+            timestamp: new Date().toISOString(),
+            type, // 'pageview' | 'click'
+            path,
+            action, // 'viewed_home', 'clicked_apply' vb.
+            ip, // Hashlenerek saklanabilir, şimdilik raw
+            userAgent,
+            meta // { device: 'mobile', city: 'Istanbul' - client side'dan gelirse }
+        };
+
+        const logs = readData(ANALYTICS_FILE);
+        // Aşırı büyümeyi önlemek için son 10.000 kaydı tut (Basit bir log rotasyonu)
+        if (logs.length > 10000) logs.shift();
+        logs.push(log);
+
+        writeData(ANALYTICS_FILE, logs);
+        res.status(200).json({ success: true });
+    } catch (e) {
+        console.error('Analytics Error:', e);
+        // Analytics hatası kullanıcı deneyimini bozmamalı
+        res.status(200).json({ success: false });
+    }
+});
+
+// 2. Raporlama Endpoint'i (Admin)
+app.get('/api/analytics/report', (req, res) => {
+    try {
+        // Analytics dosyası yoksa oluştur
+        if (!fs.existsSync(ANALYTICS_FILE)) writeData(ANALYTICS_FILE, []);
+
+        const logs = readData(ANALYTICS_FILE);
+        const now = new Date();
+        const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+        const oneHourAgo = now.getTime() - (60 * 60 * 1000);
+
+        // 1. Özet Kartlar
+        const totalVisits = logs.filter(l => l.type === 'pageview').length;
+        const dailyVisits = logs.filter(l => l.type === 'pageview' && new Date(l.timestamp).getTime() > startOfDay).length;
+        const activeUsers = new Set(logs.filter(l => new Date(l.timestamp).getTime() > oneHourAgo).map(l => l.ip)).size;
+
+        // 2. Saatlik Kırılım (Son 24 Saat)
+        const hourlyStats = {};
+        logs.forEach(l => {
+            if (l.type === 'pageview') {
+                const date = new Date(l.timestamp);
+                const key = `${date.getHours()}:00`;
+                hourlyStats[key] = (hourlyStats[key] || 0) + 1;
+            }
+        });
+        const graphData = Object.keys(hourlyStats).map(k => ({ name: k, count: hourlyStats[k] }));
+
+        // 3. En Çok Görüntülenen Sayfalar
+        const pageCounts = {};
+        logs.filter(l => l.type === 'pageview').forEach(l => {
+            pageCounts[l.path] = (pageCounts[l.path] || 0) + 1;
+        });
+        const topPages = Object.entries(pageCounts)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 5)
+            .map(([path, count]) => ({ path, count }));
+
+        // 4. En Çok Tıklananlar (Aksiyonlar)
+        const actionCounts = {};
+        logs.filter(l => l.type === 'click').forEach(l => {
+            const key = l.action || 'Bilinmeyen Tıklama';
+            actionCounts[key] = (actionCounts[key] || 0) + 1;
+        });
+        const topActions = Object.entries(actionCounts)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 5)
+            .map(([action, count]) => ({ action, count }));
+
+        // 5. Cihaz/Tarayıcı (User Agent analizi - basit)
+        const devices = { Mobile: 0, Desktop: 0, Other: 0 };
+        logs.forEach(l => {
+            const ua = (l.userAgent || '').toLowerCase();
+            if (ua.includes('mobile') || ua.includes('android') || ua.includes('iphone')) devices.Mobile++;
+            else if (ua.includes('windows') || ua.includes('macintosh') || ua.includes('linux')) devices.Desktop++;
+            else devices.Other++;
+        });
+
+        // 6. Konumlar (Meta'dan geliyorsa)
+        const locations = {};
+        logs.forEach(l => {
+            if (l.meta && l.meta.city) {
+                const city = l.meta.city;
+                locations[city] = (locations[city] || 0) + 1;
+            }
+        });
+        const topLocations = Object.entries(locations)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 5)
+            .map(([city, count]) => ({ city, count }));
+
+
+        res.json({
+            summary: { totalVisits, dailyVisits, activeUsers },
+            graph: graphData,
+            topPages,
+            topActions,
+            devices,
+            topLocations
+        });
+
+    } catch (e) {
+        console.error('Analytics Report Error:', e);
+        res.status(500).json({ message: 'Rapor oluşturulamadı.' });
+    }
+});
+
 
 // --- RSS HABERLERİ API (CANLI BESLEME) ---
 app.get('/api/news', async (req, res) => {
