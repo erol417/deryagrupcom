@@ -20,7 +20,7 @@ export default function CompanyDetail() {
   const [currentCompany, setCurrentCompany] = useState<any>(staticCompany);
 
   // Sol menü için liste
-  const [menuList, setMenuList] = useState([
+  const [menuList] = useState([
     { id: 'otomotiv', name: 'Derya Otomotiv', icon: 'directions_car' },
     { id: 'sigorta', name: 'Derya Sigorta', icon: 'verified_user' },
     { id: 'insaat', name: 'Derya İnşaat', icon: 'apartment' },
@@ -35,6 +35,7 @@ export default function CompanyDetail() {
   useEffect(() => {
     window.scrollTo(0, 0);
 
+    // @ts-ignore
     if (id && companies[id]) {
       // @ts-ignore
       setCurrentCompany(companies[id]);

@@ -163,9 +163,9 @@ export default function ManagerDashboard() {
         setActiveTab('brands');
     };
 
-    const deleteBrand = async (id: number) => {
-        if (!confirm("Markayı silmek istediğinize emin misiniz?")) return;
-    };
+    // const deleteBrand = async (id: number) => {
+    //     if (!confirm("Markayı silmek istediğinize emin misiniz?")) return;
+    // };
 
     // --- INFO OPERATIONS ---
     const handleInfoUpdate = async (e: React.FormEvent) => {

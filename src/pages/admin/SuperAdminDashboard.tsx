@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { API_BASE_URL } from '../../config';
 import { useNavigate } from 'react-router-dom';
 
+/*
 interface User {
     id: number;
     username: string;
@@ -12,15 +13,16 @@ interface User {
     scope: string;
     password?: string;
 }
+*/
 
 export default function SuperAdminDashboard() {
     const navigate = useNavigate();
     const [currentUser, setCurrentUser] = useState<any>(null);
-    const [users, setUsers] = useState<User[]>([]);
+    // const [users, setUsers] = useState<User[]>([]);
 
     // Form States
-    const [editingUser, setEditingUser] = useState<User | null>(null);
-    const [formData, setFormData] = useState({ username: '', password: '', name: '', email: '', role: 'manager', scope: 'all' });
+    // const [editingUser, setEditingUser] = useState<User | null>(null);
+    // const [formData, setFormData] = useState({ username: '', password: '', name: '', email: '', role: 'manager', scope: 'all' });
 
     useEffect(() => {
         const userData = localStorage.getItem('adminUser');
@@ -40,8 +42,8 @@ export default function SuperAdminDashboard() {
     const fetchUsers = async () => {
         try {
             const res = await fetch(`${API_BASE_URL}/api/users`);
-            const data = await res.json();
-            setUsers(data);
+            await res.json();
+            // setUsers(data);
         } catch (error) {
             console.error(error);
         }
@@ -52,6 +54,7 @@ export default function SuperAdminDashboard() {
         navigate('/admin/login');
     };
 
+    /*
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -97,14 +100,15 @@ export default function SuperAdminDashboard() {
         setEditingUser(null);
         setFormData({ username: '', password: '', name: '', email: '', role: 'manager', scope: 'all' });
     };
+    */
 
     // Navigasyon Yardımcıları
-    const goToPanel = () => {
-        // Super Admin olduğumuz için aslında diğer panellerin rotasına gidebiliriz ama
-        // o sayfalar rol kontrolü yapıyor. Bu yüzden o sayfalardaki rol kontrolünü 
-        // "role === 'super' || role === 'ilgili_rol'" şeklinde güncellememiz gerek.
-        // Şimdilik sadece yönlendirme yapalım.
-    };
+    // const goToPanel = () => {
+    // Super Admin olduğumuz için aslında diğer panellerin rotasına gidebiliriz ama
+    // o sayfalar rol kontrolü yapıyor. Bu yüzden o sayfalardaki rol kontrolünü 
+    // "role === 'super' || role === 'ilgili_rol'" şeklinde güncellememiz gerek.
+    // Şimdilik sadece yönlendirme yapalım.
+    // };
 
     if (!currentUser) return <div>Yükleniyor...</div>;
 

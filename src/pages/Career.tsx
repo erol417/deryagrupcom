@@ -70,7 +70,7 @@ export default function Career() {
             <div className="lg:col-span-2">
               <h2 className="text-3xl font-bold text-secondary dark:text-white mb-8">Açık Pozisyonlar</h2>
               <div className="space-y-4">
-                {jobs.map((job, i) => (
+                {jobs.map((job) => (
                   <div key={job.id} onClick={() => navigate(`/kariyer/ilan/${job.id}`)} className="group bg-white dark:bg-white/5 p-6 rounded-xl border border-gray-200 dark:border-white/10 hover:border-primary transition-all cursor-pointer shadow-sm hover:shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
                       <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold mb-2 ${getDeptColorClass(job.department)}`}>

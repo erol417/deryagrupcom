@@ -25,7 +25,7 @@ export default function AnalyticsTracker() {
                         const data = await res.json();
                         if (data.city) {
                             city = data.city;
-                            sessionStorage.setItem('analytics_city', city);
+                            sessionStorage.setItem('analytics_city', city || '');
                         }
                     } catch (e) {
                         // Silent fail
@@ -38,7 +38,7 @@ export default function AnalyticsTracker() {
                     body: JSON.stringify({
                         type: 'pageview',
                         path: location.pathname,
-                        meta: { city }
+                        meta: { city: city || 'Unknown' }
                     })
                 });
             } catch (e) {
@@ -60,7 +60,7 @@ export default function AnalyticsTracker() {
             // Check if vital element
             const interactive = target.closest('button, a, .clickable');
             if (interactive) {
-                const text = interactive.innerText || interactive.getAttribute('aria-label') || 'Icon-Button';
+                const text = (interactive as HTMLElement).innerText || interactive.getAttribute('aria-label') || 'Icon-Button';
                 const actionName = `Clicked: ${text.substring(0, 20)}`; // Limit length
 
                 // Debounce simple way: don't track every single click if spamming

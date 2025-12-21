@@ -26,6 +26,7 @@ export default function CompanyBrands() {
     useEffect(() => {
         window.scrollTo(0, 0);
         // ID değişince veya ilk açılışta statik veriyi resetle
+        // @ts-ignore
         if (id && companies[id]) {
             // @ts-ignore
             setCompanyData(companies[id]);

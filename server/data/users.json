@@ -1,0 +1,56 @@
+[
+  {
+    "id": 1,
+    "username": "admin",
+    "password": "ik",
+    "role": "hr",
+    "name": "İK Yöneticisi",
+    "scope": "all",
+    "email": "deryagrupcom@gmail.com"
+  },
+  {
+    "id": 2,
+    "username": "otomotiv",
+    "password": "oto",
+    "role": "manager",
+    "name": "Otomotiv Müdürü",
+    "scope": "otomotiv",
+    "email": "deryagrupcom@gmail.com"
+  },
+  {
+    "id": 3,
+    "username": "super",
+    "password": "1+1=2",
+    "role": "super",
+    "name": "Genel Yönetici",
+    "scope": "all",
+    "email": "erol.gunes@deryabilisim.com.tr"
+  },
+  {
+    "id": 1765945341079,
+    "username": "insaat",
+    "password": "123",
+    "name": "boyacı erol",
+    "role": "manager",
+    "scope": "insaat",
+    "email": "deryagrupcom@gmail.com"
+  },
+  {
+    "id": 1765945441293,
+    "username": "sigorta",
+    "password": "oto",
+    "name": "sigortacı erol",
+    "role": "manager",
+    "scope": "sigorta",
+    "email": "deryagrupcom@gmail.com"
+  },
+  {
+    "id": 1765949864889,
+    "username": "klima",
+    "password": "123",
+    "name": "klimacı",
+    "role": "manager",
+    "scope": "elektronik",
+    "email": "deryagrupcom@gmail.com"
+  }
+]

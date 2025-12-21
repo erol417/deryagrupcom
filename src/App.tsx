@@ -3,7 +3,7 @@ import MainLayout from "./layouts/MainLayout"
 import Home from "./pages/Home"
 import About from "./pages/About"
 import Contact from "./pages/Contact"
-import Career from "./pages/Career"
+// import Career from "./pages/Career"
 import CompanyDetail from "./pages/CompanyDetail"
 
 import HumanResources from "./pages/HumanResources"

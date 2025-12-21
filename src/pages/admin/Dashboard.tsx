@@ -194,7 +194,7 @@ export default function AdminDashboard() {
     };
 
     const handleToggleJobStatus = async (id: number, currentStatus: boolean | undefined) => {
-        const newStatus = currentStatus === false; // If currently false, make true. If undefined (default true) or true, make false? No, wait.
+        // const newStatus = currentStatus === false; // If currently false, make true. If undefined (default true) or true, make false? No, wait.
         // Logic: if isActive is false, become true. If true/undefined, become false.
         // Actually: currentStatus !== false.
         const targetStatus = currentStatus === false ? true : false;

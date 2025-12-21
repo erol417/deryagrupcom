@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { API_BASE_URL } from '../config';
-import ReactMarkdown from 'react-markdown'; // Eğer kuruluysa harika olur ama değilse düz text.
+// import ReactMarkdown from 'react-markdown'; // Eğer kuruluysa harika olur ama değilse düz text.
 
 // Markdown kurulu olmayabilir, risk almayalım. Düz text + regex ile basit format (Bold vb.)
 // Veya sadece whitespace-pre-wrap yeterli. Kullanıcıya "Markdown yaz" demek zor.
