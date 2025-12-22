@@ -7,7 +7,7 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-20">
           <Link to="/" className="flex-shrink-0 cursor-pointer">
             <img
-              src="/images/derya%20grup%20logo.png"
+              src="/derya-grup-logo.png"
               alt="Derya Grup"
               className="h-16 w-auto object-contain"
             />
