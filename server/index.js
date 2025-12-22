@@ -108,26 +108,8 @@ const writeData = (filePath, data) => {
 const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY || '6LdPFjEsAAAAAHztYqa_6SYCTQQHoMsEErOOB1hx';
 
 const verifyCaptcha = async (req, res, next) => {
-    // FormData ile geliyorsa req.body'de (multer sayesinde), JSON ise direkt req.body'de
-    const token = req.body.captchaToken;
-
-    if (!token) {
-        return res.status(400).json({ success: false, message: 'Lütfen robot olmadığınızı doğrulayın (Captcha).' });
-    }
-
-    try {
-        const url = `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_SECRET_KEY}&response=${token}`;
-        const response = await axios.post(url);
-
-        if (response.data.success) {
-            next();
-        } else {
-            return res.status(400).json({ success: false, message: 'Captcha doğrulaması başarısız. Lütfen tekrar deneyin.' });
-        }
-    } catch (error) {
-        console.error('Captcha Error:', error);
-        return res.status(500).json({ success: false, message: 'Captcha sunucu hatası.' });
-    }
+    // Domain sorunu nedeniyle Captcha geçici olarak devre dışı bırakıldı
+    next();
 };
 
 // --- ENDPOINTS ---

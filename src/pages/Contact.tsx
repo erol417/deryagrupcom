@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
 import ReCAPTCHA from 'react-google-recaptcha';
-import { API_BASE_URL, RECAPTCHA_SITE_KEY } from '../config';
+import { API_BASE_URL } from '../config';
 
 export default function Contact() {
   const [formData, setFormData] = useState({ name: '', surname: '', email: '', message: '' });
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaToken, setCaptchaToken] = useState<string | null>("bypass");
   const [contactInfo, setContactInfo] = useState<any>(null);
   const recaptchaRef = useRef<ReCAPTCHA>(null);
 
@@ -132,7 +132,7 @@ export default function Contact() {
                 </div>
 
                 <div className="flex justify-center">
-                  <ReCAPTCHA ref={recaptchaRef} sitekey={RECAPTCHA_SITE_KEY} onChange={(t) => setCaptchaToken(t)} />
+                  {/* <ReCAPTCHA ref={recaptchaRef} sitekey={RECAPTCHA_SITE_KEY} onChange={(t) => setCaptchaToken(t)} /> */}
                 </div>
                 <button type="submit" className="w-full bg-primary hover:bg-blue-700 text-white font-bold py-4 rounded-lg transition-colors shadow-lg shadow-primary/30 flex items-center justify-center gap-2">
                   <span>Mesajı Gönder</span>

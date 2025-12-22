@@ -1,6 +1,6 @@
 
 import { useRef, useState } from 'react';
-import { API_BASE_URL, RECAPTCHA_SITE_KEY } from '../../config';
+import { API_BASE_URL } from '../../config';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { useNavigate } from 'react-router-dom';
 
@@ -8,7 +8,7 @@ export default function AdminLogin() {
     const navigate = useNavigate();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+    const [captchaToken, setCaptchaToken] = useState<string | null>("bypass");
     const [error, setError] = useState('');
     const recaptchaRef = useRef<ReCAPTCHA>(null);
 
@@ -149,11 +149,12 @@ export default function AdminLogin() {
 
 
                         <div className="flex justify-center">
+                            {/* ReCAPTCHA Devre Dışı
                             <ReCAPTCHA
                                 ref={recaptchaRef}
                                 sitekey={RECAPTCHA_SITE_KEY}
                                 onChange={(token) => setCaptchaToken(token)}
-                            />
+                            /> */}
                         </div>
 
                         <button
