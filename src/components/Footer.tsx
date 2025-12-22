@@ -18,7 +18,7 @@ export default function Footer() {
           <div className="space-y-6">
             <div className="flex items-center gap-2">
               <img
-                src="/images/derya%20grup%20logo.png"
+                src="/derya-grup-logo.png"
                 alt="Derya Grup"
                 className="h-16 w-auto object-contain"
               />
