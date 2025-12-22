@@ -62,8 +62,8 @@ export default function CompanyDetail() {
       {/* Container */}
       <div className="max-w-7xl mx-auto px-4 py-8 flex flex-col md:flex-row gap-8">
 
-        {/* Sidebar (Sol Menü) */}
-        <div className="w-full md:w-64 flex-shrink-0">
+        {/* Sidebar (Sol Menü - Desktop Only) */}
+        <div className="hidden md:block w-64 flex-shrink-0">
           <div className="bg-white rounded-2xl p-6 shadow-sm sticky top-8">
             <h3 className="font-bold text-gray-900 mb-2">Grup Şirketleri</h3>
             <p className="text-xs text-gray-400 mb-6">Detaylarını görüntülemek için şirket seçiniz.</p>
@@ -90,6 +90,25 @@ export default function CompanyDetail() {
 
         {/* Main Content (Sağ İçerik) */}
         <div className="flex-1 min-w-0 space-y-8">
+
+          {/* Mobile Company Navigation (Horizontal Scroll) */}
+          <div className="md:hidden overflow-x-auto pb-4 -mx-4 px-4 no-scrollbar flex items-center gap-3">
+            {menuList.map((item) => (
+              <Link
+                key={item.id}
+                to={`/sirket/${item.id}`}
+                className={cn(
+                  "flex flex-col items-center justify-center min-w-[80px] h-20 rounded-xl transition-all border",
+                  id === item.id
+                    ? "bg-blue-600 text-white border-blue-600 shadow-md"
+                    : "bg-white text-gray-500 border-gray-100"
+                )}
+              >
+                <span className="material-symbols-outlined text-2xl mb-1">{item.icon}</span>
+                <span className="text-[10px] font-bold text-center leading-tight px-1 truncate w-full">{item.name}</span>
+              </Link>
+            ))}
+          </div>
 
           {/* HERO SECTION */}
           <div className="relative h-[400px] rounded-3xl overflow-hidden group">
