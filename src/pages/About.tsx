@@ -264,7 +264,7 @@ export default function About() {
             <div className="w-full lg:w-5/12 relative">
               <div className="relative rounded-lg overflow-hidden shadow-2xl">
                 <img
-                  src={data?.chairman?.image ? `${API_BASE_URL}/uploads/${data.chairman.image}` : "/images/huseyin_kis.png"}
+                  src={data?.chairman?.image ? `${API_BASE_URL}/uploads/${data.chairman.image}` : "/huseyin_kis.png"}
                   alt={data?.chairman?.name || "Hüseyin Kış"}
                   className="w-full h-auto object-cover aspect-[4/5]"
                 />
