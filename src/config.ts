@@ -1,15 +1,16 @@
 const getApiBaseUrl = () => {
-    // IIS Reverse Proxy kullanacağımız için API isteklerini
-    // direkt aynı domain'e gönderiyoruz (Portsuz).
-    // Örn: http://deryagrup.com/api/... 
-    // IIS bunu alıp arkadaki 3003'e iletecek.
     if (typeof window !== 'undefined') {
-        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        const hostname = window.location.hostname;
+        // Localhost kontrolü (Masaüstü/Sunucu içi erişim)
+        if (hostname === 'localhost' || hostname === '127.0.0.1') {
             return 'http://localhost:3003';
         }
-        return window.location.origin;
+        // Dış erişim (Protocol-Relative)
+        // Site HTTPS ise -> https://domain:3003
+        // Site HTTP ise -> http://domain:3003
+        return `//${hostname}:3003`;
     }
-    return '';
+    return 'http://localhost:3003';
 };
 
 export const API_BASE_URL = getApiBaseUrl();
