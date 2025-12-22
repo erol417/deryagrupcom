@@ -1103,6 +1103,15 @@ app.use((err, req, res, next) => {
     next();
 });
 
+// --- STATİK DOSYALAR (Tek Çatı Modeli) ---
+// Node.js sadece API değil, react uygulamasını da sunsun.
+app.use(express.static(path.join(__dirname, '../dist')));
+
+// React Router için her isteği index.html'e yönlendir (API hariç)
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../dist/index.html'));
+});
+
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
