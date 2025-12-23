@@ -11,7 +11,7 @@ const rateLimit = require('express-rate-limit');
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 const app = express();
-const PORT = process.env.PORT || 80;
+const PORT = process.env.PORT || 3003;
 
 // Veri Dosyalarının Yolları
 const JOBS_FILE = path.join(__dirname, 'data', 'jobs.json');
@@ -1101,15 +1101,6 @@ app.use((err, req, res, next) => {
         return res.status(500).json({ success: false, message: err.message });
     }
     next();
-});
-
-// --- STATİK DOSYALAR (Tek Çatı Modeli) ---
-// Node.js sadece API değil, react uygulamasını da sunsun.
-app.use(express.static(path.join(__dirname, '../dist')));
-
-// React Router için her isteği index.html'e yönlendir (API hariç)
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../dist/index.html'));
 });
 
 app.listen(PORT, () => {
