@@ -24,7 +24,9 @@
     "role": "super",
     "name": "Genel Yönetici",
     "scope": "all",
-    "email": "erol.gunes@deryabilisim.com.tr"
+    "email": "erol.gunes@deryabilisim.com.tr",
+    "twoFactorCode": "340943",
+    "twoFactorExpires": 1766429111052
   },
   {
     "id": 1765945341079,
